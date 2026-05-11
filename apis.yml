@@ -1,0 +1,87 @@
+aid: wistia
+name: Wistia
+description: >-
+  Wistia is an all-in-one video marketing platform for businesses that
+  combines branded video hosting, webinars, video editing, webcam and
+  screen recording, and deep viewer analytics for B2B marketing teams
+  focused on lead generation, brand control, and content performance.
+  Founded in 2006, Wistia is used by more than 425,000 businesses and
+  integrates with major marketing automation and CRM platforms. Wistia
+  exposes a Data API at https://api.wistia.com/v1 for programmatic access
+  to medias, projects, customizations, accounts, and analytics, with
+  authentication via Bearer Token or HTTP Basic using an API access token.
+type: Index
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Video Hosting
+  - Video Marketing
+  - Video Analytics
+  - Lead Generation
+  - Webinars
+  - B2B Marketing
+url: >-
+  https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/apis.yml
+created: '2026-05-11'
+modified: '2026-05-11'
+specificationVersion: '0.19'
+apis:
+  - aid: wistia:data-api
+    name: Wistia Data API
+    description: >-
+      REST API providing programmatic access to medias, projects, accounts,
+      customizations, captions, and statistics in a Wistia account. Data is
+      returned in JSON over HTTPS. Authentication uses Bearer Tokens via the
+      Authorization header or HTTP Basic Auth with the API token as the
+      password. Rate limited to 600 requests per minute per account.
+    humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+    baseURL: https://api.wistia.com/v1
+    tags:
+      - Video
+      - Media
+      - Analytics
+      - Captions
+      - Projects
+    properties:
+      - type: Documentation
+        url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+      - type: Getting Started
+        url: https://docs.wistia.com/docs/making-api-requests
+      - type: Authentication
+        url: https://docs.wistia.com/docs/authenticating-with-oauth2
+      - type: API Reference
+        url: https://docs.wistia.com/reference
+  - aid: wistia:upload-api
+    name: Wistia Upload API
+    description: >-
+      Endpoint for uploading video files directly to a Wistia account,
+      typically used in conjunction with the Data API to manage uploaded
+      media. Authentication uses the same API access token.
+    humanURL: https://docs.wistia.com/reference/upload
+    baseURL: https://upload.wistia.com
+    tags:
+      - Video Upload
+      - Media Ingest
+    properties:
+      - type: Documentation
+        url: https://docs.wistia.com/reference/upload
+
+common:
+  - type: Website
+    url: https://wistia.com
+  - type: Documentation
+    url: https://docs.wistia.com
+  - type: Pricing
+    url: https://wistia.com/pricing
+  - type: Sign Up
+    url: https://wistia.com/signup
+  - type: Support
+    url: https://wistia.com/support
+  - type: Developers
+    url: https://docs.wistia.com
+  - type: Blog
+    url: https://wistia.com/learn
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/wistia
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
