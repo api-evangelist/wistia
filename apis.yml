@@ -44,11 +44,11 @@ apis:
     properties:
       - type: Documentation
         url: https://docs.wistia.com/reference/getting-started-with-the-data-api
-      - type: Getting Started
+      - type: GettingStarted
         url: https://docs.wistia.com/docs/making-api-requests
       - type: Authentication
         url: https://docs.wistia.com/docs/authenticating-with-oauth2
-      - type: API Reference
+      - type: APIReference
         url: https://docs.wistia.com/reference
   - aid: wistia:upload-api
     name: Wistia Upload API
@@ -72,7 +72,7 @@ common:
     url: https://docs.wistia.com
   - type: Pricing
     url: https://wistia.com/pricing
-  - type: Sign Up
+  - type: SignUp
     url: https://wistia.com/signup
   - type: Support
     url: https://wistia.com/support
