@@ -66,6 +66,8 @@ apis:
         url: https://docs.wistia.com/reference/upload
 
 common:
+  - type: GitHubOrganization
+    url: https://github.com/wistia
   - type: Website
     url: https://wistia.com
   - type: Documentation
