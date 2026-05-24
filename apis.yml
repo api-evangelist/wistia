@@ -84,6 +84,8 @@ common:
     url: https://wistia.com/learn
   - type: LinkedIn
     url: https://www.linkedin.com/company/wistia
+  - type: LLMsTxt
+    url: https://docs.wistia.com/llms.txt
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
