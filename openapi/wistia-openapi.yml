@@ -1,0 +1,476 @@
+openapi: 3.1.0
+info:
+  title: Wistia Data API
+  description: |
+    REST API providing programmatic access to medias, projects, channels, webinars,
+    captions, customizations, tags, folders, accounts, and allowed domains in a
+    Wistia account. Returns JSON over HTTPS.
+  version: "1.0"
+  contact:
+    name: Wistia
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+servers:
+  - url: https://api.wistia.com/v1
+    description: Wistia Data API production server
+security:
+  - bearerAuth: []
+  - basicAuth: []
+tags:
+  - name: Account
+  - name: Tokens
+  - name: AllowedDomains
+  - name: Folders
+  - name: Medias
+  - name: Captions
+  - name: Customizations
+  - name: Channels
+  - name: Webinars
+  - name: Tags
+paths:
+  /account:
+    get:
+      tags: [Account]
+      summary: Retrieve account summary
+      operationId: getAccount
+      responses:
+        "200":
+          description: OK
+  /tokens:
+    get:
+      tags: [Tokens]
+      summary: Get current token details
+      operationId: getCurrentToken
+      responses:
+        "200":
+          description: OK
+  /allowed-domains:
+    get:
+      tags: [AllowedDomains]
+      summary: List allowed domains
+      operationId: listAllowedDomains
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: [AllowedDomains]
+      summary: Create allowed domain
+      operationId: createAllowedDomain
+      responses:
+        "201":
+          description: Created
+  /allowed-domains/{domain}:
+    parameters:
+      - in: path
+        name: domain
+        required: true
+        schema: { type: string }
+    get:
+      tags: [AllowedDomains]
+      summary: Show specific allowed domain
+      operationId: getAllowedDomain
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags: [AllowedDomains]
+      summary: Delete allowed domain
+      operationId: deleteAllowedDomain
+      responses:
+        "204":
+          description: No Content
+  /folders:
+    get:
+      tags: [Folders]
+      summary: List folders
+      operationId: listFolders
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: [Folders]
+      summary: Create folder
+      operationId: createFolder
+      responses:
+        "201":
+          description: Created
+  /folders/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Folders]
+      summary: Retrieve folder
+      operationId: getFolder
+      responses:
+        "200":
+          description: OK
+    put:
+      tags: [Folders]
+      summary: Update folder
+      operationId: updateFolder
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags: [Folders]
+      summary: Delete folder
+      operationId: deleteFolder
+      responses:
+        "204":
+          description: No Content
+  /folders/{id}/copy:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Folders]
+      summary: Copy folder (asynchronous)
+      operationId: copyFolder
+      responses:
+        "202":
+          description: Accepted
+  /medias:
+    get:
+      tags: [Medias]
+      summary: List media
+      operationId: listMedia
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: [Medias]
+      summary: Upload or import media
+      operationId: createMedia
+      responses:
+        "201":
+          description: Created
+  /medias/{hashedId}:
+    parameters:
+      - in: path
+        name: hashedId
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Medias]
+      summary: Retrieve media
+      operationId: getMedia
+      responses:
+        "200":
+          description: OK
+    put:
+      tags: [Medias]
+      summary: Update media
+      operationId: updateMedia
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags: [Medias]
+      summary: Delete media
+      operationId: deleteMedia
+      responses:
+        "204":
+          description: No Content
+  /medias/{hashedId}/copy:
+    parameters:
+      - in: path
+        name: hashedId
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Medias]
+      summary: Copy media
+      operationId: copyMedia
+      responses:
+        "201":
+          description: Created
+  /medias/{hashedId}/swap:
+    parameters:
+      - in: path
+        name: hashedId
+        required: true
+        schema: { type: string }
+    put:
+      tags: [Medias]
+      summary: Swap media
+      operationId: swapMedia
+      responses:
+        "200":
+          description: OK
+  /medias/move:
+    put:
+      tags: [Medias]
+      summary: Move multiple media
+      operationId: moveMedia
+      responses:
+        "200":
+          description: OK
+  /medias/archive:
+    put:
+      tags: [Medias]
+      summary: Archive media
+      operationId: archiveMedia
+      responses:
+        "200":
+          description: OK
+  /medias/restore:
+    put:
+      tags: [Medias]
+      summary: Restore archived media
+      operationId: restoreMedia
+      responses:
+        "200":
+          description: OK
+  /medias/copy:
+    put:
+      tags: [Medias]
+      summary: Bulk copy media
+      operationId: bulkCopyMedia
+      responses:
+        "200":
+          description: OK
+  /medias/{hashedId}/captions:
+    parameters:
+      - in: path
+        name: hashedId
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Captions]
+      summary: List captions
+      operationId: listCaptions
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: [Captions]
+      summary: Create captions
+      operationId: createCaptions
+      responses:
+        "201":
+          description: Created
+  /medias/{hashedId}/captions/{languageCode}:
+    parameters:
+      - in: path
+        name: hashedId
+        required: true
+        schema: { type: string }
+      - in: path
+        name: languageCode
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Captions]
+      summary: Show captions
+      operationId: getCaption
+      responses:
+        "200":
+          description: OK
+    put:
+      tags: [Captions]
+      summary: Update captions
+      operationId: updateCaption
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags: [Captions]
+      summary: Delete captions
+      operationId: deleteCaption
+      responses:
+        "204":
+          description: No Content
+  /medias/{hashedId}/captions/purchase:
+    parameters:
+      - in: path
+        name: hashedId
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Captions]
+      summary: Purchase captions
+      operationId: purchaseCaptions
+      responses:
+        "200":
+          description: OK
+  /medias/{hashedId}/customizations:
+    parameters:
+      - in: path
+        name: hashedId
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Customizations]
+      summary: Show customizations
+      operationId: getCustomizations
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: [Customizations]
+      summary: Create customizations
+      operationId: createCustomizations
+      responses:
+        "201":
+          description: Created
+    put:
+      tags: [Customizations]
+      summary: Update customizations
+      operationId: updateCustomizations
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags: [Customizations]
+      summary: Delete customizations
+      operationId: deleteCustomizations
+      responses:
+        "204":
+          description: No Content
+  /channels:
+    get:
+      tags: [Channels]
+      summary: List channels
+      operationId: listChannels
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: [Channels]
+      summary: Create channel
+      operationId: createChannel
+      responses:
+        "201":
+          description: Created
+  /channels/{hashedId}:
+    parameters:
+      - in: path
+        name: hashedId
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Channels]
+      summary: Show channel
+      operationId: getChannel
+      responses:
+        "200":
+          description: OK
+    put:
+      tags: [Channels]
+      summary: Update channel
+      operationId: updateChannel
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags: [Channels]
+      summary: Delete channel
+      operationId: deleteChannel
+      responses:
+        "204":
+          description: No Content
+  /webinars:
+    get:
+      tags: [Webinars]
+      summary: List webinars
+      operationId: listWebinars
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: [Webinars]
+      summary: Create webinar
+      operationId: createWebinar
+      responses:
+        "201":
+          description: Created
+  /webinars/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Webinars]
+      summary: Show webinar
+      operationId: getWebinar
+      responses:
+        "200":
+          description: OK
+    put:
+      tags: [Webinars]
+      summary: Update webinar
+      operationId: updateWebinar
+      responses:
+        "200":
+          description: OK
+    delete:
+      tags: [Webinars]
+      summary: Delete webinar
+      operationId: deleteWebinar
+      responses:
+        "204":
+          description: No Content
+  /webinars/{id}/registrations:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Webinars]
+      summary: Register for webinar
+      operationId: registerWebinar
+      responses:
+        "201":
+          description: Created
+  /tags:
+    get:
+      tags: [Tags]
+      summary: List tags
+      operationId: listTags
+      responses:
+        "200":
+          description: OK
+    post:
+      tags: [Tags]
+      summary: Create tags
+      operationId: createTags
+      responses:
+        "201":
+          description: Created
+  /tags/{name}:
+    parameters:
+      - in: path
+        name: name
+        required: true
+        schema: { type: string }
+    delete:
+      tags: [Tags]
+      summary: Delete tag
+      operationId: deleteTag
+      responses:
+        "204":
+          description: No Content
+  /taggings/bulk-create:
+    post:
+      tags: [Tags]
+      summary: Bulk tag media
+      operationId: bulkCreateTaggings
+      responses:
+        "201":
+          description: Created
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API access token sent as a Bearer token in the Authorization header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP Basic authentication using the API token as the password
