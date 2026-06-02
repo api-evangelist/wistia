@@ -1,0 +1,619 @@
+asyncapi: 2.6.0
+info:
+  title: Wistia Webhooks API
+  version: "1.0.0"
+  description: |
+    AsyncAPI 2.6 description of Wistia's webhook surface. Wistia delivers
+    real-time notifications about media lifecycle events to a consumer
+    endpoint configured in your Wistia account. All webhooks are delivered
+    as HTTP POST requests with a JSON body and are signed with
+    HMAC-SHA256 using your configured secret key, supplied in the
+    `X-Wistia-Signature` header. Delivery is at-least-once; consumers
+    should deduplicate on the event `uuid` and order using `generated_at`.
+
+    This document models the documented media-scope webhook events.
+    Source: https://docs.wistia.com/docs/webhooks
+  contact:
+    name: Wistia
+    url: https://docs.wistia.com/docs/webhooks
+  license:
+    name: Proprietary
+    url: https://wistia.com/terms
+  termsOfService: https://wistia.com/terms
+
+defaultContentType: application/json
+
+servers:
+  consumer:
+    url: "{consumerUrl}"
+    protocol: https
+    description: |
+      The consumer-hosted HTTPS endpoint that Wistia POSTs webhook
+      deliveries to. The URL is configured per webhook in the Wistia
+      account settings.
+    variables:
+      consumerUrl:
+        description: Fully qualified HTTPS URL of the consumer webhook receiver.
+        default: https://example.com/webhooks/wistia
+
+channels:
+  media.created:
+    description: New media has been uploaded to a Wistia account.
+    subscribe:
+      summary: Receive notifications when new media is created.
+      operationId: onMediaCreated
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaCreated'
+
+  media.updated:
+    description: |
+      An existing media's metadata (title, description, or thumbnail)
+      has been changed.
+    subscribe:
+      summary: Receive notifications when media metadata changes.
+      operationId: onMediaUpdated
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaUpdated'
+
+  media.deleted:
+    description: A media asset has been removed from the account.
+    subscribe:
+      summary: Receive notifications when media is deleted.
+      operationId: onMediaDeleted
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaDeleted'
+
+  media.processing:
+    description: Encoding has started on a newly uploaded media asset.
+    subscribe:
+      summary: Receive notifications when media processing begins.
+      operationId: onMediaProcessing
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaProcessing'
+
+  media.ready:
+    description: Encoding is complete and the media is available for playback.
+    subscribe:
+      summary: Receive notifications when media is ready for playback.
+      operationId: onMediaReady
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaReady'
+
+  media.failed:
+    description: An error occurred while processing the media.
+    subscribe:
+      summary: Receive notifications when media processing fails.
+      operationId: onMediaFailed
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaFailed'
+
+  media.transcript_updated:
+    description: |
+      A transcript / captions have been generated or updated for the
+      media. Payload includes the `language_code` of the transcript.
+    subscribe:
+      summary: Receive notifications when a media transcript is updated.
+      operationId: onMediaTranscriptUpdated
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaTranscriptUpdated'
+
+  media.transcript_failed:
+    description: Caption generation failed for the media.
+    subscribe:
+      summary: Receive notifications when transcript generation fails.
+      operationId: onMediaTranscriptFailed
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaTranscriptFailed'
+
+  media.translation_created:
+    description: A translation has been completed for the media.
+    subscribe:
+      summary: Receive notifications when a translation is created.
+      operationId: onMediaTranslationCreated
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaTranslationCreated'
+
+  media.localization_created:
+    description: A localization has been completed for the media.
+    subscribe:
+      summary: Receive notifications when a localization is created.
+      operationId: onMediaLocalizationCreated
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaLocalizationCreated'
+
+  media.localization_failed:
+    description: A localization process failed for the media.
+    subscribe:
+      summary: Receive notifications when a localization fails.
+      operationId: onMediaLocalizationFailed
+      bindings:
+        http:
+          type: request
+          method: POST
+          bindingVersion: "0.3.0"
+      message:
+        $ref: '#/components/messages/MediaLocalizationFailed'
+
+components:
+  messages:
+    MediaCreated:
+      name: MediaCreated
+      title: media.created
+      summary: A new media asset was uploaded to Wistia.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaEventEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+      examples:
+        - name: mediaCreatedExample
+          summary: Example media.created delivery
+          payload:
+            hook:
+              uuid: bb812395-8d23-4285-9278-9ca014209ae7
+            events:
+              - uuid: 09e6729eecb3a000
+                type: media.created
+                generated_at: "2024-03-30T15:10:13Z"
+                metadata:
+                  account_id: 8lq25o0p9c
+                payload:
+                  media:
+                    id: l9dqljgtfy
+                    name: Lenny Eating Peanuts
+                    duration: 71.912
+                    url: https://dave.wistia.com/medias/l9dqljgtfy
+                    thumbnail:
+                      url: https://embed-ssl.wistia.com/deliveries/aa2863d2bf45cf2cc5c325d129e80bd5c0055883.jpg?image_crop_resized=200x120
+                  project:
+                    id: some-hashed-id
+                    name: Folder Name
+
+    MediaUpdated:
+      name: MediaUpdated
+      title: media.updated
+      summary: A media asset's metadata changed.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaUpdatedEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+      examples:
+        - name: mediaUpdatedExample
+          summary: Example media.updated delivery (thumbnail change)
+          payload:
+            hook:
+              uuid: bb812395-8d23-4285-9278-9ca014209ae7
+            events:
+              - uuid: 09e6729eecb3a000
+                type: media.updated
+                generated_at: "2024-03-30T15:10:13Z"
+                metadata:
+                  account_id: 8lq25o0p9c
+                payload:
+                  media:
+                    id: l9dqljgtfy
+                    name: Lenny Eating Peanuts
+                    duration: 71.912
+                    url: https://dave.wistia.com/medias/l9dqljgtfy
+                    thumbnail:
+                      url: https://embed-ssl.wistia.com/deliveries/aa2863d2bf45cf2cc5c325d129e80bd5c0055883.jpg?image_crop_resized=200x120
+                  project:
+                    id: some-hashed-id
+                    name: Folder Name
+                  previous_attributes:
+                    thumbnail:
+                      url: https://embed-ssl.wistia.com/deliveries/e04d7729a8b83f4fdd52e107b980f5594359bb45.jpg?image_crop_resized=200x120
+
+    MediaDeleted:
+      name: MediaDeleted
+      title: media.deleted
+      summary: A media asset was removed.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaEventEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+    MediaProcessing:
+      name: MediaProcessing
+      title: media.processing
+      summary: Encoding has started on the media.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaEventEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+    MediaReady:
+      name: MediaReady
+      title: media.ready
+      summary: Encoding is complete and playback is available.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaEventEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+    MediaFailed:
+      name: MediaFailed
+      title: media.failed
+      summary: Media processing failed.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaEventEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+    MediaTranscriptUpdated:
+      name: MediaTranscriptUpdated
+      title: media.transcript_updated
+      summary: A media transcript / captions were created or updated.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaTranscriptEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+    MediaTranscriptFailed:
+      name: MediaTranscriptFailed
+      title: media.transcript_failed
+      summary: Transcript / captions generation failed.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaTranscriptEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+    MediaTranslationCreated:
+      name: MediaTranslationCreated
+      title: media.translation_created
+      summary: A translation was completed for the media.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaEventEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+    MediaLocalizationCreated:
+      name: MediaLocalizationCreated
+      title: media.localization_created
+      summary: A localization was completed for the media.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaEventEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+    MediaLocalizationFailed:
+      name: MediaLocalizationFailed
+      title: media.localization_failed
+      summary: A localization process failed for the media.
+      contentType: application/json
+      headers:
+        $ref: '#/components/schemas/WebhookHeaders'
+      payload:
+        $ref: '#/components/schemas/MediaEventEnvelope'
+      bindings:
+        http:
+          bindingVersion: "0.3.0"
+
+  schemas:
+    WebhookHeaders:
+      type: object
+      description: HTTP headers sent by Wistia on every webhook delivery.
+      properties:
+        User-Agent:
+          type: string
+          description: Identifies the Wistia webhook delivery agent and version.
+          example: Wistia-Webhooks/0.0.47
+        Content-Type:
+          type: string
+          description: Always `application/json` for webhook deliveries.
+          example: application/json
+        Content-Length:
+          type: string
+          description: Length, in bytes, of the JSON request body.
+        X-Wistia-Signature:
+          type: string
+          description: |
+            HMAC-SHA256 hex digest of the raw request body computed using
+            the consumer's configured webhook secret. Consumers must
+            recompute and compare to verify authenticity.
+          example: 4f3c1a...
+
+    Hook:
+      type: object
+      description: Identifies the webhook message envelope.
+      properties:
+        uuid:
+          type: string
+          description: Unique identifier for this webhook delivery (the message).
+          example: bb812395-8d23-4285-9278-9ca014209ae7
+      required:
+        - uuid
+
+    EventMetadata:
+      type: object
+      description: Account-scoped metadata applied to every event.
+      properties:
+        account_id:
+          type: string
+          description: Hashed identifier of the Wistia account that produced the event.
+          example: 8lq25o0p9c
+      required:
+        - account_id
+
+    Thumbnail:
+      type: object
+      description: Thumbnail descriptor for a Wistia media asset.
+      properties:
+        url:
+          type: string
+          format: uri
+          description: URL of the thumbnail image.
+
+    Media:
+      type: object
+      description: Wistia media asset object embedded in webhook payloads.
+      properties:
+        id:
+          type: string
+          description: Hashed identifier of the media asset.
+          example: l9dqljgtfy
+        name:
+          type: string
+          description: Display name / title of the media.
+        duration:
+          type: number
+          format: float
+          description: Duration of the media in seconds.
+        url:
+          type: string
+          format: uri
+          description: Wistia URL where the media is hosted.
+        thumbnail:
+          $ref: '#/components/schemas/Thumbnail'
+
+    Project:
+      type: object
+      description: |
+        Project (folder) that contains the media. The `id` is a hashed
+        identifier per Wistia's documented conventions.
+      properties:
+        id:
+          type: string
+          description: Hashed identifier of the project (folder).
+        name:
+          type: string
+          description: Project (folder) name.
+
+    MediaPayload:
+      type: object
+      description: Base payload for media-scoped events.
+      properties:
+        media:
+          $ref: '#/components/schemas/Media'
+        project:
+          $ref: '#/components/schemas/Project'
+
+    MediaUpdatedPayload:
+      allOf:
+        - $ref: '#/components/schemas/MediaPayload'
+        - type: object
+          properties:
+            previous_attributes:
+              type: object
+              description: |
+                Subset of media attributes prior to the update. Only the
+                fields that changed are reported. Mirrors the shape of
+                `media` for the keys that changed.
+              additionalProperties: true
+
+    MediaTranscriptPayload:
+      allOf:
+        - $ref: '#/components/schemas/MediaPayload'
+        - type: object
+          properties:
+            language_code:
+              type: string
+              description: |
+                BCP-47 language code of the transcript / captions, e.g.
+                `en`, `es`, `fr`.
+
+    MediaEvent:
+      type: object
+      description: Envelope for a single media-scoped event.
+      properties:
+        uuid:
+          type: string
+          description: Unique identifier of the event. Use for deduplication.
+        type:
+          type: string
+          description: The event type identifier.
+          enum:
+            - media.created
+            - media.updated
+            - media.deleted
+            - media.processing
+            - media.ready
+            - media.failed
+            - media.transcript_updated
+            - media.transcript_failed
+            - media.translation_created
+            - media.localization_created
+            - media.localization_failed
+        generated_at:
+          type: string
+          format: date-time
+          description: ISO-8601 UTC timestamp when the event was generated.
+        metadata:
+          $ref: '#/components/schemas/EventMetadata'
+        payload:
+          $ref: '#/components/schemas/MediaPayload'
+      required:
+        - uuid
+        - type
+        - generated_at
+        - metadata
+        - payload
+
+    MediaUpdatedEvent:
+      allOf:
+        - $ref: '#/components/schemas/MediaEvent'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [media.updated]
+            payload:
+              $ref: '#/components/schemas/MediaUpdatedPayload'
+
+    MediaTranscriptEvent:
+      allOf:
+        - $ref: '#/components/schemas/MediaEvent'
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - media.transcript_updated
+                - media.transcript_failed
+            payload:
+              $ref: '#/components/schemas/MediaTranscriptPayload'
+
+    MediaEventEnvelope:
+      type: object
+      description: |
+        Top-level webhook envelope. `events` is always an array; multiple
+        events occurring close together may be batched into one delivery.
+      properties:
+        hook:
+          $ref: '#/components/schemas/Hook'
+        events:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/MediaEvent'
+      required:
+        - hook
+        - events
+
+    MediaUpdatedEnvelope:
+      type: object
+      properties:
+        hook:
+          $ref: '#/components/schemas/Hook'
+        events:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/MediaUpdatedEvent'
+      required:
+        - hook
+        - events
+
+    MediaTranscriptEnvelope:
+      type: object
+      properties:
+        hook:
+          $ref: '#/components/schemas/Hook'
+        events:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/MediaTranscriptEvent'
+      required:
+        - hook
+        - events
+
+  securitySchemes:
+    wistiaSignature:
+      type: httpApiKey
+      name: X-Wistia-Signature
+      in: header
+      description: |
+        HMAC-SHA256 hex digest of the raw JSON request body computed
+        using the consumer's configured webhook secret. Consumers must
+        verify the value of `X-Wistia-Signature` matches a locally
+        recomputed HMAC over the body to authenticate the delivery.

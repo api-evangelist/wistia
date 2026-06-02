@@ -22,7 +22,7 @@ tags:
 url: >-
   https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/apis.yml
 created: '2026-05-11'
-modified: '2026-05-11'
+modified: '2026-05-30'
 specificationVersion: '0.19'
 apis:
   - aid: wistia:data-api
@@ -64,6 +64,26 @@ apis:
     properties:
       - type: Documentation
         url: https://docs.wistia.com/reference/upload
+  - aid: wistia:webhooks
+    name: Wistia Webhooks
+    description: >-
+      Real-time webhook deliveries from Wistia for documented media
+      lifecycle events. Deliveries are HTTP POST with a JSON body and
+      are signed via HMAC-SHA256 using the consumer's configured webhook
+      secret, supplied in the X-Wistia-Signature header. See the linked
+      AsyncAPI 2.6 description for the modeled events and payload shape.
+    humanURL: https://docs.wistia.com/docs/webhooks
+    baseURL: https://docs.wistia.com/docs/webhooks
+    tags:
+      - Webhooks
+      - Events
+      - Media
+      - AsyncAPI
+    properties:
+      - type: Documentation
+        url: https://docs.wistia.com/docs/webhooks
+      - type: AsyncAPI
+        url: https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/asyncapi/wistia-asyncapi.yml
 
 common:
   - type: GitHubOrganization
