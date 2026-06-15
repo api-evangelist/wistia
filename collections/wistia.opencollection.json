@@ -1,0 +1,842 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Wistia Data API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Account",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve account summary",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/account"
+          },
+          "docs": "Retrieve account summary"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Tokens",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get current token details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/tokens"
+          },
+          "docs": "Get current token details"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "AllowedDomains",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List allowed domains",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/allowed-domains"
+          },
+          "docs": "List allowed domains"
+        },
+        {
+          "info": {
+            "name": "Create allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/allowed-domains"
+          },
+          "docs": "Create allowed domain"
+        },
+        {
+          "info": {
+            "name": "Show specific allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/allowed-domains/:domain",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show specific allowed domain"
+        },
+        {
+          "info": {
+            "name": "Delete allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/allowed-domains/:domain",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete allowed domain"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Folders",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List folders",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/folders"
+          },
+          "docs": "List folders"
+        },
+        {
+          "info": {
+            "name": "Create folder",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/folders"
+          },
+          "docs": "Create folder"
+        },
+        {
+          "info": {
+            "name": "Retrieve folder",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/folders/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve folder"
+        },
+        {
+          "info": {
+            "name": "Update folder",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/folders/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update folder"
+        },
+        {
+          "info": {
+            "name": "Delete folder",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/folders/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete folder"
+        },
+        {
+          "info": {
+            "name": "Copy folder (asynchronous)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/folders/:id/copy",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Copy folder (asynchronous)"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Medias",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List media",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias"
+          },
+          "docs": "List media"
+        },
+        {
+          "info": {
+            "name": "Upload or import media",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias"
+          },
+          "docs": "Upload or import media"
+        },
+        {
+          "info": {
+            "name": "Retrieve media",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve media"
+        },
+        {
+          "info": {
+            "name": "Update media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update media"
+        },
+        {
+          "info": {
+            "name": "Delete media",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/medias/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete media"
+        },
+        {
+          "info": {
+            "name": "Copy media",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/copy",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Copy media"
+        },
+        {
+          "info": {
+            "name": "Swap media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/swap",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Swap media"
+        },
+        {
+          "info": {
+            "name": "Move multiple media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/move"
+          },
+          "docs": "Move multiple media"
+        },
+        {
+          "info": {
+            "name": "Archive media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/archive"
+          },
+          "docs": "Archive media"
+        },
+        {
+          "info": {
+            "name": "Restore archived media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/restore"
+          },
+          "docs": "Restore archived media"
+        },
+        {
+          "info": {
+            "name": "Bulk copy media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/copy"
+          },
+          "docs": "Bulk copy media"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Captions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List captions"
+        },
+        {
+          "info": {
+            "name": "Create captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Create captions"
+        },
+        {
+          "info": {
+            "name": "Show captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions/:languageCode",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "languageCode",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show captions"
+        },
+        {
+          "info": {
+            "name": "Update captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions/:languageCode",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "languageCode",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update captions"
+        },
+        {
+          "info": {
+            "name": "Delete captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions/:languageCode",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "languageCode",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete captions"
+        },
+        {
+          "info": {
+            "name": "Purchase captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions/purchase",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Purchase captions"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Customizations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Show customizations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/customizations",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show customizations"
+        },
+        {
+          "info": {
+            "name": "Create customizations",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/customizations",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Create customizations"
+        },
+        {
+          "info": {
+            "name": "Update customizations",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/customizations",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update customizations"
+        },
+        {
+          "info": {
+            "name": "Delete customizations",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/customizations",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete customizations"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Channels",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List channels",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/channels"
+          },
+          "docs": "List channels"
+        },
+        {
+          "info": {
+            "name": "Create channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/channels"
+          },
+          "docs": "Create channel"
+        },
+        {
+          "info": {
+            "name": "Show channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/channels/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show channel"
+        },
+        {
+          "info": {
+            "name": "Update channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/channels/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update channel"
+        },
+        {
+          "info": {
+            "name": "Delete channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/channels/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete channel"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Webinars",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List webinars",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/webinars"
+          },
+          "docs": "List webinars"
+        },
+        {
+          "info": {
+            "name": "Create webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/webinars"
+          },
+          "docs": "Create webinar"
+        },
+        {
+          "info": {
+            "name": "Show webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/webinars/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show webinar"
+        },
+        {
+          "info": {
+            "name": "Update webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/webinars/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update webinar"
+        },
+        {
+          "info": {
+            "name": "Delete webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/webinars/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete webinar"
+        },
+        {
+          "info": {
+            "name": "Register for webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/webinars/:id/registrations",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Register for webinar"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Tags",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/tags"
+          },
+          "docs": "List tags"
+        },
+        {
+          "info": {
+            "name": "Create tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/tags"
+          },
+          "docs": "Create tags"
+        },
+        {
+          "info": {
+            "name": "Delete tag",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/tags/:name",
+            "params": [
+              {
+                "name": "name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete tag"
+        },
+        {
+          "info": {
+            "name": "Bulk tag media",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/taggings/bulk-create"
+          },
+          "docs": "Bulk tag media"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
