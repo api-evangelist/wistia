@@ -3,16 +3,12 @@
   "feeds": [
     {
       "source": "https://wistia.com/learn",
-      "feed_url": "https://wistia.com/learn",
-      "title": "",
+      "feed_url": "",
       "saved": 0,
-      "method": "none"
-    },
-    {
-      "source": "https://docs.wistia.com",
-      "error": "HTTPError"
+      "method": "agent-scrape"
     }
   ],
-  "post_count": 1,
-  "fetched": "2026-06-14T20:42:17Z"
+  "post_count": 3,
+  "fetched": "2026-06-27T13:20:45Z",
+  "agent_pulled": "2026-06-27"
 }
