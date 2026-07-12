@@ -1,0 +1,19 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/wistia-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  description: API access token sent as a Bearer token in the Authorization header
+  sources:
+  - openapi/wistia-openapi.yml
+- name: basicAuth
+  type: http
+  scheme: basic
+  description: HTTP Basic authentication using the API token as the password
+  sources:
+  - openapi/wistia-openapi.yml

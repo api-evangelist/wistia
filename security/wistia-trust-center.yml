@@ -1,0 +1,18 @@
+generated: '2026-07-11'
+method: searched
+probe: true
+source: https://security.wistia.com/
+url: https://security.wistia.com/
+certifications:
+- SOC 2
+- PCI DSS
+- FedRAMP
+- GDPR
+evidence:
+- source: https://security.wistia.com/
+  keywords:
+  - soc 2
+  - pci dss
+  - fedramp
+  - trust center
+  - gdpr
