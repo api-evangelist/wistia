@@ -86,6 +86,8 @@ apis:
         url: https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/asyncapi/wistia-asyncapi.yml
 
 common:
+  - type: AgenticAccess
+    url: agentic-access/wistia-agentic-access.yml
   - type: TrustCenter
     url: security/wistia-trust-center.yml
   - type: DomainSecurity
