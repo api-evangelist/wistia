@@ -1,0 +1,42 @@
+openapi: 3.1.0
+info:
+  title: Wistia Data Account Tokens API
+  description: 'REST API providing programmatic access to medias, projects, channels, webinars,
+
+    captions, customizations, tags, folders, accounts, and allowed domains in a
+
+    Wistia account. Returns JSON over HTTPS.
+
+    '
+  version: '1.0'
+  contact:
+    name: Wistia
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+servers:
+- url: https://api.wistia.com/v1
+  description: Wistia Data API production server
+security:
+- bearerAuth: []
+- basicAuth: []
+tags:
+- name: Tokens
+paths:
+  /tokens:
+    get:
+      tags:
+      - Tokens
+      summary: Get current token details
+      operationId: getCurrentToken
+      responses:
+        '200':
+          description: OK
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API access token sent as a Bearer token in the Authorization header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP Basic authentication using the API token as the password

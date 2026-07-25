@@ -1,0 +1,147 @@
+openapi: 3.1.0
+info:
+  title: Wistia Data Account Medias API
+  description: 'REST API providing programmatic access to medias, projects, channels, webinars,
+
+    captions, customizations, tags, folders, accounts, and allowed domains in a
+
+    Wistia account. Returns JSON over HTTPS.
+
+    '
+  version: '1.0'
+  contact:
+    name: Wistia
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+servers:
+- url: https://api.wistia.com/v1
+  description: Wistia Data API production server
+security:
+- bearerAuth: []
+- basicAuth: []
+tags:
+- name: Medias
+paths:
+  /medias:
+    get:
+      tags:
+      - Medias
+      summary: List media
+      operationId: listMedia
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - Medias
+      summary: Upload or import media
+      operationId: createMedia
+      responses:
+        '201':
+          description: Created
+  /medias/{hashedId}:
+    parameters:
+    - in: path
+      name: hashedId
+      required: true
+      schema:
+        type: string
+    get:
+      tags:
+      - Medias
+      summary: Retrieve media
+      operationId: getMedia
+      responses:
+        '200':
+          description: OK
+    put:
+      tags:
+      - Medias
+      summary: Update media
+      operationId: updateMedia
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+      - Medias
+      summary: Delete media
+      operationId: deleteMedia
+      responses:
+        '204':
+          description: No Content
+  /medias/{hashedId}/copy:
+    parameters:
+    - in: path
+      name: hashedId
+      required: true
+      schema:
+        type: string
+    post:
+      tags:
+      - Medias
+      summary: Copy media
+      operationId: copyMedia
+      responses:
+        '201':
+          description: Created
+  /medias/{hashedId}/swap:
+    parameters:
+    - in: path
+      name: hashedId
+      required: true
+      schema:
+        type: string
+    put:
+      tags:
+      - Medias
+      summary: Swap media
+      operationId: swapMedia
+      responses:
+        '200':
+          description: OK
+  /medias/move:
+    put:
+      tags:
+      - Medias
+      summary: Move multiple media
+      operationId: moveMedia
+      responses:
+        '200':
+          description: OK
+  /medias/archive:
+    put:
+      tags:
+      - Medias
+      summary: Archive media
+      operationId: archiveMedia
+      responses:
+        '200':
+          description: OK
+  /medias/restore:
+    put:
+      tags:
+      - Medias
+      summary: Restore archived media
+      operationId: restoreMedia
+      responses:
+        '200':
+          description: OK
+  /medias/copy:
+    put:
+      tags:
+      - Medias
+      summary: Bulk copy media
+      operationId: bulkCopyMedia
+      responses:
+        '200':
+          description: OK
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API access token sent as a Bearer token in the Authorization header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP Basic authentication using the API token as the password
