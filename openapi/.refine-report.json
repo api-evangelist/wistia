@@ -1,0 +1,32 @@
+{
+  "provider": "wistia",
+  "sources": [
+    "wistia-account-api-openapi.yml",
+    "wistia-alloweddomains-api-openapi.yml",
+    "wistia-captions-api-openapi.yml",
+    "wistia-channels-api-openapi.yml",
+    "wistia-customizations-api-openapi.yml",
+    "wistia-folders-api-openapi.yml",
+    "wistia-medias-api-openapi.yml",
+    "wistia-tags-api-openapi.yml",
+    "wistia-tokens-api-openapi.yml",
+    "wistia-webinars-api-openapi.yml"
+  ],
+  "outputs": [
+    "wistia-account-api-openapi.yml",
+    "wistia-alloweddomains-api-openapi.yml",
+    "wistia-captions-api-openapi.yml",
+    "wistia-channels-api-openapi.yml",
+    "wistia-customizations-api-openapi.yml",
+    "wistia-folders-api-openapi.yml",
+    "wistia-medias-api-openapi.yml",
+    "wistia-tags-api-openapi.yml",
+    "wistia-tokens-api-openapi.yml",
+    "wistia-webinars-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
