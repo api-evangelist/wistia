@@ -7,9 +7,14 @@ description: >-
   focused on lead generation, brand control, and content performance.
   Founded in 2006, Wistia is used by more than 425,000 businesses and
   integrates with major marketing automation and CRM platforms. Wistia
-  exposes a Data API at https://api.wistia.com/v1 for programmatic access
-  to medias, projects, customizations, accounts, and analytics, with
-  authentication via Bearer Token or HTTP Basic using an API access token.
+  ships an unusually complete developer surface for its category: a
+  frozen evergreen Data API at https://api.wistia.com/v1 alongside a
+  header-versioned modern API at https://api.wistia.com/modern with dated
+  stable releases (2026-01), OpenAPI 3.1 descriptions made discoverable
+  through an RFC 9727 api-catalog linkset, OAuth 2.0 with RFC 8414/9728
+  discovery and dynamic client registration, a hosted MCP server at
+  https://api.wistia.com/mcp/api, a Go CLI, a Speakeasy-generated
+  TypeScript SDK, and the Aurora `<wistia-player>` web component.
 type: Index
 accessModel:
   pricing: unknown
@@ -31,10 +36,14 @@ tags:
   - Lead Generation
   - Webinars
   - B2B Marketing
+  - Video Captions
+  - Localization
+  - MCP
+  - Media Management
 url: >-
   https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/apis.yml
 created: '2026-05-11'
-modified: '2026-05-30'
+modified: '2026-08-14'
 specificationVersion: '0.19'
 apis:
 - aid: wistia:data-api
@@ -61,6 +70,102 @@ apis:
     url: https://docs.wistia.com/docs/authenticating-with-oauth2
   - type: APIReference
     url: https://docs.wistia.com/reference
+  - type: OpenAPI
+    url: openapi/wistia-data-api-v1-openapi.yml
+- aid: wistia:data-api-2026-01
+  name: Wistia Data API 2026-01
+  description: >-
+    The current STABLE release of Wistia's modern Data API — 55 paths and 85 operations covering
+    media, folders, subfolders, folder sharings, captions, localizations, trims, customizations,
+    tags, taggings, channels, channel episodes, webinars, webinar registrations, search, stats,
+    allowed domains, expiring access tokens and background jobs. Version is selected with the
+    X-Wistia-Api-Version request header rather than the path; each dated stable release is
+    supported for one year from its release date, so 2026-01 is supported until 2027-01. The
+    OpenAPI 3.1.1 description is published by Wistia at
+    https://wistia.github.io/wistia/api/openapi-2026-01.yaml and is discoverable machine-to-machine
+    through the RFC 9727 api-catalog linkset at https://api.wistia.com/.well-known/api-catalog.
+  humanURL: https://docs.wistia.com/reference
+  baseURL: https://api.wistia.com/modern
+  tags:
+  - Video
+  - Media
+  - Folders
+  - Captions
+  - Localization
+  - Webinars
+  - Channels
+  - Analytics
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-data-api-2026-01-openapi.yml
+  - type: Overlay
+    url: overlays/wistia-data-api-2026-01-overlay.yaml
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:data-api-modern-edge
+  name: Wistia Data API (modern, edge)
+  description: >-
+    The edge description of Wistia's modern API — 115 paths and 167 operations, the preview of what
+    lands in the next dated stable release. It carries surfaces absent from 2026-01: Remix (AI video
+    editing), Analytics, Brands, Share Links, Review Bundles, Custom Metadata Fields, Deleted Media,
+    Bulk Actions, Push Devices and Extended Audio Descriptions. It is also the document that carries
+    Wistia's MCP wiring — 125 operations declare an x-wistia-mcp-tool-name plus MCP behaviour
+    annotations, and 23 more are explicitly hidden from agents with x-wistia-mcp-ignore. This is the
+    service-desc that https://api.wistia.com/.well-known/api-catalog points at. Treat it as a
+    preview, not a contract.
+  humanURL: https://docs.wistia.com/reference
+  baseURL: https://api.wistia.com/modern
+  tags:
+  - Video
+  - Media
+  - Remix
+  - Analytics
+  - Custom Metadata
+  - Sharing
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-data-api-modern-edge-openapi.yml
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+- aid: wistia:mcp
+  name: Wistia MCP Server
+  description: >-
+    Wistia's first-party hosted Model Context Protocol server, exposing 125 tools across the media,
+    folders, channels, captions, customizations, tags, webinars, sharing, account, analytics, stats
+    and remix toolsets. It is a REMOTE streamable-HTTP endpoint an agent POSTs to directly — no
+    local install — authenticated with OAuth or a Wistia access token, and currently limited to
+    account owners and managers. Discoverable without a human: the server card is linked from
+    Wistia's RFC 9727 api-catalog. An anonymous tools/list returns 401, so the tool inventory in
+    this profile is read from the provider's own OpenAPI annotations rather than guessed.
+  humanURL: https://docs.wistia.com/docs/mcp-server-guide
+  baseURL: https://api.wistia.com/mcp/api
+  tags:
+  - MCP
+  - Agents
+  - Video
+  properties:
+  - type: MCPServer
+    url: mcp/wistia-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/wistia-tool-crosswalk.yml
+  - type: Documentation
+    url: https://docs.wistia.com/docs/mcp-server-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
 - aid: wistia:upload-api
   name: Wistia Upload API
   description: >-
@@ -94,6 +199,8 @@ apis:
   - type: AsyncAPI
     url: >-
       https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/asyncapi/wistia-asyncapi.yml
+  - type: Webhooks
+    url: asyncapi/wistia-webhooks.yml
 - aid: wistia:wistia-account-api
   name: Wistia Account API
   description: The Account API from Wistia — 1 operation(s) for account.
@@ -203,12 +310,60 @@ common:
     url: security/wistia-domain-security.yml
   - type: Authentication
     url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: WellKnown
+    url: well-known/wistia-well-known.yml
+  - type: Packages
+    url: packages/wistia-packages.yml
+  - type: SDKs
+    url: packages/wistia-packages.yml
+  - type: CLI
+    url: cli/wistia-cli.yml
+  - type: Components
+    url: components/wistia-components.yml
+  - type: Conventions
+    url: conventions/wistia-conventions.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+  - type: Plans
+    url: plans/wistia-plans-pricing.yml
+  - type: Lifecycle
+    url: lifecycle/wistia-lifecycle.yml
+  - type: StatusPage
+    url: https://status.wistia.com
+  - type: Deprecation
+    url: https://docs.wistia.com/docs/wistia-deprecation-schedule
+  - type: ChangeLog
+    url: changelog/wistia-changelog.yml
+  - type: Conformance
+    url: conformance/wistia-conformance.yml
+  - type: Compliance
+    url: https://security.wistia.com/
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: MCPServer
+    url: mcp/wistia-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/wistia-tool-crosswalk.yml
+  - type: Overlay
+    url: overlays/wistia-data-api-2026-01-overlay.yaml
   - type: GitHubOrganization
     url: https://github.com/wistia
   - type: Website
     url: https://wistia.com
   - type: Documentation
     url: https://docs.wistia.com
+  - type: DeveloperPortal
+    url: https://docs.wistia.com
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
   - type: Pricing
     url: https://wistia.com/pricing
   - type: Signup
@@ -219,10 +374,19 @@ common:
     url: https://docs.wistia.com
   - type: Blog
     url: https://wistia.com/learn
+  - type: TermsOfService
+    url: https://wistia.com/terms
+  - type: PrivacyPolicy
+    url: https://wistia.com/privacy
   - type: LinkedIn
     url: https://www.linkedin.com/company/wistia
-  - type: LlmsText
-    url: https://docs.wistia.com/llms.txt
+  - type: LLMsTxt
+    url: llms/wistia-llms.txt
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-14'
+  status: enriched
+  artifacts_added: 31
+  pass: local-v1
