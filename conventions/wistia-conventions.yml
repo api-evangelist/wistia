@@ -1,0 +1,161 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://docs.wistia.com/docs/making-api-requests,
+  https://docs.wistia.com/docs/migration-from-v1-guide,
+  https://docs.wistia.com/docs/webhooks,
+  openapi/wistia-data-api-2026-01-openapi.yml,
+  openapi/wistia-data-api-modern-edge-openapi.yml,
+  live response headers observed at https://api.wistia.com/v1/medias.json
+description: >-
+  Cross-cutting runtime semantics for the Wistia Data API: how a client authenticates, pages, sorts,
+  selects a version, traces a request, and interprets an error. Two things are notably ABSENT and
+  are recorded as such rather than glossed: there is no idempotency-key mechanism of any kind, and
+  there are no rate-limit budget headers. The API does publish MCP-style idempotency HINTS on 95 of
+  its 125 agent tools, but that is a semantic annotation describing whether replaying a call is
+  safe — it is not a de-duplication contract, and it does not make a retried POST safe.
+authentication:
+  style: bearer
+  header: 'Authorization: Bearer <token>'
+  tls_required: true
+  alternatives:
+  - HTTP Basic with the token as the password (legacy)
+  - OAuth 2.0 access token (authorization code + PKCE, or client_credentials)
+  detail: ../authentication/wistia-authentication.yml
+idempotency:
+  supported: false
+  idempotency_key_header: null
+  scope: null
+  retention: null
+  note: >-
+    No Idempotency-Key (or equivalent) header appears in the docs or in any of the three published
+    OpenAPI descriptions. Retrying a failed POST — creating a folder, creating a webinar, purchasing
+    captions — risks a duplicate, and the API offers no server-side de-duplication to prevent it.
+    Several write paths are inherently safe to replay because they are PUT-shaped state setters
+    (PUT /medias/{id}, PUT /medias/archive, PUT /medias/restore) but that is HTTP semantics, not a
+    Wistia guarantee.
+  agent_hints:
+    present: true
+    mechanism: x-wistia-mcp-annotations.idempotent_hint on each MCP-exposed operation
+    counts:
+      idempotent_hint_true: 95
+      read_only_hint_true: 46
+      destructive_hint_true: 40
+      of_tools: 125
+    note: >-
+      Each hint ships with a written justification, e.g. "Deleting a resource that is already deleted
+      has no additional effect, so the request can be safely repeated." Useful for agent planning;
+      not a substitute for an idempotency key on create operations, and Wistia's own annotation on
+      create tools says so — idempotent_hint is false because "repeating the request may create
+      duplicates".
+pagination:
+  style: page-number
+  params:
+  - name: page
+    description: Which page of results to return. Defaults to 1, not 0.
+  - name: per_page
+    description: Results per request. Maximum 100, which is also the default.
+  response_fields: []
+  response_note: >-
+    Responses are bare JSON arrays with no envelope — no total count, no next/prev links, no cursor.
+    A client learns it has reached the end only by receiving a short page. There is no Link header.
+  cursor: false
+  hateoas: false
+sorting:
+  params:
+  - name: sort_by
+    values: [name, created, updated]
+    default: sorts by Project ID when unset
+  - name: sort_direction
+    values: ['1 = ascending', '0 = descending']
+    default: '1'
+filtering:
+  note: >-
+    Filtering is per-operation rather than a shared convention. The notable cross-cutting one is
+    batch fetch by id — GET /medias?hashed_ids[]=abc123 (the singular hashed_id form was removed in
+    2026-01).
+  search_endpoint: GET /search on the modern API, with a required `q` parameter.
+field_selection:
+  expansion: false
+  sparse_fieldsets: false
+  note: >-
+    No `expand`, `fields` or partial-response parameter is documented. Wistia does maintain a
+    JSON-Mask (Google partial-response) Ruby library in its GitHub org (wistia/json-mask-ruby), but
+    it is not exposed as an API query convention.
+metadata:
+  custom_metadata: true
+  note: >-
+    The edge description adds Custom Metadata Field Definitions and Custom Metadata Field Values
+    resources on media. Not present in the 2026-01 stable release.
+request_tracing:
+  header: x-request-id
+  direction: response
+  observed: true
+  observed_note: >-
+    Observed live on 2026-08-14 — a 401 from https://api.wistia.com/v1/medias.json carried
+    x-request-id (UUID), x-runtime, and x-envoy-upstream-service-time. Requests traverse an
+    istio-envoy edge behind CloudFront.
+  documented: false
+  documented_note: >-
+    The header is emitted but is not described anywhere in the docs, so a developer filing a support
+    ticket is not told to quote it.
+versioning:
+  mechanism: request header on the modern base, frozen path version for v1
+  header: X-Wistia-Api-Version
+  detail: ../lifecycle/wistia-lifecycle.yml
+naming:
+  case: snake_case
+  note: >-
+    The 2026-01 release moved response properties from camelCase to snake_case. v1 responses remain
+    camelCase — the two tracks disagree, which is the single most likely source of a silent
+    migration bug.
+  renames:
+    projects: folders
+    project_id: folder_id
+    live_stream_events: webinars
+content_negotiation:
+  default: application/json
+  alternatives:
+  - format: xml
+    mechanism: change the request path extension from .json to .xml
+    note: >-
+      A pre-Accept-header convention that still works, e.g. GET /v1/medias.xml. Not modeled in the
+      OpenAPI.
+  method_override:
+    supported: true
+    param: _method
+    values: [put, delete]
+    note: >-
+      Clients that cannot send PUT or DELETE may POST with a `_method` body parameter. A tunnelling
+      convention worth knowing about because it changes which HTTP verb a proxy or WAF sees.
+async_operations:
+  pattern: background job + poll
+  marker_object: background_job_status
+  poll_endpoint: GET /background_job_status/{backgroundJobStatusId}
+  operations_returning_a_job:
+  - PUT /medias/archive
+  - PUT /medias/restore
+  - PUT /medias/move
+  - PUT /medias/copy
+  - PUT /medias/{mediaHashedId}/swap
+  - POST /medias/import_url
+  note: >-
+    Bulk and long-running media operations do not return the resource. They return a
+    background_job_status object which the client polls. No callback or webhook is offered for job
+    completion, so an agent must poll.
+errors:
+  envelope: '{ "error": "<message>" } with variants'
+  problem_json: false
+  machine_readable_code: 401 responses only
+  detail: ../errors/wistia-problem-types.yml
+rate_limiting:
+  signal: 429 + Retry-After
+  budget_headers: false
+  detail: ../rate-limits/wistia-rate-limits.yml
+webhooks:
+  signature: HMAC-SHA256 hexdigest of the raw body in X-Wistia-Signature
+  delivery: HTTP POST, application/json, at-least-once
+  deduplication: on the per-event `uuid`
+  ordering: by `generated_at` (ISO-8601 UTC)
+  user_agent: Wistia-Webhooks/{VERSION}
+  detail: ../asyncapi/wistia-asyncapi.yml

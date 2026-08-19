@@ -1,0 +1,378 @@
+generated: '2026-08-14'
+method: derived
+source: openapi/wistia-data-api-2026-01-openapi.yml — path nesting, the Includes* mixin schemas, and *_id
+  / *_hashed_id reference fields across components.schemas
+description: 'Entity-relationship graph of the Wistia Data API 2026-01 stable release. The spine is Folder
+  -> Subfolder -> Media, with Media as the hub: captions, localizations, customizations, trims, taggings
+  and stats all hang off a single media. Channels and Webinars are parallel containers that also reference
+  media. A note on how this was derived: Wistia''s spec does NOT link entities with $ref in properties
+  — related objects are inlined, and the shared ones are factored into mixin schemas named Includes* (IncludesFolder,
+  IncludesSubfolder, IncludesTags, IncludesAssets). So the reliable relationship signal here is URL nesting
+  plus those mixins, not the $ref graph, and a naive $ref crawl of this spec returns almost nothing.'
+identifier_scheme:
+  primary: hashed_id
+  secondary: id
+  note: Media, channels, channel episodes and localizations are addressed in URLs by an opaque `hashed_id`
+    string; folders, subfolders, webinars and background jobs are addressed by a numeric `id`. Objects
+    typically expose BOTH, so passing the wrong one is a silent 404. The 2026-01 release renamed v1's
+    camelCase `hashedId` to `hashed_id`.
+  prefixes: null
+  prefix_note: Wistia ids carry no type prefix — a hashed id is not self-describing.
+relationships:
+- from: Media
+  to: Stats
+  type: has_many
+  via: /medias/{mediaHashedId}/stats
+- from: Media
+  to: Customizations
+  type: has_many
+  via: /medias/{mediaId}/customizations
+- from: Media
+  to: Caption
+  type: has_many
+  via: /medias/{mediaHashedId}/captions
+- from: Media
+  to: Localization
+  type: has_many
+  via: /medias/{mediaHashedId}/localizations
+- from: Media
+  to: Trim
+  type: has_many
+  via: /medias/{mediaHashedId}/trims
+- from: Folder
+  to: FolderSharing
+  type: has_many
+  via: /folders/{folderId}/sharings
+- from: Folder
+  to: Subfolder
+  type: has_many
+  via: /folders/{folderId}/subfolders
+- from: Channel
+  to: ChannelEpisode
+  type: has_many
+  via: /channels/{channelHashedId}/channel_episodes/{channelEpisodeId}
+- from: Webinar
+  to: WebinarRegistration
+  type: has_many
+  via: /webinars/{webinarId}/registrations
+- from: Stats
+  to: Account
+  type: collection
+  via: /stats/account
+- from: Stats
+  to: Folder
+  type: collection
+  via: /stats/projects/{projectId}
+- from: Stats
+  to: Media
+  type: collection
+  via: /stats/medias/{mediaId}
+- from: Stats
+  to: Visitor
+  type: collection
+  via: /stats/visitors
+- from: Stats
+  to: Event
+  type: collection
+  via: /stats/events
+embedded_objects:
+  note: Mixin schemas the spec composes into resource responses to inline a related object rather than
+    reference it.
+  mixins:
+  - mixin: IncludesFolder
+    embeds: folder
+  - mixin: IncludesAssets
+    embeds: assets
+  - mixin: IncludesSubfolder
+    embeds: subfolder
+  - mixin: IncludesTags
+    embeds: tags
+shared_reference_fields:
+  note: Foreign-key-shaped fields and the schemas that carry them.
+  fields:
+    channel:
+    - ChannelEpisode
+    - SearchChannelEpisode
+    folder:
+    - CreateWebinar
+    - SearchMedia
+    hashed:
+    - Channel
+    - ChannelEpisode
+    - Folder
+    - Folder-2
+    - Localization
+    - LocalizationTranscript
+    - LocalizationWithPurchaseData
+    - MediaCopy
+    - MediaIndex
+    - MediaProperties
+    - MediaShow
+    - MediaUpdate
+    - SearchChannel
+    - SearchChannelEpisode
+    - SearchMedia
+    - SourceMedia
+    - Subfolder
+    - SubfolderWithMedia
+    live_stream_event:
+    - ChannelEpisode
+    - ChannelEpisodeCreateOrUpdateParams
+    - SearchChannelEpisode
+    media:
+    - ChannelEpisode
+    - ChannelEpisodeCreateOrUpdateParams
+    - CreateChannelEpisode
+    - Event
+    - SearchChannelEpisode
+    public:
+    - Folder-2
+core_resources:
+  account:
+  - GET /account
+  allowed_domains:
+  - DELETE /allowed_domains/{domain}
+  - GET /allowed_domains
+  - GET /allowed_domains/{domain}
+  - POST /allowed_domains
+  background_job_status:
+  - GET /background_job_status/{backgroundJobStatusId}
+  captions:
+  - GET /captions
+  channel_episodes:
+  - DELETE /channel_episodes/{channelEpisodeHashedId}
+  - GET /channel_episodes
+  - PUT /channel_episodes/{channelEpisodeHashedId}
+  - PUT /channel_episodes/{channelEpisodeHashedId}/publish
+  - PUT /channel_episodes/{channelEpisodeHashedId}/unpublish
+  channels:
+  - DELETE /channels/{channelHashedId}
+  - GET /channels
+  - GET /channels/{channelHashedId}
+  - GET /channels/{channelHashedId}/channel_episodes
+  - GET /channels/{channelHashedId}/channel_episodes/{channelEpisodeId}
+  - POST /channels
+  - POST /channels/{channelHashedId}/channel_episodes
+  - PUT /channels/{channelHashedId}
+  expiring_token:
+  - POST /expiring_token
+  folders:
+  - DELETE /folders/{folderId}/sharings/{sharingId}
+  - DELETE /folders/{folderId}/subfolders/bulk_delete
+  - DELETE /folders/{folderId}/subfolders/{subfolderId}
+  - DELETE /folders/{id}
+  - GET /folders
+  - GET /folders/{folderId}/sharings
+  - GET /folders/{folderId}/sharings/{sharingId}
+  - GET /folders/{folderId}/subfolders
+  - GET /folders/{folderId}/subfolders/{subfolderId}
+  - GET /folders/{id}
+  - POST /folders
+  - POST /folders/{folderId}/sharings
+  - POST /folders/{folderId}/subfolders
+  - POST /folders/{id}/copy
+  - PUT /folders/{folderId}/sharings/{sharingId}
+  - PUT /folders/{folderId}/subfolders/{subfolderId}
+  - PUT /folders/{id}
+  medias:
+  - DELETE /medias/{mediaHashedId}
+  - DELETE /medias/{mediaHashedId}/captions/{languageCode}
+  - DELETE /medias/{mediaHashedId}/localizations/{localizationHashedId}
+  - DELETE /medias/{mediaId}/customizations
+  - GET /medias
+  - GET /medias/{mediaHashedId}
+  - GET /medias/{mediaHashedId}/captions
+  - GET /medias/{mediaHashedId}/captions/{languageCode}
+  - GET /medias/{mediaHashedId}/localizations
+  - GET /medias/{mediaHashedId}/localizations/{localizationHashedId}
+  - GET /medias/{mediaHashedId}/stats
+  - GET /medias/{mediaId}/customizations
+  - POST /medias/{mediaHashedId}/captions
+  - POST /medias/{mediaHashedId}/captions/purchase
+  - POST /medias/{mediaHashedId}/copy
+  - POST /medias/{mediaHashedId}/localizations
+  - POST /medias/{mediaHashedId}/translate
+  - POST /medias/{mediaHashedId}/trims
+  - POST /medias/{mediaId}/customizations
+  - PUT /medias/archive
+  - PUT /medias/copy
+  - PUT /medias/move
+  - PUT /medias/restore
+  - PUT /medias/{mediaHashedId}
+  - PUT /medias/{mediaHashedId}/captions/{languageCode}
+  - PUT /medias/{mediaHashedId}/swap
+  - PUT /medias/{mediaId}/customizations
+  search:
+  - GET /search
+  stats:
+  - GET /stats/account
+  - GET /stats/events
+  - GET /stats/events/{eventKey}
+  - GET /stats/medias/{mediaId}
+  - GET /stats/medias/{mediaId}/by_date
+  - GET /stats/medias/{mediaId}/engagement
+  - GET /stats/projects/{projectId}
+  - GET /stats/visitors
+  - GET /stats/visitors/{visitorKey}
+  taggings:
+  - POST /taggings/bulk_create
+  tags:
+  - DELETE /tags/{name}
+  - GET /tags
+  - POST /tags
+  webinars:
+  - DELETE /webinars/{id}
+  - GET /webinars
+  - GET /webinars/{id}
+  - POST /webinars
+  - POST /webinars/{webinarId}/registrations
+  - PUT /webinars/{id}
+entities:
+- name: Account
+  field_count: 7
+  description: An account represents a customer at Wistia. Each account can own media, folders
+- name: AllowedDomain
+  field_count: 3
+  description: An allowed domain represents a domain where a Wistia video can be embedded. Account
+- name: Asset
+  field_count: 6
+- name: BackgroundJobStatus
+  field_count: 2
+  description: A background job keeps track of the progress of an asynchronous task, e.g
+- name: Caption
+  field_count: 7
+- name: Channel
+  field_count: 13
+  description: A Channel lets you take a collection of video (or audio) and embed them
+- name: ChannelCreateOrUpdateParams
+  field_count: 16
+- name: ChannelEpisode
+  field_count: 14
+  description: A channel episode represents a media that has been added to a channel. Only published
+- name: ChannelEpisodeCreateOrUpdateParams
+  field_count: 14
+- name: CreateChannelEpisode
+  field_count: 12
+- name: CreateFolder
+  field_count: 3
+- name: CreateFolderSharing
+  field_count: 1
+- name: CreateFolderSharingResponse
+  field_count: 3
+  description: The response includes a link for the user to access the folder.
+- name: CreateRegistration
+  field_count: 3
+- name: CreateWebinar
+  field_count: 6
+- name: Event
+  field_count: 22
+- name: ExpiringAccessTokenInput
+  field_count: 2
+- name: ExpiringAccessTokenResponse
+  field_count: 1
+- name: Folder
+  field_count: 3
+- name: Folder-2
+  field_count: 15
+  description: A folder (previously called a project) is a container in which to organize media into.
+    It can be
+- name: FolderSharingSchema
+  field_count: 8
+  description: A sharing is an object that links either a contact or a contact group to a folder, including
+    information about the contacts' permissions to that folder.
+- name: IncludesAssets
+  field_count: 1
+- name: IncludesFolder
+  field_count: 1
+- name: IncludesSubfolder
+  field_count: 1
+- name: IncludesTags
+  field_count: 1
+- name: Localization
+  field_count: 12
+  description: A localization is a translation of a media into another language.
+- name: LocalizationTranscript
+  field_count: 6
+  description: The transcript for the localization. Selectively serialized in some endpoints. See properties
+    for endpoint.
+- name: LocalizationWithPurchaseData
+  field_count: 17
+- name: MediaCopy
+  field_count: 16
+- name: MediaIndex
+  field_count: 20
+- name: MediaProperties
+  field_count: 15
+  description: A media generally represents a video or an audio which can be embedded into your website.
+- name: MediaShow
+  field_count: 19
+- name: MediaUpdate
+  field_count: 16
+- name: PodcastSettings
+  field_count: 10
+  description: Podcast specific settings for a channel. These settings only take effect if
+- name: PodcastSettings-2
+  field_count: 5
+  description: Podcast specific settings for a channel episode. These settings only take effect
+- name: RegistrationResponse
+  field_count: 2
+- name: SearchChannel
+  field_count: 11
+- name: SearchChannelEpisode
+  field_count: 12
+- name: SearchMedia
+  field_count: 17
+- name: SourceMedia
+  field_count: 5
+  description: The media that the localization is associated with.
+- name: Subfolder
+  field_count: 7
+  description: A subfolder within a folder that contains media.
+- name: SubfolderInput
+  field_count: 2
+  description: Input data for creating or updating a subfolder.
+- name: SubfolderWithMedia
+  field_count: 8
+  description: A subfolder with its contained media files.
+- name: Tag
+  field_count: 8
+  description: A tag is used to tag related media. You can then filter media
+- name: Thumbnail
+  field_count: 3
+- name: TranscriptMatch
+  field_count: 4
+- name: UpdateFolder
+  field_count: 5
+- name: UpdateSharingRequest
+  field_count: 1
+- name: UpdateWebinar
+  field_count: 1
+- name: VideoCustomization
+  field_count: 38
+  description: A collection of settings you can apply to a video to change its appearance and
+- name: VideoCustomizationResponse
+  field_count: 43
+- name: Visitor
+  field_count: 8
+- name: Webinar
+  field_count: 13
+  description: A webinar is an event which allows you to stream a video
+- name: cursor
+  field_count: 0
+  description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]`
+    or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort
+    order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]`
+summary:
+  schemas: 54
+  relationships: 14
+  mixin_embeds: 4
+  top_level_resources: 14
+notes:
+- Derived from the STABLE 2026-01 cut (54 schemas). The edge description carries 155 schemas and adds
+  Remix, Brands, Share Links, Review Bundles, Custom Metadata Fields and Deleted Media — see openapi/wistia-data-api-modern-edge-openapi.yml.
+- The v1 track models the same domain with `project` where 2026-01 says `folder`, and in camelCase. Same
+  graph, different names — see lifecycle/wistia-lifecycle.yml.
+- 'The Stats API kept the pre-rename noun: /stats/projects/{projectId} was deliberately NOT renamed to
+  folders in 2026-01.'
+- 'MediaProperties.embedCode is marked deprecated: true in the spec, pointing callers at the construct-an-embed-code
+  guide instead.'

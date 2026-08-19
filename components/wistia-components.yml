@@ -1,0 +1,122 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://docs.wistia.com/docs/player-quick-start,
+  https://docs.wistia.com/docs/player-embed-api,
+  https://docs.wistia.com/docs/aurora-player-version-pinning,
+  https://docs.wistia.com/docs/uploader,
+  https://docs.wistia.com/docs/wistia-chooser,
+  https://docs.wistia.com/docs/transcript-embeds,
+  https://docs.wistia.com/docs/wistia-and-oembed,
+  https://docs.wistia.com/llms.txt
+description: >-
+  Wistia's client-side surface is as large as its REST surface and is a distinct product from the
+  Data API: embeddable players, hosted pickers and uploaders, and a plugin framework. The current
+  generation, Aurora, is a standards-based custom element — `<wistia-player>` — with a React
+  wrapper, replacing the legacy Vulcan player and its E-v1.js loader. Wistia documents a migration
+  path between the two generations, which is the right thing to look for when judging whether a
+  component library is maintained or merely present.
+families:
+- name: Aurora Player
+  kind: web-component
+  status: current
+  element: <wistia-player media-id="abc123"></wistia-player>
+  packages:
+  - '@wistia/wistia-player'
+  - '@wistia/wistia-player-react'
+  loaders:
+  - name: player.js
+    url: https://fast.wistia.com/player.js
+    pinning: >-
+      Optional @<version> suffix (player.js@1.2.3, player.js@latest); the default in-app embed code
+      is unpinned and always follows the newest release. Works on both fast.wistia.com (standard)
+      and fast.wistia.net (iframe).
+  - name: per-media loader
+    url: https://fast.wistia.com/embed/{mediaHashedId}.js
+    note: Loaded as type="module" alongside player.js in the standard embed code.
+  surfaces:
+  - Embed API — options, events, methods (https://docs.wistia.com/docs/player-embed-api)
+  - Player events (https://docs.wistia.com/docs/player-events)
+  - Player methods (https://docs.wistia.com/docs/player-methods)
+  - Attributes and properties (https://docs.wistia.com/docs/player-attributes-and-properties)
+  - Popover Player API (https://docs.wistia.com/docs/player-popover-embed-api)
+  - React component (https://docs.wistia.com/docs/player-react-component)
+  - Version pinning (https://docs.wistia.com/docs/aurora-player-version-pinning)
+- name: Legacy player (Vulcan) + E-v1.js
+  kind: javascript-library
+  status: legacy
+  migration: https://docs.wistia.com/docs/migrating-from-the-legacy-player-vulcan-to-aurora
+  surfaces:
+  - JavaScript Player API (https://docs.wistia.com/docs/javascript-player-api)
+  - Embed options and plugins (https://docs.wistia.com/docs/embed-options-and-plugins)
+  - iFrame embed options (https://docs.wistia.com/docs/iframe-embed-options)
+  - Popover options and API (https://docs.wistia.com/docs/popover-embed-customization)
+  - Plugin API (https://docs.wistia.com/docs/plugin-api)
+  - Player Controls Framework (https://docs.wistia.com/docs/player-controls-framework)
+  - Player Privacy Mode (https://docs.wistia.com/docs/player-privacy-mode)
+  - All About E-v1.js (https://docs.wistia.com/docs/all-about-e-v1)
+  disambiguation: https://docs.wistia.com/docs/which-player-should-i-use
+- name: Wistia Uploader
+  kind: hosted-widget
+  status: current
+  url: https://docs.wistia.com/docs/uploader
+  description: >-
+    Drop-in uploader that enables video upload directly from a host application into Wistia, without
+    the host handling the file transfer.
+- name: Wistia Chooser
+  kind: hosted-widget
+  status: current
+  url: https://docs.wistia.com/docs/wistia-chooser
+  description: >-
+    A picker that lets a person browse their Wistia library from outside the Wistia app and embed or
+    share a video.
+- name: Channel Embeds
+  kind: embed
+  status: current
+  url: https://docs.wistia.com/docs/channel-embeds
+  description: Embedded channel galleries with a Channel API for embed options.
+- name: Transcript Embeds
+  kind: embed
+  status: current
+  url: https://docs.wistia.com/docs/transcript-embeds
+  description: Embeds a media's transcript alongside the player.
+- name: Embed Links
+  kind: embed
+  status: current
+  url: https://docs.wistia.com/docs/embed-links
+  description: >-
+    Playlists, chaptering, "watch another video" and choose-your-own-adventure navigation with no
+    JavaScript.
+- name: LLM Embeds
+  kind: embed
+  status: current
+  url: https://docs.wistia.com/docs/use-wistia-llm-embeds-for-seo-ai-visibility
+  description: >-
+    An embed variant Wistia positions for SEO and AI visibility — making video content legible to
+    crawlers and language models rather than to a browser alone.
+- name: oEmbed
+  kind: protocol
+  status: current
+  url: https://docs.wistia.com/docs/wistia-and-oembed
+  description: >-
+    Standard oEmbed endpoint for programmatically retrieving an embed code from a media URL. Wistia
+    also maintains the oEmbed spec repo mirror in its GitHub org.
+integration_notes:
+- topic: Content Security Policy
+  url: https://docs.wistia.com/docs/how-to-create-a-wistia-friendly-content-security-policy-csp
+- topic: Referrer policy and domain restrictions
+  url: https://docs.wistia.com/docs/using-wistias-domain-restrictions-with-a-referrer-policy
+- topic: Safe styling and sizing of embed components
+  url: https://docs.wistia.com/docs/style-and-size-wistia-embed-components-safely
+- topic: Working with multiple embeds on a page
+  url: https://docs.wistia.com/docs/quick-guide-working-with-multiple-embeds
+- topic: Embed code ID tagging — pass a viewer ID into stats via the player API
+  url: https://docs.wistia.com/docs/embed-code-id-tagging
+summary:
+  families: 10
+  current: 9
+  legacy: 1
+  npm_packages: 2
+  cdn_hosts:
+  - fast.wistia.com
+  - fast.wistia.net

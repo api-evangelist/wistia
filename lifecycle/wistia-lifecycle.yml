@@ -1,0 +1,135 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://docs.wistia.com/docs/migration-from-v1-guide,
+  https://docs.wistia.com/docs/wistia-deprecation-schedule,
+  https://docs.wistia.com/changelog/api-versioning,
+  https://api.wistia.com/.well-known/api-catalog,
+  https://status.wistia.com/api/v2/summary.json
+description: >-
+  Wistia runs an explicit, dated API lifecycle — one of the stronger versioning postures in the
+  video category. It maintains a frozen evergreen v1 alongside a header-versioned "modern" API whose
+  stable releases are date-stamped (2026-01) and carry a published one-year support window, and it
+  keeps a separate, dated deprecation schedule for platform features. Version selection is a
+  request header, not a URL rewrite, and omitting the header silently resolves to the newest stable
+  release — which is convenient and is also the main upgrade hazard Wistia itself warns about.
+versioning:
+  scheme: hybrid — frozen path version plus dated header versions
+  current_stable: '2026-01'
+  release_cadence: every other month (per the API versioning changelog entry)
+  header: X-Wistia-Api-Version
+  header_example: 'X-Wistia-Api-Version: 2026-01'
+  default_when_omitted: >-
+    The most recent stable release. Wistia's own guidance is that it is "generally safer to always
+    set the X-Wistia-Api-Version".
+  resolution_rules:
+  - Requesting a date with no corresponding release serves the release immediately preceding it.
+  - Requesting a deprecated version serves the least recent still-supported stable release.
+  tracks:
+  - name: v1
+    base: https://api.wistia.com/v1
+    status: evergreen-frozen
+    guarantee: No breaking changes, ever.
+    caveat: Will never receive new features. Recommended only for existing users.
+    spec: openapi/wistia-data-api-v1-openapi.yml
+  - name: modern / 2026-01
+    base: https://api.wistia.com/modern
+    status: stable
+    released: '2026-01'
+    supported_until: '2027-01'
+    guarantee: >-
+      No breaking changes until the version is deprecated. Stable releases are supported for up to
+      one year from release date.
+    spec: openapi/wistia-data-api-2026-01-openapi.yml
+  - name: modern / edge
+    base: https://api.wistia.com/modern
+    status: edge
+    version_string: edge-version
+    note: >-
+      The description the api-catalog links as service-desc. Substantially larger than the stable
+      cut — 167 operations against 85 — carrying Remix, Analytics, Review Bundles, Share Links,
+      Custom Metadata, Deleted Media, Bulk Actions and Brands. Treat as a preview of what lands in
+      the next dated release, not as a contract.
+    spec: openapi/wistia-data-api-modern-edge-openapi.yml
+  docs_versioning:
+    note: >-
+      The documentation site is versioned in step with the API — changelog entries link to paths
+      such as https://docs.wistia.com/v2026.03/docs/migration-from-v1-guide.
+deprecation:
+  policy_published: true
+  policy_url: https://docs.wistia.com/docs/wistia-deprecation-schedule
+  migration_guide: https://docs.wistia.com/docs/migration-from-v1-guide
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  header_note: >-
+    No Sunset or Deprecation response header is documented or declared in any published spec.
+    Deprecation is announced on a docs page and in the changelog; a client cannot learn about it
+    from a response.
+  brownouts: true
+  brownout_note: >-
+    Wistia has used scheduled brownouts before removal — query-parameter authentication was browned
+    out on 2022-06-30 and 2022-07-14 before its 2022-07-30 removal.
+  entries:
+  - date: '2024-06-14'
+    title: API token security improvements
+    change: >-
+      Tokens created on or after this date are stored with a randomized hashing layer and are no
+      longer stored in plain text; a token is copyable only at creation. Legacy tokens were migrated
+      to the same scheme.
+    breaking: false
+    action: Save a copy of any token at creation; a lost token must be replaced.
+  - date: '2024-03-29'
+    title: Channels-as-Projects deprecation
+    change: >-
+      Media in a channel previously returned channel information in the `project` field. After this
+      date, project data is returned for all media; channel data must come from the Channels#list
+      and Channels#show endpoints.
+    breaking: true
+  - date: '2023-08-21'
+    title: Heatmaps removed from Private User Sessions
+    change: The Viewed Media event in Private User Session logs no longer carries a heatmap.
+    breaking: false
+  - date: '2022-07-30'
+    title: Authentication in query parameters
+    change: >-
+      Passing tokens or passwords as query parameters was removed in favor of bearer tokens.
+    breaking: true
+breaking_changes_v1_to_2026_01:
+  source: https://docs.wistia.com/docs/migration-from-v1-guide
+  items:
+  - Response property names changed from camelCase to snake_case across most objects.
+  - '`projects` renamed to `folders`: /projects → /folders, /projects/{id}/sharings → /folders/{id}/sharings.'
+  - Media responses now carry a `folder` object where they previously carried `project`.
+  - '`project_id` renamed to `folder_id` in query params and in copy/move request bodies.'
+  - The singular `hashed_id` query parameter was removed; use `hashed_ids[]`.
+  - '`/v1/live_stream_events` renamed to `/modern/webinars`; `/v1/live_stream_event_registrations` → `/modern/webinar_registrations`.'
+  not_renamed:
+  - The Stats API path /stats/projects/{projectId} kept the old noun in 2026-01.
+deprecated_operations_in_spec:
+  count: 0
+  note: >-
+    No operation in the v1, 2026-01 or edge description carries `deprecated: true`. Version-level
+    deprecation is handled by retiring whole dated releases rather than by flagging individual
+    operations.
+status_page:
+  url: https://status.wistia.com
+  status: 200
+  machine_readable: true
+  api: https://status.wistia.com/api/v2/summary.json
+  api_note: >-
+    Statuspage-compatible v2 API. summary.json returned 200 with
+    {"page":{"name":"Wistia","url":"https://status.wistia.com","status":"UP"}} on 2026-08-14.
+    status.json returned 404, so not every v2 route is implemented.
+health_endpoint:
+  url: https://api.wistia.com/health
+  status: 200
+  body: OK
+  note: >-
+    Declared as the `status` link of the api.wistia.com/modern anchor in the RFC 9727 api-catalog
+    linkset, which advertises it as application/json; the live response is the plain string "OK".
+sla:
+  published: false
+  note: >-
+    No public SLA or uptime commitment was found. Enterprise plans include a dedicated customer
+    success manager; any availability commitment appears to be contractual rather than published.

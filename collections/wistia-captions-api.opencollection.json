@@ -1,0 +1,147 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Wistia Data Account Captions API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Captions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "List captions"
+        },
+        {
+          "info": {
+            "name": "Create captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Create captions"
+        },
+        {
+          "info": {
+            "name": "Show captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions/:languageCode",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "languageCode",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show captions"
+        },
+        {
+          "info": {
+            "name": "Update captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions/:languageCode",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "languageCode",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update captions"
+        },
+        {
+          "info": {
+            "name": "Delete captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions/:languageCode",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "languageCode",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete captions"
+        },
+        {
+          "info": {
+            "name": "Purchase captions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/captions/purchase",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Purchase captions"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

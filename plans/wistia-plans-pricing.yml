@@ -1,0 +1,100 @@
+generated: '2026-08-14'
+method: searched
+source: https://wistia.com/pricing
+description: >-
+  Wistia sells the video platform on four published tiers plus a separately-priced Webinars line.
+  Pricing is seat- and storage-gated, not API-gated: there is no per-call, per-token or API-tier
+  pricing anywhere on the pricing page, and the API is presented as a platform feature ("Wistia
+  API — Build custom video experiences for your site") rather than a metered product. The
+  practical API gate is feature access — SSO, video playback protection and team accounts sit on
+  Enterprise — and the account-wide 600 requests/minute ceiling is the same for everyone.
+  Prices below are the monthly-billed figures shown on the page; the page offers "Save 20%" on
+  annual billing without publishing the resulting annual figures.
+currency: USD
+billing_periods:
+- monthly
+- annual
+plan_count: 4
+plans:
+- name: Free
+  price: 0
+  currency: USD
+  period: month
+  quota:
+    storage: 25 GB max
+    users: 1
+  includes:
+  - Create, host, and share polished videos
+  - Basic video analytics
+  - Wistia branding included
+  signup: Sign up now — no credit card required
+- name: Business
+  price: 79
+  currency: USD
+  period: month
+  quota:
+    storage: 250 GB+ included
+    users: 3+
+  includes:
+  - Everything in Free
+  - Remove Wistia branding
+  - Collections and playlists
+  - CTAs and forms
+  - Advanced video analytics
+  signup: Start free trial — no credit card required
+- name: Business + Lead gen
+  price: 329
+  currency: USD
+  period: month
+  badge: Best for marketing
+  quota:
+    storage: 250 GB+ included
+    users: 3+
+  includes:
+  - Everything in Business plus the Automation Suite
+  - Connect Wistia to your marketing platform
+  - Capture leads and viewer engagement data
+  - Activate personalized follow-up and lead scoring
+  - Measure pipeline and revenue impact
+  signup: Start free trial — no credit card required
+- name: Enterprise
+  price: null
+  price_label: Custom
+  currency: USD
+  period: month
+  quota:
+    storage: Starting at 1 TB
+    users: Custom
+  includes:
+  - Everything in Business + Automation Suite
+  - Team accounts
+  - SSO
+  - Video Playback Protection
+  - Unlimited view-only access
+  - Dedicated customer success manager
+  signup: Talk to sales
+overage:
+  note: >-
+    The pricing page does not publish an overage rate for storage or bandwidth beyond the included
+    allowance; tiers are described as "250 GB+" and "starting at 1 TB", implying negotiated
+    expansion rather than a posted per-GB price.
+api_pricing:
+  metered: false
+  api_tier_gated: false
+  note: >-
+    No API tier, call allowance, or per-request price is published. The Data API, MCP server and CLI
+    are available to accounts with an API token; the MCP server is additionally restricted to
+    account owners and managers per https://docs.wistia.com/docs/mcp-server-guide.
+  usage_endpoint: >-
+    GET /account/usage (Get Account Usage) returns plan tier, upload eligibility and limit
+    information programmatically; usage and limit details are visible only to account owners and
+    managers, other contacts receive null for `limits`.
+  usage_endpoint_docs: https://docs.wistia.com/reference/getaccountusage
+other_lines:
+- name: Webinars
+  note: >-
+    The pricing page carries a separate "Webinars" tab alongside "Video Platform". Its tiers were
+    not captured in this pass; the Webinars API surface is documented and modeled in the OpenAPI.
+free_tier: true
+trial: true
+trial_note: Business and Business + Lead gen both offer a free trial with no credit card required.

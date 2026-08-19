@@ -1,0 +1,82 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Wistia Data Account AllowedDomains API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "AllowedDomains",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List allowed domains",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/allowed-domains"
+          },
+          "docs": "List allowed domains"
+        },
+        {
+          "info": {
+            "name": "Create allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/allowed-domains"
+          },
+          "docs": "Create allowed domain"
+        },
+        {
+          "info": {
+            "name": "Show specific allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/allowed-domains/:domain",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show specific allowed domain"
+        },
+        {
+          "info": {
+            "name": "Delete allowed domain",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/allowed-domains/:domain",
+            "params": [
+              {
+                "name": "domain",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete allowed domain"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

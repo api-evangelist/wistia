@@ -1,19 +1,106 @@
-generated: '2026-07-11'
-method: derived
-source: openapi/wistia-openapi.yml
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://docs.wistia.com/docs/making-api-requests,
+  https://docs.wistia.com/docs/authenticating-with-oauth2,
+  https://api.wistia.com/.well-known/oauth-authorization-server,
+  https://api.wistia.com/.well-known/oauth-protected-resource,
+  https://api.wistia.com/auth.md,
+  openapi/wistia-data-api-2026-01-openapi.yml
+docs: https://docs.wistia.com/docs/making-api-requests
+description: >-
+  Wistia authenticates API and MCP traffic with bearer credentials over TLS. Two credential
+  families exist: a long-lived account API access token created in Account Settings, and an OAuth
+  2.0 access token obtained on a user's behalf. The published OpenAPI declares only the bearer
+  scheme; the full OAuth surface — including RFC 7591 dynamic client registration, PKCE, and
+  introspection/revocation — is declared in the live RFC 8414 / RFC 9728 discovery documents rather
+  than in the spec, which is why an OpenAPI-only read of this provider understates its auth posture.
 summary:
   types:
   - http
+  - oauth2
+  transport_required: TLS (https). The docs state plainly "You must use SSL to access the API."
 schemes:
-- name: bearerAuth
+- name: BearerAuth
   type: http
   scheme: bearer
-  description: API access token sent as a Bearer token in the Authorization header
+  description: >-
+    API access token or OAuth access token sent as `Authorization: Bearer <token>`. This is the
+    supported way to call the API and the only securityScheme declared in the published OpenAPI.
   sources:
-  - openapi/wistia-openapi.yml
+  - openapi/wistia-data-api-2026-01-openapi.yml
+  - openapi/wistia-data-api-modern-edge-openapi.yml
+  - openapi/wistia-data-api-v1-openapi.yml
+  - https://docs.wistia.com/docs/making-api-requests
 - name: basicAuth
   type: http
   scheme: basic
-  description: HTTP Basic authentication using the API token as the password
+  description: >-
+    HTTP Basic with the API token as the password. Historically supported and still present in the
+    profile, but the docs name Bearer as "the supported way to access the API".
+  status: legacy
   sources:
-  - openapi/wistia-openapi.yml
+  - https://docs.wistia.com/docs/making-api-requests
+- name: oauth2
+  type: oauth2
+  description: >-
+    OAuth 2.0 authorization code (with PKCE S256), refresh_token, and client_credentials grants,
+    issued by https://api.wistia.com. Discoverable anonymously via RFC 8414 and RFC 9728 metadata.
+    Wistia's docs note OAuth2 is not enabled on all accounts by default.
+  flows:
+    authorizationCode:
+      authorizationUrl: https://api.wistia.com/oauth/authorize
+      tokenUrl: https://api.wistia.com/oauth/token
+      refreshUrl: https://api.wistia.com/oauth/token
+      pkce: S256
+    clientCredentials:
+      tokenUrl: https://api.wistia.com/oauth/token
+  registration_endpoint: https://api.wistia.com/oauth/register
+  revocation_endpoint: https://api.wistia.com/oauth/revoke
+  introspection_endpoint: https://api.wistia.com/oauth/introspect
+  token_endpoint_auth_methods_supported:
+  - client_secret_basic
+  - client_secret_post
+  - none
+  scopes: ../scopes/wistia-scopes.yml
+  sources:
+  - well-known/wistia-oauth-authorization-server.json
+  - well-known/wistia-oauth-protected-resource.json
+  - https://docs.wistia.com/docs/authenticating-with-oauth2
+- name: expiringAccessToken
+  type: derived-token
+  description: >-
+    The modern API exposes POST /expiring_token, which mints a short-lived token for sharing
+    scenarios. Grouped by Wistia into the `sharing` MCP toolset.
+  sources:
+  - openapi/wistia-data-api-2026-01-openapi.yml
+webhook_authentication:
+  scheme: hmac
+  algorithm: HMAC-SHA256 hexdigest
+  header: X-Wistia-Signature
+  signed_payload: the raw POST body
+  secret: the `secret_key` configured on the webhook in Account Settings
+  source: https://docs.wistia.com/docs/webhooks
+token_management:
+  creation: https://account.wistia.com/account/api (API tab of Account Settings)
+  restriction: The API tokens page is accessible only to the Account Owner.
+  storage: >-
+    Since June 2024 tokens are stored hashed, not in plain text; a token is copyable only at the
+    moment it is created. Existing tokens were migrated to the hashed scheme.
+  editable_permissions: true
+  source: https://docs.wistia.com/docs/wistia-deprecation-schedule
+deprecated_methods:
+- method: query-parameter authentication
+  status: removed
+  date: '2022-07-30'
+  note: >-
+    Passing tokens or passwords in query parameters was deprecated 2022-07-30 with brownouts on
+    2022-06-30 and 2022-07-14. Bearer tokens replaced it.
+  source: https://docs.wistia.com/docs/wistia-deprecation-schedule
+agent_onboarding:
+  document: https://api.wistia.com/auth.md
+  local_copy: ../well-known/wistia-auth.md
+  note: >-
+    A machine-addressed auth runbook ("You are an agent...") walking discover → register →
+    authorize → use → refresh → revoke, citing RFC 7591, 7636, 7009, 8414 and 9728. Referenced from
+    the `agent_auth.skill` field of the authorization-server metadata.

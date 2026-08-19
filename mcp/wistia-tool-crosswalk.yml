@@ -1,0 +1,2272 @@
+generated: '2026-08-14'
+method: derived
+source: openapi/wistia-data-api-modern-edge-openapi.yml (x-wistia-mcp-tool-name, x-wistia-mcp-annotations,
+  x-wistia-mcp-toolsets, x-wistia-mcp-ignore), well-known/wistia-mcp-server-card.json
+description: 'Binding between the tools on Wistia''s hosted MCP server and the REST operations that back
+  them. This is an unusually strong crosswalk: it is not inferred from tool names, it is READ from the
+  provider''s own OpenAPI, where every exposed operation carries an x-wistia-mcp-tool-name plus MCP annotations
+  (read_only / destructive / idempotent / open_world hints) and every deliberately-hidden operation carries
+  x-wistia-mcp-ignore. The live MCP endpoint is OAuth-gated (anonymous tools/list returns 401), so the
+  tool inventory here comes from the spec rather than an authenticated introspection; the two should agree
+  because the spec is what generates the server.'
+surfaces:
+  openapi:
+    edge: openapi/wistia-data-api-modern-edge-openapi.yml
+    stable: openapi/wistia-data-api-2026-01-openapi.yml
+    legacy_v1: openapi/wistia-data-api-v1-openapi.yml
+    gated: false
+    note: All three are published anonymously at https://wistia.github.io/wistia/api/.
+  mcp:
+    endpoint: https://api.wistia.com/mcp/api
+    transport: streamable-http
+    gated: true
+    note: Anonymous tools/list returned HTTP 401 unauthorized on 2026-08-14.
+  graphql:
+    endpoint: null
+    note: Wistia publishes no public GraphQL API.
+toolsets:
+  Media: null
+  Customizations: null
+  Captions: null
+  Localizations:
+  - captions
+  Trims:
+  - media
+  Extended Audio Descriptions:
+  - captions
+  Brands:
+  - customizations
+  Tags: null
+  Taggings:
+  - tags
+  Folders: null
+  Folder Sharings:
+  - folders
+  Subfolders:
+  - folders
+  Channels: null
+  Channel Collaborators:
+  - channels
+  Channel Episodes:
+  - channels
+  Webinars: null
+  Webinar Collaborators:
+  - webinars
+  Webinar Registrations:
+  - webinars
+  Account: null
+  Search:
+  - media
+  - folders
+  - channels
+  Resource URLs:
+  - media
+  - folders
+  - channels
+  - webinars
+  - remix
+  Expiring Access Tokens:
+  - sharing
+  Background Job Status:
+  - account
+  Allowed Domains:
+  - sharing
+  Remix: null
+  Push Devices:
+  - account
+  Deleted Media:
+  - media
+  Review Bundles:
+  - sharing
+  Share Links:
+  - sharing
+  Bulk Actions:
+  - media
+  - folders
+  - channels
+  - account
+  Custom Metadata Field Definitions:
+  - media
+  Custom Metadata Field Values:
+  - media
+  Stats:Account:
+  - stats
+  Stats:Events:
+  - stats
+  Stats:Media:
+  - stats
+  Stats:Projects:
+  - stats
+  Stats:Visitors:
+  - stats
+  Analytics:Account:
+  - analytics
+  Analytics:Media:
+  - analytics
+  Analytics:Webinar:
+  - analytics
+coverage:
+  operations_total: 167
+  tools: 125
+  rest_only: 42
+  mcp_only: 0
+  tools_in_stable_2026_01: 62
+  tools_edge_only: 63
+  read_only_tools: 46
+  destructive_tools: 40
+  idempotent_tools: 95
+  by_toolset:
+    account: 4
+    captions: 16
+    channels: 13
+    customizations: 25
+    folders: 14
+    media: 28
+    remix: 5
+    sharing: 7
+    tags: 4
+    webinars: 9
+crosswalk:
+- tool: get-account-usage
+  category: account
+  rest:
+  - GET /account_usage
+  binding: declared
+  confidence: high
+  tag: Account
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-current-account
+  category: account
+  rest:
+  - GET /account
+  binding: declared
+  confidence: high
+  tag: Account
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-current-token
+  category: account
+  rest:
+  - GET /token
+  binding: declared
+  confidence: high
+  tag: Account
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-background-job-status
+  category: account
+  rest:
+  - GET /background_job_status/{backgroundJobStatusId}
+  binding: declared
+  confidence: high
+  tag: Background Job Status
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-captions
+  category: captions
+  rest:
+  - POST /medias/{mediaHashedId}/captions
+  binding: declared
+  confidence: high
+  tag: Captions
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-localization
+  category: captions
+  rest:
+  - POST /medias/{mediaHashedId}/localizations
+  binding: declared
+  confidence: high
+  tag: Localizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: false
+    open_world_hint: true
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-captions
+  category: captions
+  rest:
+  - DELETE /medias/{mediaHashedId}/captions/{languageCode}
+  binding: declared
+  confidence: high
+  tag: Captions
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-localization
+  category: captions
+  rest:
+  - DELETE /medias/{mediaHashedId}/localizations/{localizationHashedId}
+  binding: declared
+  confidence: high
+  tag: Localizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-media-extended-audio-description
+  category: captions
+  rest:
+  - DELETE /media_extended_audio_descriptions/{id}
+  binding: declared
+  confidence: high
+  tag: Extended Audio Descriptions
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: edit-captions-text
+  category: captions
+  rest:
+  - POST /medias/{mediaHashedId}/captions/{languageCode}/edits
+  binding: declared
+  confidence: high
+  tag: Captions
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-captions
+  category: captions
+  rest:
+  - GET /captions
+  binding: declared
+  confidence: high
+  tag: Captions
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-media-extended-audio-descriptions
+  category: captions
+  rest:
+  - GET /media_extended_audio_descriptions
+  binding: declared
+  confidence: high
+  tag: Extended Audio Descriptions
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: gets-localizations
+  category: captions
+  rest:
+  - GET /medias/{mediaHashedId}/localizations
+  binding: declared
+  confidence: high
+  tag: Localizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: order-media-extended-audio-description
+  category: captions
+  rest:
+  - POST /media_extended_audio_descriptions/order
+  binding: declared
+  confidence: high
+  tag: Extended Audio Descriptions
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: false
+    open_world_hint: true
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: purchase-captions
+  category: captions
+  rest:
+  - POST /medias/{mediaHashedId}/captions/purchase
+  binding: declared
+  confidence: high
+  tag: Captions
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: false
+    open_world_hint: true
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-captions-file
+  category: captions
+  rest:
+  - GET /medias/{mediaHashedId}/captions/{languageCode}
+  binding: declared
+  confidence: high
+  tag: Captions
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-localization
+  category: captions
+  rest:
+  - GET /medias/{mediaHashedId}/localizations/{localizationHashedId}
+  binding: declared
+  confidence: high
+  tag: Localizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-media-extended-audio-description
+  category: captions
+  rest:
+  - GET /media_extended_audio_descriptions/{id}
+  binding: declared
+  confidence: high
+  tag: Extended Audio Descriptions
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-media-extended-audio-description-order-status
+  category: captions
+  rest:
+  - GET /media_extended_audio_descriptions/order_status/{id}
+  binding: declared
+  confidence: high
+  tag: Extended Audio Descriptions
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-captions
+  category: captions
+  rest:
+  - PUT /medias/{mediaHashedId}/captions/{languageCode}
+  binding: declared
+  confidence: high
+  tag: Captions
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-channel
+  category: channels
+  rest:
+  - POST /channels
+  binding: declared
+  confidence: high
+  tag: Channels
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-channel-collaborator
+  category: channels
+  rest:
+  - POST /channels/{channelHashedId}/collaborators
+  binding: declared
+  confidence: high
+  tag: Channel Collaborators
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-channel-episode
+  category: channels
+  rest:
+  - POST /channels/{channelHashedId}/channel_episodes
+  binding: declared
+  confidence: high
+  tag: Channel Episodes
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-channel
+  category: channels
+  rest:
+  - DELETE /channels/{channelHashedId}
+  binding: declared
+  confidence: high
+  tag: Channels
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-channel-collaborator
+  category: channels
+  rest:
+  - DELETE /channels/{channelHashedId}/collaborators/{id}
+  binding: declared
+  confidence: high
+  tag: Channel Collaborators
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-channel-episode
+  category: channels
+  rest:
+  - DELETE /channel_episodes/{channelEpisodeHashedId}
+  binding: declared
+  confidence: high
+  tag: Channel Episodes
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-channel-collaborators
+  category: channels
+  rest:
+  - GET /channels/{channelHashedId}/collaborators
+  binding: declared
+  confidence: high
+  tag: Channel Collaborators
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-channel-episodes
+  category: channels
+  rest:
+  - GET /channel_episodes
+  binding: declared
+  confidence: high
+  tag: Channel Episodes
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-channels
+  category: channels
+  rest:
+  - GET /channels
+  binding: declared
+  confidence: high
+  tag: Channels
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: publish-channel-episode
+  category: channels
+  rest:
+  - PUT /channel_episodes/{channelEpisodeHashedId}/publish
+  binding: declared
+  confidence: high
+  tag: Channel Episodes
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: un-publish-channel-episode
+  category: channels
+  rest:
+  - PUT /channel_episodes/{channelEpisodeHashedId}/unpublish
+  binding: declared
+  confidence: high
+  tag: Channel Episodes
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-channel
+  category: channels
+  rest:
+  - PUT /channels/{channelHashedId}
+  binding: declared
+  confidence: high
+  tag: Channels
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-channel-episode
+  category: channels
+  rest:
+  - PUT /channel_episodes/{channelEpisodeHashedId}
+  binding: declared
+  confidence: high
+  tag: Channel Episodes
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-customizations
+  category: customizations
+  rest:
+  - POST /medias/{mediaId}/customizations
+  binding: declared
+  confidence: high
+  tag: Customizations
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-customizations
+  category: customizations
+  rest:
+  - DELETE /medias/{mediaId}/customizations
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-brands
+  category: customizations
+  rest:
+  - GET /brands
+  binding: declared
+  confidence: high
+  tag: Brands
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-access-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/access
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-accessibility-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/accessibility
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-appearance-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/appearance
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-chapters-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/chapters
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-engagement-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/engagement
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-lead-capture-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/lead_capture
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-playback-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/playback
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-related-media-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/related_media
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-sharing-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/sharing
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-thumbnail-customizations
+  category: customizations
+  rest:
+  - GET /medias/{mediaId}/customizations/thumbnail
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-access-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/access
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-accessibility-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/accessibility
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-appearance-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/appearance
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-chapters-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/chapters
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations
+  binding: declared
+  confidence: high
+  tag: Customizations
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-engagement-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/engagement
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-lead-capture-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/lead_capture
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-playback-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/playback
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-related-media-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/related_media
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-sharing-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/sharing
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-thumbnail-customizations
+  category: customizations
+  rest:
+  - PUT /medias/{mediaId}/customizations/thumbnail
+  binding: declared
+  confidence: high
+  tag: Customizations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: bulk-delete-subfolders
+  category: folders
+  rest:
+  - DELETE /folders/{folderId}/subfolders/bulk_delete
+  binding: declared
+  confidence: high
+  tag: Subfolders
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: copy-folder
+  category: folders
+  rest:
+  - POST /folders/{id}/copy
+  binding: declared
+  confidence: high
+  tag: Folders
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-folder
+  category: folders
+  rest:
+  - POST /folders
+  binding: declared
+  confidence: high
+  tag: Folders
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-folder-sharing
+  category: folders
+  rest:
+  - POST /folders/{folderId}/sharings
+  binding: declared
+  confidence: high
+  tag: Folder Sharings
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-subfolder
+  category: folders
+  rest:
+  - POST /folders/{folderId}/subfolders
+  binding: declared
+  confidence: high
+  tag: Subfolders
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-folder
+  category: folders
+  rest:
+  - DELETE /folders/{id}
+  binding: declared
+  confidence: high
+  tag: Folders
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-folder-sharing
+  category: folders
+  rest:
+  - DELETE /folders/{folderId}/sharings/{sharingId}
+  binding: declared
+  confidence: high
+  tag: Folder Sharings
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-subfolder
+  category: folders
+  rest:
+  - DELETE /folders/{folderId}/subfolders/{subfolderId}
+  binding: declared
+  confidence: high
+  tag: Subfolders
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-folder-sharings
+  category: folders
+  rest:
+  - GET /folders/{folderId}/sharings
+  binding: declared
+  confidence: high
+  tag: Folder Sharings
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-folders
+  category: folders
+  rest:
+  - GET /folders
+  binding: declared
+  confidence: high
+  tag: Folders
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-subfolders
+  category: folders
+  rest:
+  - GET /folders/{folderId}/subfolders
+  binding: declared
+  confidence: high
+  tag: Subfolders
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-folder
+  category: folders
+  rest:
+  - PUT /folders/{id}
+  binding: declared
+  confidence: high
+  tag: Folders
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-folder-sharing
+  category: folders
+  rest:
+  - PUT /folders/{folderId}/sharings/{sharingId}
+  binding: declared
+  confidence: high
+  tag: Folder Sharings
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-subfolder
+  category: folders
+  rest:
+  - PUT /folders/{folderId}/subfolders/{subfolderId}
+  binding: declared
+  confidence: high
+  tag: Subfolders
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: archive-custom-metadata-field-definition
+  category: media
+  rest:
+  - DELETE /custom_metadata_field_definitions/{key}
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Definitions
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: archive-media
+  category: media
+  rest:
+  - PUT /medias/archive
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: bulk-copy-media
+  category: media
+  rest:
+  - PUT /medias/copy
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: clear-media-custom-metadata-field-value
+  category: media
+  rest:
+  - DELETE /medias/{mediaHashedId}/custom_metadata_field_values/{key}
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Values
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: copy-media
+  category: media
+  rest:
+  - POST /medias/{mediaHashedId}/copy
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-bulk-actions
+  category: media
+  rest:
+  - POST /bulk
+  binding: declared
+  confidence: high
+  toolsets:
+  - media
+  - folders
+  - channels
+  - account
+  tag: Bulk Actions
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-custom-metadata-field-definition
+  category: media
+  rest:
+  - POST /custom_metadata_field_definitions
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Definitions
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-media-from-trims
+  category: media
+  rest:
+  - POST /medias/{mediaHashedId}/trims
+  binding: declared
+  confidence: high
+  tag: Trims
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-media
+  category: media
+  rest:
+  - DELETE /medias/{mediaHashedId}
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-custom-metadata-field-definition
+  category: media
+  rest:
+  - GET /custom_metadata_field_definitions/{key}
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Definitions
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-custom-metadata-field-definitions
+  category: media
+  rest:
+  - GET /custom_metadata_field_definitions
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Definitions
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-media-custom-metadata-field-value
+  category: media
+  rest:
+  - GET /medias/{mediaHashedId}/custom_metadata_field_values/{key}
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Values
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-media-custom-metadata-field-values
+  category: media
+  rest:
+  - GET /medias/{mediaHashedId}/custom_metadata_field_values
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Values
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-medias
+  category: media
+  rest:
+  - GET /medias
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: import-media-from-url
+  category: media
+  rest:
+  - POST /medias/import_url
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: true
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: list-deleted-media
+  category: media
+  rest:
+  - GET /deleted_media
+  binding: declared
+  confidence: high
+  tag: Deleted Media
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: move-media
+  category: media
+  rest:
+  - PUT /medias/move
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: resolve-resource-urls
+  category: media
+  rest:
+  - GET /resource_urls
+  binding: declared
+  confidence: high
+  toolsets:
+  - media
+  - folders
+  - channels
+  - webinars
+  - remix
+  tag: Resource URLs
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: restore-custom-metadata-field-definition
+  category: media
+  rest:
+  - POST /custom_metadata_field_definitions/{key}/restore
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Definitions
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: restore-deleted-media
+  category: media
+  rest:
+  - POST /deleted_media/restore
+  binding: declared
+  confidence: high
+  tag: Deleted Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: restore-media
+  category: media
+  rest:
+  - PUT /medias/restore
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: search
+  category: media
+  rest:
+  - GET /search
+  binding: declared
+  confidence: high
+  toolsets:
+  - media
+  - folders
+  - channels
+  tag: Search
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: set-media-custom-metadata-field-value
+  category: media
+  rest:
+  - PUT /medias/{mediaHashedId}/custom_metadata_field_values/{key}
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Values
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-media-aggregated-stats
+  category: media
+  rest:
+  - GET /medias/{mediaHashedId}/stats
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: swap-media
+  category: media
+  rest:
+  - PUT /medias/{mediaHashedId}/swap
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: translate-media
+  category: media
+  rest:
+  - POST /medias/{mediaHashedId}/translate
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: true
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-custom-metadata-field-definition
+  category: media
+  rest:
+  - PUT /custom_metadata_field_definitions/{key}
+  binding: declared
+  confidence: high
+  tag: Custom Metadata Field Definitions
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  account_gate: can_use_custom_metadata?
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-media
+  category: media
+  rest:
+  - PUT /medias/{mediaHashedId}
+  binding: declared
+  confidence: high
+  tag: Media
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: continue-remix
+  category: remix
+  rest:
+  - POST /remixes/{remixHashedId}/continue
+  binding: declared
+  confidence: high
+  tag: Remix
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-remix
+  category: remix
+  rest:
+  - POST /remixes
+  binding: declared
+  confidence: high
+  tag: Remix
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: export-remix
+  category: remix
+  rest:
+  - POST /remixes/{remixHashedId}/export
+  binding: declared
+  confidence: high
+  tag: Remix
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-remix
+  category: remix
+  rest:
+  - GET /remixes/{remixHashedId}
+  binding: declared
+  confidence: high
+  tag: Remix
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-remix-account-status
+  category: remix
+  rest:
+  - GET /remix_account_status
+  binding: declared
+  confidence: high
+  tag: Remix
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-review-bundle
+  category: sharing
+  rest:
+  - POST /review_bundles
+  binding: declared
+  confidence: high
+  tag: Review Bundles
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-media-share-link
+  category: sharing
+  rest:
+  - DELETE /medias/{mediaId}/share_link
+  binding: declared
+  confidence: high
+  tag: Share Links
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-review-bundle
+  category: sharing
+  rest:
+  - DELETE /review_bundles/{reviewBundleHashedId}
+  binding: declared
+  confidence: high
+  tag: Review Bundles
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-review-bundles
+  category: sharing
+  rest:
+  - GET /review_bundles
+  binding: declared
+  confidence: high
+  tag: Review Bundles
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: resolve-share-link
+  category: sharing
+  rest:
+  - GET /share_links/{identifier}
+  binding: declared
+  confidence: high
+  tag: Share Links
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: show-media-share-link
+  category: sharing
+  rest:
+  - GET /medias/{mediaId}/share_link
+  binding: declared
+  confidence: high
+  tag: Share Links
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-media-share-link
+  category: sharing
+  rest:
+  - PUT /medias/{mediaId}/share_link
+  binding: declared
+  confidence: high
+  tag: Share Links
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: bulk-tag-media
+  category: tags
+  rest:
+  - POST /taggings/bulk_create
+  binding: declared
+  confidence: high
+  tag: Taggings
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-tags
+  category: tags
+  rest:
+  - POST /tags
+  binding: declared
+  confidence: high
+  tag: Tags
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-tag
+  category: tags
+  rest:
+  - DELETE /tags/{name}
+  binding: declared
+  confidence: high
+  tag: Tags
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-tags
+  category: tags
+  rest:
+  - GET /tags
+  binding: declared
+  confidence: high
+  tag: Tags
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-webinar
+  category: webinars
+  rest:
+  - POST /webinars
+  binding: declared
+  confidence: high
+  tag: Webinars
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-webinar-collaborator
+  category: webinars
+  rest:
+  - POST /webinars/{webinarId}/collaborators
+  binding: declared
+  confidence: high
+  tag: Webinar Collaborators
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: create-webinar-registration
+  category: webinars
+  rest:
+  - POST /webinars/{webinarId}/registrations
+  binding: declared
+  confidence: high
+  tag: Webinar Registrations
+  annotations:
+    read_only_hint: false
+    destructive_hint: false
+    idempotent_hint: false
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-webinar
+  category: webinars
+  rest:
+  - DELETE /webinars/{id}
+  binding: declared
+  confidence: high
+  tag: Webinars
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: delete-webinar-collaborator
+  category: webinars
+  rest:
+  - DELETE /webinars/{webinarId}/collaborators/{id}
+  binding: declared
+  confidence: high
+  tag: Webinar Collaborators
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-webinar-collaborators
+  category: webinars
+  rest:
+  - GET /webinars/{webinarId}/collaborators
+  binding: declared
+  confidence: high
+  tag: Webinar Collaborators
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: get-webinars
+  category: webinars
+  rest:
+  - GET /webinars
+  binding: declared
+  confidence: high
+  tag: Webinars
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: list-webinar-registrations
+  category: webinars
+  rest:
+  - GET /webinars/{webinarId}/registrations
+  binding: declared
+  confidence: high
+  tag: Webinar Registrations
+  annotations:
+    read_only_hint: true
+    destructive_hint: false
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: false
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+- tool: update-webinar
+  category: webinars
+  rest:
+  - PUT /webinars/{id}
+  binding: declared
+  confidence: high
+  tag: Webinars
+  annotations:
+    read_only_hint: false
+    destructive_hint: true
+    idempotent_hint: true
+    open_world_hint: false
+  in_stable_2026_01: true
+  note: Tool name and MCP annotations are published by Wistia on the operation itself (x-wistia-mcp-tool-name
+    / x-wistia-mcp-annotations); the tool inherits this operation's parameters and requestBody as its
+    inputSchema.
+mcp_only: []
+rest_only:
+- rest: DELETE /allowed_domains/{domain}
+  tag: Allowed Domains
+  reason: excluded by x-wistia-mcp-ignore
+- rest: DELETE /devices/{deviceToken}
+  tag: Push Devices
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /allowed_domains
+  tag: Allowed Domains
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /allowed_domains/{domain}
+  tag: Allowed Domains
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /analytics/account
+  tag: Analytics:Account
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/account/embed_locations
+  tag: Analytics:Account
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/account/timeseries
+  tag: Analytics:Account
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/account/top_content
+  tag: Analytics:Account
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/medias/{mediaId}
+  tag: Analytics:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/medias/{mediaId}/conversions
+  tag: Analytics:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/medias/{mediaId}/embed_locations
+  tag: Analytics:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/medias/{mediaId}/embed_locations_timeseries
+  tag: Analytics:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/medias/{mediaId}/languages
+  tag: Analytics:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/medias/{mediaId}/timeseries
+  tag: Analytics:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/medias/{mediaId}/traffic
+  tag: Analytics:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/webinars/{webinarId}
+  tag: Analytics:Webinar
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/webinars/{webinarId}/audience
+  tag: Analytics:Webinar
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/webinars/{webinarId}/histograms
+  tag: Analytics:Webinar
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/webinars/{webinarId}/registration
+  tag: Analytics:Webinar
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /analytics/webinars/{webinarId}/traffic
+  tag: Analytics:Webinar
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /channels/{channelHashedId}
+  tag: Channels
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /channels/{channelHashedId}/channel_episodes
+  tag: Channel Episodes
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /channels/{channelHashedId}/channel_episodes/{channelEpisodeId}
+  tag: Channel Episodes
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /folders/{folderId}/sharings/{sharingId}
+  tag: Folder Sharings
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /folders/{folderId}/subfolders/{subfolderId}
+  tag: Subfolders
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /folders/{id}
+  tag: Folders
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /medias/{mediaHashedId}
+  tag: Media
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /medias/{mediaHashedId}/captions
+  tag: Captions
+  reason: excluded by x-wistia-mcp-ignore
+- rest: GET /stats/account
+  tag: Stats:Account
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/account/by_date
+  tag: Stats:Account
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/events
+  tag: Stats:Events
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/events/{eventKey}
+  tag: Stats:Events
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/medias/{mediaId}
+  tag: Stats:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/medias/{mediaId}/by_date
+  tag: Stats:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/medias/{mediaId}/engagement
+  tag: Stats:Media
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/projects/{projectId}
+  tag: Stats:Projects
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/visitors
+  tag: Stats:Visitors
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /stats/visitors/{visitorKey}
+  tag: Stats:Visitors
+  reason: no x-wistia-mcp-tool-name declared on the operation
+- rest: GET /webinars/{id}
+  tag: Webinars
+  reason: excluded by x-wistia-mcp-ignore
+- rest: POST /allowed_domains
+  tag: Allowed Domains
+  reason: excluded by x-wistia-mcp-ignore
+- rest: POST /devices
+  tag: Push Devices
+  reason: excluded by x-wistia-mcp-ignore
+- rest: POST /expiring_token
+  tag: Expiring Access Tokens
+  reason: excluded by x-wistia-mcp-ignore

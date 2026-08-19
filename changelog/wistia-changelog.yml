@@ -1,0 +1,109 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://docs.wistia.com/changelog/ (entries enumerated from https://docs.wistia.com/llms.txt)
+url: https://docs.wistia.com/changelog
+description: >-
+  Wistia publishes a developer changelog on the docs site, indexed in llms.txt so a machine can
+  enumerate it. The entries are release announcements rather than a versioned diff — they name the
+  new endpoints and link to the reference, but individual entries carry no publication date in the
+  markdown export, so ordering below follows the published index order (newest first) and dates are
+  recorded only where the provider states one elsewhere. The API itself is versioned separately on
+  dated stable releases; see lifecycle/wistia-lifecycle.yml.
+scheme: release-notes
+versioned_api: true
+current_version: '2026-01'
+release_cadence: every other month
+dated_entries: false
+dated_entries_note: >-
+  The .md export of each changelog entry carries no date field, so no publication date is asserted
+  here. This is the one real gap in an otherwise machine-readable changelog.
+entries:
+- title: Access Wistia via your terminal (Wistia CLI)
+  url: https://docs.wistia.com/changelog/access-wistia-via-your-terminal-wistia-cli
+  type: addition
+  breaking: false
+  highlights:
+  - >-
+    A Go CLI that uploads media, manages the library and pulls analytics from a terminal, CI job or
+    AI coding agent.
+  - Generated from the same API that powers the SDK and MCP server.
+  - Install via brew install wistia/tap/wistia-cli, curl/PowerShell scripts, or GitHub Releases.
+  related: ../cli/wistia-cli.yml
+- title: Improved webhooks page
+  url: https://docs.wistia.com/changelog/improved-webhooks-page
+  type: improvement
+  breaking: false
+  highlights:
+  - Grouped webhook events with select/deselect all in the account UI.
+- title: API versioning
+  url: https://docs.wistia.com/changelog/api-versioning
+  type: addition
+  breaking: true
+  highlights:
+  - >-
+    Introduced the versioned modern API, released every other month, with a TypeScript SDK shipped
+    alongside each new API version.
+  - Links to the v1 → 2026-01 migration guide for the full breaking-change list.
+  related: ../lifecycle/wistia-lifecycle.yml
+- title: MCP server
+  url: https://docs.wistia.com/changelog/mcp-server
+  type: addition
+  breaking: false
+  highlights:
+  - >-
+    A hosted Model Context Protocol server so agents can read and update Wistia data — the entry
+    gives worked prompts such as archiving videos unplayed in 60 days.
+  related: ../mcp/wistia-mcp.yml
+- title: Live Stream Events (Webinars)
+  url: https://docs.wistia.com/changelog/live-stream-events
+  type: addition
+  breaking: false
+  highlights:
+  - View, create, delete and update live events and webinars programmatically.
+  - >-
+    Later renamed — /v1/live_stream_events became /modern/webinars in the 2026-01 release.
+- title: Swap
+  url: https://docs.wistia.com/changelog/swap
+  type: addition
+  breaking: false
+  highlights:
+  - >-
+    Media Swap replaces a video everywhere it is embedded while preserving the original hashed ID
+    and URLs, so viewers and analytics are undisturbed. Queues a background job.
+- title: Subfolders
+  url: https://docs.wistia.com/changelog/organize-and-manage-content-at-scale
+  type: addition
+  breaking: false
+  highlights:
+  - >-
+    Subfolder list/create/show/update/delete endpoints, adding a third level of organization
+    alongside tagging and projects.
+- title: Transcript ID
+  url: https://docs.wistia.com/changelog/media-translate
+  type: addition
+  breaking: false
+  highlights:
+  - >-
+    A transcript ID is now returned by Captions List, Captions Purchase and the
+    media.transcript_updated webhook, so local records can be synced.
+- title: Translation
+  url: https://docs.wistia.com/changelog/media-swap
+  type: addition
+  breaking: false
+  highlights:
+  - >-
+    Media Translate translates transcripts into additional languages; completed orders are tracked
+    via the media.translation_created webhook.
+- title: Localization
+  url: https://docs.wistia.com/changelog/localizations-list
+  type: addition
+  breaking: false
+  highlights:
+  - >-
+    Video dubbing into 50+ languages via Localizations list/show/create/delete; completed dubs are
+    tracked via the media.localization_created webhook.
+summary:
+  entries_captured: 10
+  window: the full changelog index published in llms.txt as of 2026-08-14
+  breaking_entries: 1

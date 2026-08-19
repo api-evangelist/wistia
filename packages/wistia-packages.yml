@@ -1,0 +1,135 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://registry.npmjs.org, https://proxy.golang.org, https://rubygems.org/api/v1,
+  https://api.github.com/orgs/wistia, https://docs.wistia.com/docs/player-quick-start,
+  https://docs.wistia.com/docs/wistia-cli-guide
+description: >-
+  First-party Wistia client libraries, the CLI binary, and the embeddable player
+  distributions, with the latest published version and release date read from each
+  registry's own metadata endpoint. Wistia's official SDK surface is small and recent:
+  a Speakeasy-generated TypeScript API client, the Aurora player web component (plus
+  its React wrapper), and a Go CLI shipped through Homebrew and GitHub Releases. There
+  is no first-party Python, Ruby, PHP, Java, .NET or Go SDK for the Data API — the Ruby
+  gems on RubyGems are long-abandoned community work.
+packages:
+- name: '@wistia/wistia-api-client'
+  registry: npm
+  url: https://www.npmjs.com/package/@wistia/wistia-api-client
+  language: TypeScript
+  official: true
+  version: 2026.7.0
+  published: '2026-07-29'
+  repository: https://github.com/wistia/wistia-typescript-sdk
+  note: >-
+    Speakeasy-generated TypeScript/JavaScript client for the Wistia Data API; package.json
+    lists author "Speakeasy". Versioned on the same calendar scheme as the API stable
+    releases. Repository wistia/wistia-typescript-sdk was last pushed 2026-08-13.
+- name: '@wistia/wistia-player'
+  registry: npm
+  url: https://www.npmjs.com/package/@wistia/wistia-player
+  language: JavaScript
+  official: true
+  version: 0.7.12
+  published: '2026-07-30'
+  note: >-
+    The Aurora player as an embeddable `<wistia-player>` custom HTML web component. This is
+    a client-side component library, not a Data API SDK — see components/wistia-components.yml.
+- name: '@wistia/wistia-player-react'
+  registry: npm
+  url: https://www.npmjs.com/package/@wistia/wistia-player-react
+  language: TypeScript
+  official: true
+  version: 0.7.12
+  published: '2026-07-30'
+  note: React wrapper around the `<wistia-player>` web component; released in lockstep with it.
+- name: wistia-cli
+  registry: homebrew
+  url: https://github.com/wistia/homebrew-tap
+  language: Go
+  official: true
+  version: 2026.5.1
+  published: '2026-07-01'
+  install: brew install wistia/tap/wistia-cli
+  repository: https://github.com/wistia/wistia-cli
+  note: >-
+    Formula is GoReleaser-generated in wistia/homebrew-tap (Formula/wistia-cli.rb, desc
+    "Data API: Wistia Data API"). Version and date read from the tap formula and the matching
+    GitHub release v2026.5.1. A second tap, wistia/homebrew-wistia-cli, also exists.
+- name: github.com/wistia/wistia-cli
+  registry: go
+  url: https://pkg.go.dev/github.com/wistia/wistia-cli
+  language: Go
+  official: true
+  version: v0.0.0-20260813152658-4b935d87824b
+  published: '2026-08-13'
+  note: >-
+    proxy.golang.org resolves the module to an untagged pseudo-version even though the repo
+    carries semver release tags (v2026.5.1), because the module is distributed as a binary
+    rather than an importable library. The tagged binary release is 2026.5.1 (2026-07-01).
+- name: wistia-player (CDN)
+  registry: cdn
+  url: https://fast.wistia.com/player.js
+  language: JavaScript
+  official: true
+  version: null
+  published: null
+  note: >-
+    The default in-app embed code loads https://fast.wistia.com/player.js with NO version
+    suffix, which Wistia's own docs say always follows the newest release — so a consumer
+    cannot tell which player build they are running. Version pinning IS supported via an
+    `@<version>` suffix (player.js@1.2.3) on both fast.wistia.com and fast.wistia.net, but
+    it is opt-in and the docs recommend the unpinned default. There is no CDN metadata
+    endpoint to query, so version/published are honestly null.
+    Source: https://docs.wistia.com/docs/aurora-player-version-pinning
+- name: wistia
+  registry: rubygems
+  url: https://rubygems.org/gems/wistia
+  language: Ruby
+  official: false
+  version: 0.1.0
+  published: '2016-01-14'
+  note: >-
+    Community gem, last released 2016-01-14 — a decade stale and predating the modern API
+    entirely. Not linked from Wistia's docs. Recorded as evidence of the Ruby gap, not as a
+    supported SDK.
+- name: wistia-api
+  registry: rubygems
+  url: https://rubygems.org/gems/wistia-api
+  language: Ruby
+  official: false
+  version: 0.2.3
+  published: '2013-04-10'
+  note: >-
+    Community gem (689k downloads), last released 2013-04-10. Wraps the pre-v1 API. Not
+    linked from Wistia's docs.
+absent:
+- registry: pypi
+  note: No first-party Python SDK found; no wistia-branded package published by Wistia.
+- registry: packagist
+  note: No first-party PHP SDK found.
+- registry: maven-central
+  note: No first-party Java SDK found.
+- registry: nuget
+  note: No first-party .NET SDK found.
+- registry: crates.io
+  note: No first-party Rust SDK found.
+- registry: terraform-registry
+  note: >-
+    registry.terraform.io/v1/providers/wistia/wistia returns 404 "provider not found". The
+    github.com/wistia/terraform-provider-wistia repo exists ("Wistia media as code") but was
+    last pushed 2024-12-10 and is not published to the Terraform Registry.
+summary:
+  total: 9
+  official: 6
+  registries:
+  - npm
+  - homebrew
+  - go
+  - cdn
+  - rubygems
+  languages:
+  - TypeScript
+  - JavaScript
+  - Go
+  - Ruby

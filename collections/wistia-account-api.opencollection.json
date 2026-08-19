@@ -1,0 +1,35 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Wistia Data Account API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Account",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve account summary",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/account"
+          },
+          "docs": "Retrieve account summary"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

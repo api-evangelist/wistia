@@ -1,0 +1,180 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Wistia Data Account Medias API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Medias",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List media",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias"
+          },
+          "docs": "List media"
+        },
+        {
+          "info": {
+            "name": "Upload or import media",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias"
+          },
+          "docs": "Upload or import media"
+        },
+        {
+          "info": {
+            "name": "Retrieve media",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve media"
+        },
+        {
+          "info": {
+            "name": "Update media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update media"
+        },
+        {
+          "info": {
+            "name": "Delete media",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/medias/:hashedId",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete media"
+        },
+        {
+          "info": {
+            "name": "Copy media",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/copy",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Copy media"
+        },
+        {
+          "info": {
+            "name": "Swap media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/swap",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Swap media"
+        },
+        {
+          "info": {
+            "name": "Move multiple media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/move"
+          },
+          "docs": "Move multiple media"
+        },
+        {
+          "info": {
+            "name": "Archive media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/archive"
+          },
+          "docs": "Archive media"
+        },
+        {
+          "info": {
+            "name": "Restore archived media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/restore"
+          },
+          "docs": "Restore archived media"
+        },
+        {
+          "info": {
+            "name": "Bulk copy media",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/copy"
+          },
+          "docs": "Bulk copy media"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

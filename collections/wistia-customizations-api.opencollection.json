@@ -1,0 +1,96 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Wistia Data Account Customizations API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Customizations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Show customizations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/customizations",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show customizations"
+        },
+        {
+          "info": {
+            "name": "Create customizations",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/customizations",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Create customizations"
+        },
+        {
+          "info": {
+            "name": "Update customizations",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/customizations",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update customizations"
+        },
+        {
+          "info": {
+            "name": "Delete customizations",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/medias/:hashedId/customizations",
+            "params": [
+              {
+                "name": "hashedId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete customizations"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

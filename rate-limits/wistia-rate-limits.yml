@@ -1,0 +1,81 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://docs.wistia.com/docs/making-api-requests#rate-limit,
+  https://docs.wistia.com/reference/put_medias-move,
+  https://docs.wistia.com/reference/put_medias-archive,
+  live response headers observed on https://api.wistia.com/v1/medias.json
+docs: https://docs.wistia.com/docs/making-api-requests
+description: >-
+  Wistia publishes a single account-wide request ceiling plus a much tighter per-endpoint ceiling on
+  bulk media moves, and several documented per-request batch caps. On exhaustion the API returns 429
+  with a Retry-After header. Wistia does NOT publish standing quota headers — there is no
+  X-RateLimit-* or RFC 9331 RateLimit-* family on responses — so an agent cannot see how much budget
+  it has left; it can only react to the 429. That was confirmed on a live 401 from
+  api.wistia.com/v1/medias.json, whose headers carry x-request-id and x-runtime but no rate-limit
+  fields.
+limit_count: 4
+limits:
+- name: account request ceiling
+  scope: per-account
+  window: 1 minute
+  limit: 600
+  burst: null
+  applies_to: >-
+    Any HTTP request to api.wistia.com or upload.wistia.com. Fetching a media asset directly
+    (a .bin delivery, for example) does NOT count toward the ceiling.
+  exhaustion_status: 429
+  source: https://docs.wistia.com/docs/making-api-requests
+- name: bulk media move
+  scope: per-endpoint
+  endpoint: PUT /medias/move
+  window: 5 minutes
+  limit: 10
+  note: >-
+    Wistia's own reference calls this out explicitly — "max 10 requests in 5 minutes. Note: this is
+    a different rate limit than applies to the rest of the api!" A separate per-request cap of 100
+    media applies to the same call.
+  source: https://docs.wistia.com/reference/put_medias-move
+- name: bulk archive / restore batch size
+  scope: per-request
+  endpoint: PUT /medias/archive, PUT /medias/restore
+  limit: 100
+  unit: medias per request
+  note: >-
+    A payload cap rather than a rate; both operations process asynchronously and return a
+    background_job_status object.
+  source: https://docs.wistia.com/reference/put_medias-archive
+- name: list pagination page size
+  scope: per-request
+  limit: 100
+  unit: results per page
+  note: >-
+    `per_page` maximum is 100, which is also the default. Not a throttle, but it is the ceiling that
+    determines how many requests a full crawl costs against the 600/min budget.
+  source: https://docs.wistia.com/docs/making-api-requests
+response:
+  status_on_exhaustion: 429
+  status_label_in_docs: >-
+    The docs say "HTTP error 429 Service Unavailable"; 429 is Too Many Requests in RFC 6585 — the
+    label in the docs is wrong, the code is right.
+  headers_returned:
+  - name: Retry-After
+    description: Number of seconds to wait before retrying. Documented and the only throttle signal.
+  headers_absent:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  - RateLimit
+  - RateLimit-Policy
+  absence_note: >-
+    Confirmed by observation on 2026-08-14: a live request to https://api.wistia.com/v1/medias.json
+    returned 401 with x-request-id, x-runtime, x-envoy-upstream-service-time and CloudFront headers,
+    and no rate-limit family. A 429 could not be provoked without credentials, so this records what
+    the unauthenticated edge returns.
+  spec_declaration: >-
+    The published OpenAPI declares a 429 response on exactly one operation and models no rate-limit
+    headers anywhere.
+observed:
+  fetched: '2026-08-14'
+  url: https://api.wistia.com/v1/medias.json
+  status: 401

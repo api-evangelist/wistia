@@ -1,0 +1,121 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://api.wistia.com/.well-known/oauth-authorization-server (live RFC 8414 metadata),
+  https://api.wistia.com/.well-known/oauth-protected-resource,
+  https://docs.wistia.com/docs/authenticating-with-oauth2
+docs: https://docs.wistia.com/docs/authenticating-with-oauth2
+description: >-
+  Wistia's OAuth 2.0 authorization surface publishes its scopes in machine-readable form:
+  `scopes_supported` appears in both the RFC 8414 authorization-server metadata and the RFC 9728
+  protected-resource metadata at api.wistia.com, and the same names are documented in prose on the
+  OAuth2 guide. Two of the seven live scopes (`project:write` and
+  `all:delegate_to_contact_permissions`) are advertised by the metadata but are NOT described on the
+  docs page — recorded here from the metadata with that gap noted rather than invented.
+  Note that OAuth scopes are a separate axis from API-token PERMISSIONS: a Wistia API access token
+  is issued with one of a small set of permission tiers, which is what the API reference cites
+  per-operation. Both are captured below.
+authorization_server:
+  issuer: https://api.wistia.com
+  authorization_endpoint: https://api.wistia.com/oauth/authorize
+  token_endpoint: https://api.wistia.com/oauth/token
+  revocation_endpoint: https://api.wistia.com/oauth/revoke
+  introspection_endpoint: https://api.wistia.com/oauth/introspect
+  registration_endpoint: https://api.wistia.com/oauth/register
+  grant_types_supported:
+  - authorization_code
+  - refresh_token
+  - client_credentials
+  code_challenge_methods_supported:
+  - S256
+scope_count: 7
+scopes:
+- name: all:all
+  description: Anything you can do with the Wistia API is allowed.
+  documented: true
+  sources:
+  - well-known/wistia-oauth-authorization-server.json
+  - https://docs.wistia.com/docs/authenticating-with-oauth2
+- name: all:read
+  description: All requests for data are allowed, but no changes can be made.
+  documented: true
+  sources:
+  - well-known/wistia-oauth-authorization-server.json
+  - https://docs.wistia.com/docs/authenticating-with-oauth2
+- name: media:read
+  description: >-
+    All requests for media and project data are allowed. Extends to customization and captions
+    data.
+  documented: true
+  sources:
+  - well-known/wistia-oauth-authorization-server.json
+  - https://docs.wistia.com/docs/authenticating-with-oauth2
+- name: media:upload
+  description: >-
+    Uploading via the API is allowed, as well as fetching data about a single media by hashed ID
+    (medias#show).
+  documented: true
+  sources:
+  - well-known/wistia-oauth-authorization-server.json
+  - https://docs.wistia.com/docs/authenticating-with-oauth2
+- name: stats:read
+  description: All requests for stats data are allowed.
+  documented: true
+  sources:
+  - well-known/wistia-oauth-authorization-server.json
+  - https://docs.wistia.com/docs/authenticating-with-oauth2
+- name: project:write
+  description: null
+  documented: false
+  note: >-
+    Advertised in scopes_supported by the live authorization-server and protected-resource
+    metadata but absent from the "Available Scopes" section of the OAuth2 guide. Name implies
+    write access to projects/folders; no provider description exists to quote, so none is
+    asserted here.
+  sources:
+  - well-known/wistia-oauth-authorization-server.json
+  - well-known/wistia-oauth-protected-resource.json
+- name: all:delegate_to_contact_permissions
+  description: null
+  documented: false
+  note: >-
+    Advertised in scopes_supported but undocumented on the OAuth2 guide. It IS referenced in the
+    API reference: the List Folders operation says that for tokens scoped to a specific user
+    (`all:delegate_to_contact_permissions`), results are limited to the folders that user can see
+    in their content library. So the scope narrows a token to one contact's effective permissions.
+  sources:
+  - well-known/wistia-oauth-authorization-server.json
+  - https://docs.wistia.com/reference/get_folders
+token_permissions:
+  note: >-
+    Distinct from OAuth scopes. Every operation in the API reference states which API-token
+    permission it requires. These four strings are quoted verbatim from the reference pages
+    indexed by https://docs.wistia.com/llms.txt.
+  tiers:
+  - name: Read all folder and media data
+    kind: read
+  - name: Read, update & delete anything
+    kind: write
+  - name: Read detailed stats
+    kind: stats
+  - name: (any scope allowed)
+    kind: unrestricted
+    note: Used by operations such as Get Account Usage that any token may call.
+agent_auth:
+  note: >-
+    The authorization-server metadata carries a non-standard `agent_auth` block aimed at
+    autonomous clients, pointing at a human/agent-readable onboarding document.
+  skill: https://api.wistia.com/auth.md
+  registration_types_supported:
+  - oauth_dynamic_client_registration
+  identity_types_supported:
+  - user_delegated
+  - application
+  credential_types_supported:
+  - client_secret
+  - pkce
+  - bearer_token
+availability:
+  note: >-
+    The OAuth2 guide states OAuth2 "is not yet available for all accounts" and that customers must
+    contact Wistia to have it enabled — the discovery metadata is public, the grant is gated.

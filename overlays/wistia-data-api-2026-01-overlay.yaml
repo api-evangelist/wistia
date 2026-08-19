@@ -1,0 +1,772 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements — Wistia Data API 2026-01
+  version: 1.0.0
+extends: openapi/wistia-data-api-2026-01-openapi.yml
+x-generated: '2026-08-14'
+x-method: generated
+x-source: openapi/wistia-data-api-2026-01-openapi.yml plus provider-published values from openapi/wistia-data-api-modern-edge-openapi.yml
+  (x-wistia-mcp-tool-name, x-wistia-mcp-annotations), https://api.wistia.com/.well-known/oauth-authorization-server,
+  and https://docs.wistia.com/docs/making-api-requests
+x-description: 'Non-destructive enhancements over the stable 2026-01 description. The single largest gap
+  in the published spec is missing operationIds: 84 of 85 operations have none, which makes the contract
+  hard to code-generate against and impossible to reference stably. Rather than invent names, this overlay
+  lifts Wistia''s OWN MCP tool name for each method+path out of the edge description and camelCases it,
+  so the identifiers trace back to the provider. It also fills in contact/terms/license and describes
+  the bearer credential.'
+actions:
+- target: $.info
+  description: Attach the provider identity, terms and license that the published description omits.
+  update:
+    contact:
+      name: Wistia
+      url: https://docs.wistia.com/reference
+    termsOfService: https://wistia.com/terms
+    license:
+      name: Proprietary
+      url: https://wistia.com/terms
+    x-api-evangelist:
+      source: https://wistia.github.io/wistia/api/openapi-2026-01.yaml
+      discovered-via: https://api.wistia.com/.well-known/api-catalog
+      track: stable 2026-01
+      supported-until: 2027-01
+- target: $
+  description: Declare the account-wide security requirement the description leaves implicit.
+  update:
+    security:
+    - BearerAuth: []
+- target: $.components.securitySchemes['BearerAuth']
+  description: Describe what the bearer credential actually is and where it comes from.
+  update:
+    description: 'A Wistia API access token created in the API tab of Account Settings (https://account.wistia.com/account/api),
+      or an OAuth 2.0 access token issued by https://api.wistia.com. Sent as `Authorization: Bearer <token>`.
+      TLS is required. Scopes: see https://api.wistia.com/.well-known/oauth-authorization-server.'
+- target: $.paths['/medias'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getMedias
+    x-wistia-mcp-tool-name: get-medias
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateMedia
+    x-wistia-mcp-tool-name: update-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteMedia
+    x-wistia-mcp-tool-name: delete-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/copy'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: copyMedia
+    x-wistia-mcp-tool-name: copy-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/medias/{mediaHashedId}/swap'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: swapMedia
+    x-wistia-mcp-tool-name: swap-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: false
+- target: $.paths['/medias/{mediaHashedId}/stats'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: showMediaAggregatedStats
+    x-wistia-mcp-tool-name: show-media-aggregated-stats
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/translate'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: translateMedia
+    x-wistia-mcp-tool-name: translate-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: true
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/medias/archive'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: archiveMedia
+    x-wistia-mcp-tool-name: archive-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/move'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: moveMedia
+    x-wistia-mcp-tool-name: move-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/restore'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: restoreMedia
+    x-wistia-mcp-tool-name: restore-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/copy'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: bulkCopyMedia
+    x-wistia-mcp-tool-name: bulk-copy-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/medias/{mediaId}/customizations'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: showCustomizations
+    x-wistia-mcp-tool-name: show-customizations
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaId}/customizations'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createCustomizations
+    x-wistia-mcp-tool-name: create-customizations
+- target: $.paths['/medias/{mediaId}/customizations'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateCustomizations
+    x-wistia-mcp-tool-name: update-customizations
+- target: $.paths['/medias/{mediaId}/customizations'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteCustomizations
+    x-wistia-mcp-tool-name: delete-customizations
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/captions'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createCaptions
+    x-wistia-mcp-tool-name: create-captions
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/captions'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getCaptions
+    x-wistia-mcp-tool-name: get-captions
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/captions/purchase'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: purchaseCaptions
+    x-wistia-mcp-tool-name: purchase-captions
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: true
+      destructive_hint: true
+      idempotent_hint: false
+- target: $.paths['/medias/{mediaHashedId}/captions/{languageCode}'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: showCaptionsFile
+    x-wistia-mcp-tool-name: show-captions-file
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/captions/{languageCode}'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateCaptions
+    x-wistia-mcp-tool-name: update-captions
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/captions/{languageCode}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteCaptions
+    x-wistia-mcp-tool-name: delete-captions
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/localizations'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getsLocalizations
+    x-wistia-mcp-tool-name: gets-localizations
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/localizations'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createLocalization
+    x-wistia-mcp-tool-name: create-localization
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: true
+      destructive_hint: true
+      idempotent_hint: false
+- target: $.paths['/medias/{mediaHashedId}/localizations/{localizationHashedId}'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: showLocalization
+    x-wistia-mcp-tool-name: show-localization
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/localizations/{localizationHashedId}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteLocalization
+    x-wistia-mcp-tool-name: delete-localization
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/medias/{mediaHashedId}/trims'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createMediaFromTrims
+    x-wistia-mcp-tool-name: create-media-from-trims
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/tags'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getTags
+    x-wistia-mcp-tool-name: get-tags
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/tags'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createTags
+    x-wistia-mcp-tool-name: create-tags
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/tags/{name}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteTag
+    x-wistia-mcp-tool-name: delete-tag
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/taggings/bulk_create'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: bulkTagMedia
+    x-wistia-mcp-tool-name: bulk-tag-media
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/folders'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getFolders
+    x-wistia-mcp-tool-name: get-folders
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/folders'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createFolder
+    x-wistia-mcp-tool-name: create-folder
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/folders/{id}'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateFolder
+    x-wistia-mcp-tool-name: update-folder
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/folders/{id}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteFolder
+    x-wistia-mcp-tool-name: delete-folder
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/folders/{id}/copy'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: copyFolder
+    x-wistia-mcp-tool-name: copy-folder
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/folders/{folderId}/sharings'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getFolderSharings
+    x-wistia-mcp-tool-name: get-folder-sharings
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/folders/{folderId}/sharings'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createFolderSharing
+    x-wistia-mcp-tool-name: create-folder-sharing
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/folders/{folderId}/sharings/{sharingId}'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateFolderSharing
+    x-wistia-mcp-tool-name: update-folder-sharing
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/folders/{folderId}/sharings/{sharingId}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteFolderSharing
+    x-wistia-mcp-tool-name: delete-folder-sharing
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/folders/{folderId}/subfolders'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getSubfolders
+    x-wistia-mcp-tool-name: get-subfolders
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/folders/{folderId}/subfolders'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createSubfolder
+    x-wistia-mcp-tool-name: create-subfolder
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/folders/{folderId}/subfolders/{subfolderId}'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateSubfolder
+    x-wistia-mcp-tool-name: update-subfolder
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/folders/{folderId}/subfolders/{subfolderId}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteSubfolder
+    x-wistia-mcp-tool-name: delete-subfolder
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/folders/{folderId}/subfolders/bulk_delete'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: bulkDeleteSubfolders
+    x-wistia-mcp-tool-name: bulk-delete-subfolders
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/channels'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getChannels
+    x-wistia-mcp-tool-name: get-channels
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/channels'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createChannel
+    x-wistia-mcp-tool-name: create-channel
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/channels/{channelHashedId}'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateChannel
+    x-wistia-mcp-tool-name: update-channel
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/channels/{channelHashedId}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteChannel
+    x-wistia-mcp-tool-name: delete-channel
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/channels/{channelHashedId}/channel_episodes'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createChannelEpisode
+    x-wistia-mcp-tool-name: create-channel-episode
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/channel_episodes'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getChannelEpisodes
+    x-wistia-mcp-tool-name: get-channel-episodes
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/channel_episodes/{channelEpisodeHashedId}'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateChannelEpisode
+    x-wistia-mcp-tool-name: update-channel-episode
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/channel_episodes/{channelEpisodeHashedId}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteChannelEpisode
+    x-wistia-mcp-tool-name: delete-channel-episode
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/channel_episodes/{channelEpisodeHashedId}/publish'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: publishChannelEpisode
+    x-wistia-mcp-tool-name: publish-channel-episode
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/channel_episodes/{channelEpisodeHashedId}/unpublish'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: unPublishChannelEpisode
+    x-wistia-mcp-tool-name: un-publish-channel-episode
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/webinars'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: getWebinars
+    x-wistia-mcp-tool-name: get-webinars
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/webinars'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createWebinar
+    x-wistia-mcp-tool-name: create-webinar
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/webinars/{id}'].put
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: updateWebinar
+    x-wistia-mcp-tool-name: update-webinar
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/webinars/{id}'].delete
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: deleteWebinar
+    x-wistia-mcp-tool-name: delete-webinar
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: true
+      idempotent_hint: true
+- target: $.paths['/webinars/{webinarId}/registrations'].post
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: createWebinarRegistration
+    x-wistia-mcp-tool-name: create-webinar-registration
+    x-mcp-annotations:
+      read_only_hint: false
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: false
+- target: $.paths['/search'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: search
+    x-wistia-mcp-tool-name: search
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths['/background_job_status/{backgroundJobStatusId}'].get
+  description: Add the missing operationId. The name is Wistia's own MCP tool name for this exact method+path,
+    taken from x-wistia-mcp-tool-name in the provider-published edge description — not an invented identifier.
+    The MCP behaviour hints are carried over from the same source.
+  update:
+    operationId: showBackgroundJobStatus
+    x-wistia-mcp-tool-name: show-background-job-status
+    x-mcp-annotations:
+      read_only_hint: true
+      open_world_hint: false
+      destructive_hint: false
+      idempotent_hint: true
+- target: $.paths..responses.429
+  description: Note that the throttle body is text/plain, unlike every other error in this API, and that
+    Retry-After carries the wait in seconds. See rate-limits/wistia-rate-limits.yml.
+  update:
+    x-api-evangelist-note: Account ceiling is 600 requests per minute across api.wistia.com and upload.wistia.com.
+      PUT /medias/move additionally allows only 10 requests per 5 minutes. No X-RateLimit-* or RateLimit-*
+      budget headers are returned.

@@ -1,0 +1,139 @@
+generated: '2026-08-14'
+method: probed
+source: live HTTPS probes of every apis.yml baseURL host and the docs host
+description: >-
+  Probe of the RFC-registered /.well-known/ surface across every Wistia host in this
+  profile. Wistia serves a real, non-trivial well-known surface: RFC 8414 authorization
+  server metadata, RFC 9728 protected resource metadata, and an RFC 9727 api-catalog
+  linkset that points at the machine-readable OpenAPI description and the MCP server
+  card. The oauth and api-catalog documents are served identically from wistia.com,
+  api.wistia.com and fast.wistia.com — the same edge answers all three.
+hosts:
+- host: api.wistia.com
+  probes:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: wistia-oauth-authorization-server.json
+    note: >-
+      RFC 8414 metadata. Declares authorization/token/revocation/introspection/registration
+      endpoints, authorization_code + refresh_token + client_credentials grants, PKCE S256,
+      seven scopes, and a non-standard `agent_auth` block that points at an agent-facing
+      auth.md skill document.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: wistia-oauth-protected-resource.json
+    note: RFC 9728 protected resource metadata; resource https://api.wistia.com, bearer header.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: application/linkset+json
+    file: wistia-api-catalog.json
+    note: >-
+      RFC 9727 linkset. Anchors https://api.wistia.com/modern to a service-desc OpenAPI at
+      https://wistia.github.io/wistia/api/openapi-modern.yaml, service-doc at docs.wistia.com,
+      and a status endpoint at https://api.wistia.com/health; a second anchor exposes the MCP
+      server card. This is how the machine-readable contract was discovered.
+  - path: /.well-known/mcp/server-card.json
+    status: 200
+    content_type: application/json
+    file: wistia-mcp-server-card.json
+    note: >-
+      Not probed blind — referenced by the api-catalog linkset. Declares the wistia-api-mcp
+      server, streamable-http transport at https://api.wistia.com/mcp/api, tools/resources/prompts
+      capabilities, and four supported MCP protocol versions.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: wistia.com
+  probes:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    note: Identical body to api.wistia.com; issuer is https://api.wistia.com.
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    note: resource is https://wistia.com, authorization_servers points at https://api.wistia.com.
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: application/linkset+json
+    note: Identical linkset to api.wistia.com.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: fast.wistia.com
+  probes:
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: application/linkset+json
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: docs.wistia.com
+  probes:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain
+    note: Not a /.well-known/ path, but the docs host's machine index. Saved to llms/wistia-llms.txt.
+- host: upload.wistia.com
+  probes:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+summary:
+  hosts_probed: 5
+  documents_served: 4
+  security_txt: false
+  openid_configuration: false
+  oauth_authorization_server: true
+  oauth_protected_resource: true
+  api_catalog: true
+  ai_plugin: false
+  agent_card: false

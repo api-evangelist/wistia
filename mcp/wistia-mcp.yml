@@ -1,0 +1,106 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://api.wistia.com/.well-known/mcp/server-card.json (referenced by
+  https://api.wistia.com/.well-known/api-catalog),
+  https://docs.wistia.com/docs/mcp-server-guide
+name: Wistia API MCP Server
+status: published
+description: >-
+  Wistia operates a first-party, hosted MCP server that exposes the Wistia Data API to
+  agents: media, folders, channels, captions, analytics and AI remix. It is a REMOTE
+  streamable-HTTP endpoint — an agent POSTs to it directly, with no local install — and it
+  is discoverable without a human, because Wistia's RFC 9727 api-catalog linkset anchors
+  https://api.wistia.com/mcp/api to the server card. Access is OAuth-gated (or an account
+  access token), and the docs state the server is currently limited to account owners and
+  managers.
+deployment:
+  mode: remote
+  endpoint: https://api.wistia.com/mcp/api
+  auth: oauth
+  verified: probed
+  note: >-
+    Anonymous POST of {"jsonrpc":"2.0","id":1,"method":"tools/list"} to
+    https://api.wistia.com/mcp/api returned HTTP 401 {"error":"unauthorized"} — the endpoint is
+    live and the schema is auth-gated. The server card and the 125 provider-published tool
+    names embedded in the OpenAPI (x-wistia-mcp-tool-name) supply the tool inventory without
+    an authenticated session; per-tool inputSchemas are the corresponding OpenAPI parameters
+    and requestBody. Wistia additionally publishes an agent onboarding document at
+    https://api.wistia.com/auth.md describing dynamic client registration and PKCE.
+server_card:
+  file: ../well-known/wistia-mcp-server-card.json
+  name: wistia-api-mcp
+  title: Wistia API
+  version: 0.1.2
+  website: https://wistia.com
+  transport: streamable-http
+  capabilities:
+  - tools
+  - resources
+  - prompts
+  - logging
+  supported_protocol_versions:
+  - '2025-11-25'
+  - '2025-06-18'
+  - '2025-03-26'
+  - '2024-11-05'
+authentication:
+  methods:
+  - type: oauth2
+    note: >-
+      Authorization code + PKCE (S256) or client_credentials against
+      https://api.wistia.com/oauth/authorize and /oauth/token. Dynamic client registration
+      (RFC 7591) is supported at https://api.wistia.com/oauth/register. Discovery via
+      /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource.
+  - type: bearer-token
+    note: >-
+      A Wistia API access token supplied as `Authorization: Bearer <token>`, configured in the
+      MCP client rather than negotiated. Created in the API tab of Account Settings.
+  scopes: ../scopes/wistia-scopes.yml
+  account_restriction: >-
+    Docs state the MCP server is currently available only to owners and managers of a Wistia
+    account.
+toolsets:
+  note: >-
+    Wistia groups tools into named toolsets and publishes the grouping as an
+    `x-wistia-mcp-toolsets` extension on the OpenAPI tags of the modern (edge) description.
+    These are the provider's own toolset names, not our inference.
+  names:
+  - account
+  - analytics
+  - captions
+  - channels
+  - customizations
+  - folders
+  - media
+  - sharing
+  - stats
+  - tags
+  - webinars
+  - remix
+tools:
+  count: 125
+  source: >-
+    openapi/wistia-data-api-modern-edge-openapi.yml — 125 of 167 operations carry an
+    x-wistia-mcp-tool-name; 23 more carry x-wistia-mcp-ignore: true and are deliberately not
+    exposed as tools.
+  crosswalk: wistia-tool-crosswalk.yml
+clients_documented:
+- Claude (web custom connector)
+- Claude Code (claude mcp add --transport http)
+- Claude Desktop (custom connector)
+- Cursor
+- VS Code / GitHub Copilot agent mode
+- Windsurf
+docs: https://docs.wistia.com/docs/mcp-server-guide
+changelog: https://docs.wistia.com/changelog/mcp-server
+x-evidence:
+  fetched: '2026-08-14'
+  probes:
+  - url: https://api.wistia.com/.well-known/api-catalog
+    status: 200
+  - url: https://api.wistia.com/.well-known/mcp/server-card.json
+    status: 200
+  - url: https://api.wistia.com/mcp/api
+    status: 401
+    method: POST tools/list (anonymous)

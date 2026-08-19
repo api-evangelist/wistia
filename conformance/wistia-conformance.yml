@@ -1,0 +1,179 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://api.wistia.com/.well-known/oauth-authorization-server,
+  https://api.wistia.com/.well-known/oauth-protected-resource,
+  https://api.wistia.com/.well-known/api-catalog,
+  https://api.wistia.com/.well-known/mcp/server-card.json,
+  https://api.wistia.com/auth.md,
+  https://security.wistia.com/,
+  https://docs.wistia.com/docs/making-api-requests,
+  openapi/wistia-data-api-2026-01-openapi.yml
+description: >-
+  Which cross-cutting standards Wistia actually conforms to, each with the evidence that proves or
+  disproves it. The headline is that Wistia is a standards-forward API for its category: it serves
+  RFC 8414 and RFC 9728 OAuth discovery, an RFC 9727 api-catalog linkset that makes its OpenAPI
+  machine-discoverable without a human reading docs, and a Model Context Protocol server card. The
+  gaps are equally clear — no RFC 9457 problem details, no RFC 8594 Sunset/Deprecation headers, no
+  security.txt, and no RFC 9331 rate-limit headers.
+conformance:
+- id: openapi
+  conforms: true
+  version: 3.1.1
+  evidence: >-
+    Three descriptions published anonymously at https://wistia.github.io/wistia/api/ —
+    openapi.yaml (v1, 76 operations), openapi-2026-01.yaml (stable, 85 operations),
+    openapi-modern.yaml (edge, 167 operations). All parse as OpenAPI 3.1.1.
+  caveat: >-
+    84 of 85 operations in the stable description carry no operationId; the edge description carries
+    3 across 167. See overlays/wistia-data-api-2026-01-overlay.yaml.
+- id: rfc9727-api-catalog
+  conforms: true
+  evidence: >-
+    https://api.wistia.com/.well-known/api-catalog returns HTTP 200 with
+    application/linkset+json, anchoring https://api.wistia.com/modern to a service-desc OpenAPI, a
+    service-doc, and a status endpoint, plus a second anchor for the MCP server card. Served
+    identically from wistia.com and fast.wistia.com.
+  note: >-
+    This is rare. Fewer than a handful of providers in the catalog publish a working api-catalog
+    linkset, and it is what made the real contract discoverable here after a docs-host probe missed.
+- id: oauth2
+  conforms: true
+  version: RFC 6749
+  evidence: >-
+    authorization_code, refresh_token and client_credentials grants declared in the live
+    authorization-server metadata; documented flow at
+    https://docs.wistia.com/docs/authenticating-with-oauth2.
+  caveat: The OAuth2 guide states OAuth2 is not yet enabled on all accounts.
+- id: rfc8414-oauth-server-metadata
+  conforms: true
+  evidence: https://api.wistia.com/.well-known/oauth-authorization-server returns 200 application/json.
+- id: rfc9728-protected-resource-metadata
+  conforms: true
+  evidence: >-
+    https://api.wistia.com/.well-known/oauth-protected-resource returns 200 with resource,
+    authorization_servers, bearer_methods_supported and scopes_supported.
+- id: rfc7591-dynamic-client-registration
+  conforms: true
+  evidence: >-
+    registration_endpoint https://api.wistia.com/oauth/register declared in the AS metadata and
+    documented step-by-step in https://api.wistia.com/auth.md.
+- id: rfc7636-pkce
+  conforms: true
+  evidence: code_challenge_methods_supported ["S256"] in the AS metadata.
+- id: rfc7009-token-revocation
+  conforms: true
+  evidence: revocation_endpoint https://api.wistia.com/oauth/revoke with client_secret_basic/post auth.
+- id: rfc7662-token-introspection
+  conforms: true
+  evidence: introspection_endpoint https://api.wistia.com/oauth/introspect declared in the AS metadata.
+- id: oidc
+  conforms: false
+  evidence: >-
+    /.well-known/openid-configuration returns 404 on every Wistia host probed. Wistia is an OAuth 2.0
+    authorization server, not an OpenID Provider. (SSO/SCIM for the app itself is documented
+    separately at https://docs.wistia.com/docs/configure-sso-and-scim.)
+- id: mcp
+  conforms: true
+  version: '2025-11-25'
+  evidence: >-
+    https://api.wistia.com/.well-known/mcp/server-card.json declares server wistia-api-mcp 0.1.2,
+    streamable-http transport at https://api.wistia.com/mcp/api, tools/resources/prompts/logging
+    capabilities, and supported protocol versions 2025-11-25, 2025-06-18, 2025-03-26 and 2024-11-05.
+    The endpoint is live — an anonymous tools/list returned 401.
+- id: a2a
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json both return 404 on wistia.com,
+    api.wistia.com, docs.wistia.com, fast.wistia.com and upload.wistia.com. No A2A agent card is
+    published.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    No response in any published description uses application/problem+json. Errors are ad hoc JSON
+    objects keyed on `error`/`errors`/`message`, and the 429 body is text/plain. See
+    errors/wistia-problem-types.yml.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: >-
+    No Sunset or Deprecation response header is documented or declared. Deprecation is announced on
+    https://docs.wistia.com/docs/wistia-deprecation-schedule and in the changelog only.
+- id: rfc9331-ratelimit-headers
+  conforms: false
+  evidence: >-
+    No RateLimit / RateLimit-Policy or X-RateLimit-* headers were observed on a live response, and
+    none are modeled in any description. Only Retry-After on 429 is documented.
+- id: idempotency-key
+  conforms: false
+  evidence: >-
+    No Idempotency-Key header appears in the docs or in any published description. Wistia does
+    publish per-operation MCP idempotency HINTS (95 of 125 tools), which describe replay safety but
+    do not provide server-side de-duplication.
+- id: pagination
+  conforms: true
+  style: page-number
+  evidence: >-
+    `page` and `per_page` (max and default 100) documented at
+    https://docs.wistia.com/docs/making-api-requests, with sort_by/sort_direction for ordering.
+  caveat: No total count, no next/prev links, no Link header, no cursor.
+- id: json-api
+  conforms: false
+  evidence: Responses are bare JSON arrays and objects with no JSON:API envelope, type or links members.
+- id: odata
+  conforms: false
+  evidence: No OData metadata document or $-query conventions.
+- id: graphql
+  conforms: false
+  evidence: No public GraphQL endpoint is documented or discoverable.
+- id: asyncapi
+  conforms: partial
+  evidence: >-
+    Wistia documents a signed webhook surface at https://docs.wistia.com/docs/webhooks but publishes
+    no AsyncAPI document. asyncapi/wistia-asyncapi.yml in this repo is an API Evangelist-authored
+    AsyncAPI 2.6 model of the documented events, not a provider artifact.
+- id: oembed
+  conforms: true
+  evidence: >-
+    https://docs.wistia.com/docs/wistia-and-oembed documents a standard oEmbed endpoint for
+    retrieving embed codes from a media URL.
+- id: hmac-webhook-signing
+  conforms: true
+  evidence: >-
+    HMAC-SHA256 hexdigest of the raw POST body in X-Wistia-Signature, keyed on a per-webhook
+    secret_key. Documented with a worked Ruby example.
+- id: scim
+  conforms: true
+  scope: platform-identity-only
+  evidence: >-
+    https://docs.wistia.com/docs/configure-sso-and-scim documents SSO and SCIM provisioning for the
+    Wistia application. This is account provisioning, not part of the Data API contract.
+- id: soc2
+  conforms: true
+  evidence: >-
+    Named on the Wistia trust center at https://security.wistia.com/. See
+    security/wistia-trust-center.yml.
+- id: pci-dss
+  conforms: true
+  evidence: Named on https://security.wistia.com/.
+- id: fedramp
+  conforms: true
+  evidence: Named on https://security.wistia.com/.
+- id: gdpr
+  conforms: true
+  evidence: Named on https://security.wistia.com/.
+- id: security-txt
+  conforms: false
+  evidence: >-
+    /.well-known/security.txt returns 404 on wistia.com, api.wistia.com, docs.wistia.com,
+    fast.wistia.com and upload.wistia.com. No RFC 9116 disclosure file is served, and no public bug
+    bounty program was found.
+- id: tls
+  conforms: true
+  evidence: >-
+    TLSv1.3 on wistia.com, docs.wistia.com and api.wistia.com; the docs state SSL is required to
+    access the API. See security/wistia-domain-security.yml.
+summary:
+  asserted: 27
+  conforms: 18
+  partial: 1
+  does_not_conform: 8

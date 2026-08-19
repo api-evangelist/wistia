@@ -1,0 +1,58 @@
+generated: '2026-08-14'
+method: generated
+source: >-
+  openapi/wistia-data-api-2026-01-openapi.yml,
+  openapi/wistia-data-api-modern-edge-openapi.yml,
+  mcp/wistia-tool-crosswalk.yml,
+  https://docs.wistia.com/
+description: >-
+  Packaged Agent Skills for the Wistia Data API, one per marquee flow. Every operation named in
+  these skills is grounded in Wistia's own published contract: the step names are Wistia's MCP tool
+  names read from x-wistia-mcp-tool-name in the published OpenAPI, and each is annotated with
+  whether it exists in the 2026-01 stable release or only in the edge description — because calling
+  an edge-only operation against a pinned stable version fails. Wistia does not publish its own
+  AGENTS.md or skills bundle; these are API Evangelist-authored.
+api: wistia:data-api
+base: https://api.wistia.com/modern
+version_header: 'X-Wistia-Api-Version: 2026-01'
+skills:
+- name: wistia-import-and-organize-media
+  file: wistia-import-and-organize-media.md
+  summary: >-
+    Import a video from a public URL, poll the background job, then file, tag, and customize it.
+  toolsets: [media, folders, tags, customizations]
+- name: wistia-caption-and-localize-video
+  file: wistia-caption-and-localize-video.md
+  summary: >-
+    Order or upload captions, translate the transcript, purchase a dubbed localization, and track
+    each paid asynchronous order via webhook.
+  toolsets: [captions, media]
+  spends_money: true
+- name: wistia-audit-and-archive-library
+  file: wistia-audit-and-archive-library.md
+  summary: >-
+    Crawl folders and media, pull per-media stats, and bulk archive or restore — written around the
+    600/minute ceiling and the 100-per-request batch caps.
+  toolsets: [folders, media, stats]
+  destructive: true
+- name: wistia-run-a-webinar
+  file: wistia-run-a-webinar.md
+  summary: >-
+    Create a webinar, register attendees and get their personalized URLs, then read registration
+    analytics. Plan-gated — a 403 here is a billing question, not an auth failure.
+  toolsets: [webinars, analytics]
+cross_references:
+  authentication: ../authentication/wistia-authentication.yml
+  scopes: ../scopes/wistia-scopes.yml
+  conventions: ../conventions/wistia-conventions.yml
+  errors: ../errors/wistia-problem-types.yml
+  rate_limits: ../rate-limits/wistia-rate-limits.yml
+  mcp: ../mcp/wistia-mcp.yml
+  tool_crosswalk: ../mcp/wistia-tool-crosswalk.yml
+provider_published_skills:
+  found: false
+  note: >-
+    No AGENTS.md, skills manifest or /skills surface was found on wistia.com or docs.wistia.com.
+    Wistia DOES publish an agent-addressed auth runbook at https://api.wistia.com/auth.md
+    (saved to well-known/wistia-auth.md), which is the closest thing to a provider-authored skill —
+    it is scoped to OAuth onboarding only, not to task flows.

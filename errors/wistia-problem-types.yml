@@ -1,0 +1,156 @@
+generated: '2026-08-14'
+method: derived
+source: >-
+  openapi/wistia-data-api-2026-01-openapi.yml (all 4xx/5xx responses),
+  live 401 observed at https://api.wistia.com/v1/medias.json,
+  https://docs.wistia.com/llms.txt reference index
+format: json
+rfc9457: false
+description: >-
+  Wistia does not use RFC 9457 problem+json. Errors are plain `application/json` objects with an ad
+  hoc envelope that varies by operation — the dominant shape is a single `error` string, with an
+  `errors` array (or an object of field-name → messages) used for validation failures, and one
+  outlier that returns `message`. Exactly one error surface is machine-readable: the 401 response
+  carries a `code` enum, which is the only stable, non-prose error identifier the API publishes.
+  The 429 rate-limit response is `text/plain`, not JSON — a client parsing every error as JSON will
+  break on throttling.
+envelopes:
+- name: single-error
+  shape: '{ "error": "<human message>" }'
+  content_type: application/json
+  usage: The default for 400, 403, 404, 405, 422, 500 and 501.
+  unevaluated_properties: false
+- name: unauthorized
+  shape: '{ "code": "<enum>", "error": "<human message>" }'
+  content_type: application/json
+  usage: 401 only. The `code` field is the only machine-readable error identifier in the API.
+- name: error-list
+  shape: '{ "errors": ["<message>", ...] }'
+  content_type: application/json
+  usage: Validation failures on webinar create/update and some bulk operations.
+- name: field-errors
+  shape: '{ "errors": { "<field>": ["<message>", ...] } }'
+  content_type: application/json
+  usage: >-
+    422 validation failures on folder sharings and webinar registrations — validation errors grouped
+    by field name.
+- name: message
+  shape: '{ "message": "<human message>" }'
+  content_type: application/json
+  usage: 422 on POST /medias/{mediaHashedId}/captions/purchase only. An outlier.
+- name: plain-text
+  shape: Rate limit exceeded
+  content_type: text/plain
+  usage: 429 only.
+- name: undocumented-body
+  shape: null
+  usage: >-
+    17 responses across captions, webinars and channel operations declare a 4xx status with a
+    description but NO content block, so the body shape is unspecified in the contract.
+machine_readable_codes:
+  field: code
+  scope: 401 responses
+  values:
+  - code: unauthorized_credentials
+    meaning: The supplied token is invalid or absent.
+    observed: true
+    observed_note: >-
+      Confirmed live on 2026-08-14 — an unauthenticated GET https://api.wistia.com/v1/medias.json
+      returned 401 {"code":"unauthorized_credentials","error":"Invalid credentials."}.
+    remediation: Create or rotate an API token in the API tab of Account Settings, or complete the OAuth flow.
+  - code: account_inactive
+    meaning: The token is valid but the Wistia account is not active.
+    remediation: Restore the account's billing/plan standing; retrying will not clear this.
+  - code: unauthorized_scope
+    meaning: The token does not carry a scope permitting this operation.
+    remediation: >-
+      Re-issue the token with a broader permission tier, or re-authorize the OAuth client with the
+      required scope (see scopes/wistia-scopes.yml). Wistia notes that changing an application's
+      permissions does not update already-issued tokens — the user must re-authorize.
+  - code: unauthorized_params
+    meaning: The token is not authorized for the parameters supplied on this request.
+    remediation: >-
+      Narrow the request, or use a token not delegated to a single contact's permissions
+      (all:delegate_to_contact_permissions restricts visibility to one user's content library).
+statuses:
+- status: 400
+  title: Bad request
+  count: 26
+  retryable: false
+  notes: >-
+    Malformed or missing parameters. Real published examples include "param is missing or the value
+    is empty: name" and 'the "q" parameter should specify the search query'. Also used for
+    domain conflicts, e.g. copy failure or captions already existing for a video.
+- status: 401
+  title: Unauthorized, invalid or missing token
+  count: 85
+  retryable: false
+  notes: Declared on every operation. Carries the `code` enum above.
+- status: 403
+  title: Forbidden — plan or feature not available
+  count: 8
+  retryable: false
+  notes: >-
+    Distinct from 401: the token is valid, the ACCOUNT lacks the feature. Published examples are
+    "Webinars are not available on your current plan" and archiving access. An agent must treat 403
+    as a permanent capability gap, not an auth problem — retrying or re-authorizing will not fix it.
+- status: 404
+  title: Resource not found
+  count: 51
+  retryable: false
+  notes: >-
+    Messages name the resource and id, e.g. "Folder with ID 'fakeid' not found." One 404 body still
+    says "Project with ID ... not found" even though the resource was renamed to Folder in the
+    2026-01 release — a residue of the v1 → 2026-01 rename.
+- status: 405
+  title: Method not allowed
+  count: 1
+  retryable: false
+  notes: Used semantically, e.g. attempting to copy archived media.
+- status: 422
+  title: Unprocessable entity — validation failure
+  count: 15
+  retryable: false
+  notes: >-
+    The richest error class. Shapes vary: a single `error` string, an `errors` array, or an `errors`
+    object keyed by field name. Published examples include "Validation failed: Name has already been
+    taken" and ["Title is required", "Event duration must be at least 15 minutes"].
+- status: 429
+  title: Rate limit exceeded
+  count: 1
+  retryable: true
+  retry_after: true
+  notes: >-
+    text/plain body. Retry-After carries the wait in seconds. Declared on only one operation in the
+    spec even though the 600 req/min ceiling applies account-wide — see
+    rate-limits/wistia-rate-limits.yml.
+- status: 500
+  title: Internal server error
+  count: 85
+  retryable: true
+  notes: Declared on nearly every operation. Body is a single `error` string.
+- status: 501
+  title: Not implemented
+  count: 1
+  retryable: false
+  notes: >-
+    POST /expiring_token — "Expiring tokens can only be created from non-expiring access tokens."
+summary:
+  total_error_responses: 273
+  distinct_statuses: 9
+  problem_json: false
+  machine_readable_code_field: 401 only
+  content_types:
+    application/json: 252
+    text/plain: 1
+    undeclared: 20
+gaps:
+- >-
+  No error `type` URI, no per-error documentation link, and no error-code reference page in the
+  docs — outside the 401 `code` enum, every error must be matched on English prose.
+- >-
+  The 429 body is text/plain while every other error is JSON, so a single parse path fails exactly
+  when a client is being throttled.
+- >-
+  20 declared error responses carry no content schema at all, so the contract does not say what the
+  client will receive.

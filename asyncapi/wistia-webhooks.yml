@@ -1,0 +1,134 @@
+generated: '2026-08-14'
+method: searched
+source: https://docs.wistia.com/docs/webhooks
+docs: https://docs.wistia.com/docs/webhooks
+description: >-
+  Complete catalog of Wistia's documented webhook events, read from the provider's own event
+  reference. Wistia publishes no AsyncAPI document — asyncapi/wistia-asyncapi.yml in this repo is an
+  API Evangelist model of the media.* subset. This catalog is the authoritative list and covers all
+  three event families: media lifecycle, per-viewer viewing-session behaviour, and live-event
+  registration. The viewing_session family is the one most often missed and is the most
+  interesting: it turns Wistia into a behavioural event source, not just a media-state notifier.
+transport:
+  protocol: https
+  method: POST
+  content_type: application/json
+  delivery: at-least-once
+  batching: >-
+    The body always contains an `events` ARRAY, even for a single event. Multiple events can be
+    delivered in one POST.
+  deduplication: on the per-event `uuid`
+  ordering: by `generated_at` (ISO-8601, UTC)
+  user_agent: Wistia-Webhooks/{VERSION}
+  configuration_ui: https://my.wistia.com/account/webhooks
+security:
+  signature_header: X-Wistia-Signature
+  algorithm: HMAC-SHA256 hexdigest
+  signed_content: the raw POST body
+  secret: the `secret_key` configured per webhook in Account Settings
+  verification_example: |
+    payload_body = request.body.read
+    secret_key = SECRET_KEY_AS_DEFINED_IN_WISTIA
+    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), secret_key, payload_body)
+envelope:
+  hook:
+    uuid: A UUID identifying the webhook message.
+  events:
+    uuid: Universally-unique ID for this instance of the event. Only the first instance matters.
+    type: The event type, e.g. media.updated.
+    generated_at: When the event occurred in Wistia. Always ISO-8601, always UTC.
+    payload: The event-specific data and the object it happened to.
+    metadata:
+      account_id: The Wistia account the event belongs to.
+event_count: 17
+events:
+- name: media.created
+  family: media
+  description: A media is created.
+  payload: [media, project]
+- name: media.processing
+  family: media
+  description: Processing has started on a media.
+  payload: [media, project]
+- name: media.ready
+  family: media
+  description: >-
+    Processing is complete and all dependent video and image assets have been successfully encoded.
+    The media is ready for playback. This is the event to wait on before publishing an embed.
+  payload: [media, project]
+- name: media.failed
+  family: media
+  description: Processing of a media failed.
+  payload: [media, project]
+- name: media.updated
+  family: media
+  description: A media's attributes changed.
+  payload: [media, project]
+- name: media.deleted
+  family: media
+  description: A media was deleted.
+  payload: [media, project]
+- name: media.transcript_updated
+  family: media
+  description: >-
+    A media's transcript changed. Carries the transcript ID, which is how a consumer keeps local
+    caption records in sync. Also the completion signal for a captions purchase.
+- name: media.transcript_failed
+  family: media
+  description: Transcript generation failed.
+- name: media.translation_created
+  family: media
+  description: >-
+    A transcript translation ordered via POST /medias/{mediaHashedId}/translate has completed.
+- name: media.localization_created
+  family: media
+  description: >-
+    A dubbed localization ordered via POST /medias/{mediaHashedId}/localizations has completed.
+- name: media.localization_failed
+  family: media
+  description: A localization order failed.
+- name: viewing_session.play
+  family: viewing_session
+  description: A viewer started playback in a viewing session.
+- name: viewing_session.percent_watched
+  family: viewing_session
+  description: A viewing session crossed a watched-percentage threshold.
+- name: viewing_session.turnstile.converted
+  family: viewing_session
+  description: A viewer converted on a Turnstile email-capture gate.
+- name: viewing_session.call_to_action.converted
+  family: viewing_session
+  description: A viewer converted on a call-to-action.
+- name: viewing_session.annotation.converted
+  family: viewing_session
+  description: A viewer converted on an annotation link.
+- name: live_event.registration
+  family: live_event
+  description: >-
+    Someone registered for a live event / webinar. Note the event name still uses the pre-2026-01
+    "live_event" noun even though the REST resource was renamed to webinars.
+families:
+  media: 11
+  viewing_session: 5
+  live_event: 1
+coverage_gap:
+  asyncapi_models: 11
+  catalog_documents: 17
+  note: >-
+    asyncapi/wistia-asyncapi.yml models the 11 media.* events only. The 5 viewing_session events and
+    live_event.registration are documented by Wistia but not yet modeled there.
+no_provider_asyncapi:
+  checked: true
+  note: >-
+    No /asyncapi.yaml, /asyncapi.json or event catalog was found on wistia.com, api.wistia.com or
+    docs.wistia.com, and none is referenced from the RFC 9727 api-catalog linkset — which lists only
+    the OpenAPI service-desc and the MCP server card. Wistia's event surface is documented in prose
+    and in the account UI, not in a machine-readable event description.
+completion_signalling:
+  note: >-
+    Webhooks are the ONLY completion signal for paid asynchronous orders (captions purchase,
+    translation, localization) — there is no polling endpoint for those. Bulk media operations
+    (archive, restore, move, copy, swap, import) go the other way: they return a
+    background_job_status object to poll and emit no completion webhook.
+integrations:
+  zapier: https://docs.wistia.com/docs/webhooks#connecting-to-zapier-example

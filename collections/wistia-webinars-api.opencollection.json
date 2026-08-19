@@ -1,0 +1,118 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Wistia Data Account Webinars API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Webinars",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List webinars",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/webinars"
+          },
+          "docs": "List webinars"
+        },
+        {
+          "info": {
+            "name": "Create webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/webinars"
+          },
+          "docs": "Create webinar"
+        },
+        {
+          "info": {
+            "name": "Show webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.wistia.com/v1/webinars/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Show webinar"
+        },
+        {
+          "info": {
+            "name": "Update webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.wistia.com/v1/webinars/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Update webinar"
+        },
+        {
+          "info": {
+            "name": "Delete webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.wistia.com/v1/webinars/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete webinar"
+        },
+        {
+          "info": {
+            "name": "Register for webinar",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.wistia.com/v1/webinars/:id/registrations",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Register for webinar"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

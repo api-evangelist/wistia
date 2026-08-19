@@ -1,0 +1,120 @@
+generated: '2026-08-14'
+method: searched
+source: >-
+  https://docs.wistia.com/docs/wistia-cli-guide,
+  https://docs.wistia.com/changelog/access-wistia-via-your-terminal-wistia-cli,
+  https://github.com/wistia/wistia-cli,
+  https://raw.githubusercontent.com/wistia/homebrew-tap/main/Formula/wistia-cli.rb
+name: Wistia CLI
+binary: wistia
+official: true
+url: https://docs.wistia.com/docs/wistia-cli-guide
+repository: https://github.com/wistia/wistia-cli
+language: Go
+version: 2026.5.1
+released: '2026-07-01'
+description: >-
+  A first-party command-line client for the Wistia Data API, generated from the same OpenAPI that
+  produces the TypeScript SDK and the MCP server — so the three stay in step by construction.
+  Wistia positions it explicitly as an agent surface for terminal-resident agents (Claude Code,
+  Cursor, Codex) as the complement to the protocol-based MCP server, and backs that with
+  machine-readable output formats including TOON, a token-efficient encoding meant for piping into
+  LLM prompts. That is an unusually deliberate design choice: most CLIs offer JSON and stop.
+install:
+- method: homebrew
+  command: brew install wistia/tap/wistia-cli
+  platforms: [macOS, Linux]
+  tap: https://github.com/wistia/homebrew-tap
+- method: shell-installer
+  command: curl -fsSL https://raw.githubusercontent.com/wistia/wistia-cli/main/scripts/install.sh | bash
+  platforms: [macOS, Linux]
+- method: powershell
+  command: iwr -useb https://raw.githubusercontent.com/wistia/wistia-cli/main/scripts/install.ps1 | iex
+  platforms: [Windows]
+- method: binary
+  url: https://github.com/wistia/wistia-cli/releases
+  platforms: [macOS, Linux, Windows]
+authentication:
+  token_source: API access token created in the API tab of https://account.wistia.com/account/api
+  methods:
+  - name: os-keychain
+    command: wistia configure
+    note: >-
+      Interactive setup stores the token in macOS Keychain, Linux Secret Service, or Windows
+      Credential Locker.
+  - name: environment
+    variable: WISTIA_CLI_BEARER_AUTH
+  - name: flag
+    flag: --bearer-auth
+  fallback: >-
+    Secrets fall back to the config file only when no keychain is available — for example in CI.
+configuration:
+  config_file: ~/.config/wistia/config.yaml
+  scope: non-secret settings only; credentials live in the OS keychain
+output_formats:
+- name: pretty
+  default: true
+  description: Human-readable, aligned, colorized.
+- name: json
+  description: JSON, for scripts and jq.
+- name: yaml
+- name: table
+  description: Tabular, for list responses.
+- name: toon
+  description: >-
+    TOON (https://github.com/toon-format/spec), a compact token-efficient format Wistia recommends
+    for piping into LLM prompts.
+flags:
+- flag: --output-format
+  description: Selects one of the formats above.
+- flag: --jq
+  description: Inline filtering expression; always emits JSON.
+- flag: --bearer-auth
+  description: Per-command token override.
+- flag: --version
+- flag: --help
+shell_completions:
+- bash
+- zsh
+- fish
+- powershell
+completion_command: wistia completion <shell>
+command_groups:
+- name: media
+  operations: upload/import, list, update, copy, archive, trim, swap
+- name: folders
+  operations: folders, subfolders and sharings — organize and share projects
+- name: captions
+  operations: captions, localizations and audio descriptions
+- name: channels
+  operations: channels and episodes — curated collections and podcasts
+- name: webinars
+  operations: webinars and registrations
+- name: tags
+  operations: tags and taggings
+- name: account
+  operations: account, allowed domains and customizations
+- name: search
+- name: analytics
+  operations: stats for media, account, visitors, events and webinars
+- name: remix
+  operations: AI video editing
+key_flows:
+- name: show the current account
+  command: wistia account get
+- name: list media, newest first
+  command: wistia media list
+- name: list folders (projects)
+  command: wistia folders list
+- name: extract media names as JSON
+  command: wistia media list --output-format json | jq '.[].name'
+- name: filter inline
+  command: wistia media list --jq '.[] | select(.type == "Video")'
+agent_positioning:
+  stated_by_provider: true
+  quote: >-
+    "That makes it a natural fit for AI coding agents such as Claude Code, Cursor, and Codex: they
+    can run `wistia` commands and act on the structured results as part of a coding session, the
+    same way a developer would. The CLI is a complement to Wistia's MCP server for agents that work
+    in a terminal rather than over a protocol."
+  source: https://docs.wistia.com/docs/wistia-cli-guide
