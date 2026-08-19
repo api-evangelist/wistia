@@ -44,7 +44,7 @@ url: >-
   https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/apis.yml
 created: '2026-05-11'
 modified: '2026-08-14'
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 apis:
 - aid: wistia:data-api
   name: Wistia Data API
