@@ -60,6 +60,12 @@ apis:
   - Media
   - Analytics
   - Captions
+  - Project
+  tags_raw:
+  - Video
+  - Media
+  - Analytics
+  - Captions
   - Projects
   properties:
   - type: Documentation
@@ -189,6 +195,11 @@ apis:
   humanURL: https://docs.wistia.com/docs/webhooks
   baseURL: https://docs.wistia.com/docs/webhooks
   tags:
+  - Webhook
+  - Event
+  - Media
+  - AsyncAPI
+  tags_raw:
   - Webhooks
   - Events
   - Media
