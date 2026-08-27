@@ -46,115 +46,16 @@ created: '2026-05-11'
 modified: '2026-08-14'
 specificationVersion: '0.23'
 apis:
-- aid: wistia:data-api
-  name: Wistia Data API
-  description: >-
-    REST API providing programmatic access to medias, projects, accounts, customizations, captions, and
-    statistics in a Wistia account. Data is returned in JSON over HTTPS. Authentication uses Bearer Tokens
-    via the Authorization header or HTTP Basic Auth with the API token as the password. Rate limited to
-    600 requests per minute per account.
-  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
-  baseURL: https://api.wistia.com/v1
-  tags:
-  - Video
-  - Media
-  - Analytics
-  - Captions
-  - Project
-  tags_raw:
-  - Video
-  - Media
-  - Analytics
-  - Captions
-  - Projects
-  properties:
-  - type: Documentation
-    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
-  - type: GettingStarted
-    url: https://docs.wistia.com/docs/making-api-requests
-  - type: Authentication
-    url: https://docs.wistia.com/docs/authenticating-with-oauth2
-  - type: APIReference
-    url: https://docs.wistia.com/reference
-  - type: OpenAPI
-    url: openapi/wistia-data-api-v1-openapi.yml
-- aid: wistia:data-api-2026-01
-  name: Wistia Data API 2026-01
-  description: >-
-    The current STABLE release of Wistia's modern Data API — 55 paths and 85 operations covering
-    media, folders, subfolders, folder sharings, captions, localizations, trims, customizations,
-    tags, taggings, channels, channel episodes, webinars, webinar registrations, search, stats,
-    allowed domains, expiring access tokens and background jobs. Version is selected with the
-    X-Wistia-Api-Version request header rather than the path; each dated stable release is
-    supported for one year from its release date, so 2026-01 is supported until 2027-01. The
-    OpenAPI 3.1.1 description is published by Wistia at
-    https://wistia.github.io/wistia/api/openapi-2026-01.yaml and is discoverable machine-to-machine
-    through the RFC 9727 api-catalog linkset at https://api.wistia.com/.well-known/api-catalog.
-  humanURL: https://docs.wistia.com/reference
-  baseURL: https://api.wistia.com/modern
-  tags:
-  - Video
-  - Media
-  - Folders
-  - Captions
-  - Localization
-  - Webinars
-  - Channels
-  - Analytics
-  properties:
-  - type: OpenAPI
-    url: openapi/wistia-data-api-2026-01-openapi.yml
-  - type: Overlay
-    url: overlays/wistia-data-api-2026-01-overlay.yaml
-  - type: APIReference
-    url: https://docs.wistia.com/reference
-  - type: Documentation
-    url: https://docs.wistia.com/docs/migration-from-v1-guide
-  - type: Authentication
-    url: authentication/wistia-authentication.yml
-  - type: OAuthScopes
-    url: scopes/wistia-scopes.yml
-  - type: ErrorCatalog
-    url: errors/wistia-problem-types.yml
-  - type: DataModel
-    url: data-model/wistia-data-model.yml
-  - type: RateLimits
-    url: rate-limits/wistia-rate-limits.yml
-- aid: wistia:data-api-modern-edge
-  name: Wistia Data API (modern, edge)
-  description: >-
-    The edge description of Wistia's modern API — 115 paths and 167 operations, the preview of what
-    lands in the next dated stable release. It carries surfaces absent from 2026-01: Remix (AI video
-    editing), Analytics, Brands, Share Links, Review Bundles, Custom Metadata Fields, Deleted Media,
-    Bulk Actions, Push Devices and Extended Audio Descriptions. It is also the document that carries
-    Wistia's MCP wiring — 125 operations declare an x-wistia-mcp-tool-name plus MCP behaviour
-    annotations, and 23 more are explicitly hidden from agents with x-wistia-mcp-ignore. This is the
-    service-desc that https://api.wistia.com/.well-known/api-catalog points at. Treat it as a
-    preview, not a contract.
-  humanURL: https://docs.wistia.com/reference
-  baseURL: https://api.wistia.com/modern
-  tags:
-  - Video
-  - Media
-  - Remix
-  - Analytics
-  - Custom Metadata
-  - Sharing
-  properties:
-  - type: OpenAPI
-    url: openapi/wistia-data-api-modern-edge-openapi.yml
-  - type: APIReference
-    url: https://docs.wistia.com/reference
 - aid: wistia:mcp
   name: Wistia MCP Server
   description: >-
-    Wistia's first-party hosted Model Context Protocol server, exposing 125 tools across the media,
-    folders, channels, captions, customizations, tags, webinars, sharing, account, analytics, stats
-    and remix toolsets. It is a REMOTE streamable-HTTP endpoint an agent POSTs to directly — no
-    local install — authenticated with OAuth or a Wistia access token, and currently limited to
-    account owners and managers. Discoverable without a human: the server card is linked from
-    Wistia's RFC 9727 api-catalog. An anonymous tools/list returns 401, so the tool inventory in
-    this profile is read from the provider's own OpenAPI annotations rather than guessed.
+    Wistia's first-party hosted Model Context Protocol server, exposing 125 tools across the media, folders,
+    channels, captions, customizations, tags, webinars, sharing, account, analytics, stats and remix toolsets.
+    It is a REMOTE streamable-HTTP endpoint an agent POSTs to directly — no local install — authenticated
+    with OAuth or a Wistia access token, and currently limited to account owners and managers. Discoverable
+    without a human: the server card is linked from Wistia's RFC 9727 api-catalog. An anonymous tools/list
+    returns 401, so the tool inventory in this profile is read from the provider's own OpenAPI annotations
+    rather than guessed.
   humanURL: https://docs.wistia.com/docs/mcp-server-guide
   baseURL: https://api.wistia.com/mcp/api
   tags:
@@ -312,6 +213,1120 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/wistia-webinars-api-openapi.yml
+- aid: wistia:wistia-allowed-domains-api
+  name: Wistia Allowed Domains API
+  description: The Allowed Domains API from Wistia — 2 operation(s) for allowed domains.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Allowed Domains
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-allowed-domains-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-analytics-account-api
+  name: Wistia Analytics:Account API
+  description: The Analytics:Account API from Wistia — 4 operation(s) for analytics:account.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Analytics:Account
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-analytics-account-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-analytics-media-api
+  name: Wistia Analytics:Media API
+  description: The Analytics:Media API from Wistia — 7 operation(s) for analytics:media.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Analytics:Media
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-analytics-media-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-analytics-webinar-api
+  name: Wistia Analytics:Webinar API
+  description: The Analytics:Webinar API from Wistia — 5 operation(s) for analytics:webinar.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Analytics:Webinar
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-analytics-webinar-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-background-job-status-api
+  name: Wistia Background Job Status API
+  description: The Background Job Status API from Wistia — 1 operation(s) for background job status.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Background Job Status
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-background-job-status-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-brands-api
+  name: Wistia Brands API
+  description: The Brands API from Wistia — 1 operation(s) for brands.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Brands
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-brands-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-bulk-actions-api
+  name: Wistia Bulk Actions API
+  description: The Bulk Actions API from Wistia — 1 operation(s) for bulk actions.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Bulk Actions
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-bulk-actions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-channel-collaborators-api
+  name: Wistia Channel Collaborators API
+  description: The Channel Collaborators API from Wistia — 2 operation(s) for channel collaborators.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Channel Collaborators
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-channel-collaborators-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-channel-episodes-api
+  name: Wistia Channel Episodes API
+  description: The Channel Episodes API from Wistia — 6 operation(s) for channel episodes.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Channel Episodes
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-channel-episodes-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-custom-metadata-field-definitions-api
+  name: Wistia Custom Metadata Field Definitions API
+  description: >-
+    The Custom Metadata Field Definitions API from Wistia — 3 operation(s) for custom metadata field definitions.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Custom Metadata Field Definitions
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-custom-metadata-field-definitions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-custom-metadata-field-values-api
+  name: Wistia Custom Metadata Field Values API
+  description: >-
+    The Custom Metadata Field Values API from Wistia — 2 operation(s) for custom metadata field values.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Custom Metadata Field Values
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-custom-metadata-field-values-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-deleted-media-api
+  name: Wistia Deleted Media API
+  description: The Deleted Media API from Wistia — 2 operation(s) for deleted media.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Deleted Media
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-deleted-media-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-expiring-access-tokens-api
+  name: Wistia Expiring Access Tokens API
+  description: The Expiring Access Tokens API from Wistia — 1 operation(s) for expiring access tokens.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Expiring Access Tokens
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-expiring-access-tokens-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-extended-audio-descriptions-api
+  name: Wistia Extended Audio Descriptions API
+  description: >-
+    The Extended Audio Descriptions API from Wistia — 4 operation(s) for extended audio descriptions.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Extended Audio Descriptions
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-extended-audio-descriptions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-folder-sharings-api
+  name: Wistia Folder Sharings API
+  description: The Folder Sharings API from Wistia — 2 operation(s) for folder sharings.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Folder Sharings
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-folder-sharings-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-live-stream-event-registrations-api
+  name: Wistia Live Stream Event Registrations API
+  description: >-
+    The Live Stream Event Registrations API from Wistia — 1 operation(s) for live stream event registrations.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Live Stream Event Registrations
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-live-stream-event-registrations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-live-stream-events-api
+  name: Wistia Live Stream Events API
+  description: The Live Stream Events API from Wistia — 2 operation(s) for live stream events.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Live Stream Events
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-live-stream-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-localizations-api
+  name: Wistia Localizations API
+  description: The Localizations API from Wistia — 2 operation(s) for localizations.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Localizations
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-localizations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-media-api
+  name: Wistia Media API
+  description: The Media API from Wistia — 11 operation(s) for media.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Media
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-media-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-project-sharings-api
+  name: Wistia Project Sharings API
+  description: The Project Sharings API from Wistia — 2 operation(s) for project sharings.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Project Sharings
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-project-sharings-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-projects-api
+  name: Wistia Projects API
+  description: The Projects API from Wistia — 3 operation(s) for projects.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Projects
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-projects-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-push-devices-api
+  name: Wistia Push Devices API
+  description: The Push Devices API from Wistia — 2 operation(s) for push devices.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Push Devices
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-push-devices-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-remix-api
+  name: Wistia Remix API
+  description: The Remix API from Wistia — 5 operation(s) for remix.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Remix
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-remix-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-resource-urls-api
+  name: Wistia Resource URLs API
+  description: The Resource URLs API from Wistia — 1 operation(s) for resource urls.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Resource URLs
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-resource-urls-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-review-bundles-api
+  name: Wistia Review Bundles API
+  description: The Review Bundles API from Wistia — 2 operation(s) for review bundles.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Review Bundles
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-review-bundles-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-search-api
+  name: Wistia Search API
+  description: The Search API from Wistia — 1 operation(s) for search.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-search-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-share-links-api
+  name: Wistia Share Links API
+  description: The Share Links API from Wistia — 2 operation(s) for share links.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Share Links
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-share-links-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-stats-account-api
+  name: Wistia Stats:Account API
+  description: The Stats:Account API from Wistia — 2 operation(s) for stats:account.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Stats:Account
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-stats-account-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-stats-events-api
+  name: Wistia Stats:Events API
+  description: The Stats:Events API from Wistia — 2 operation(s) for stats:events.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Stats:Events
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-stats-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-stats-media-api
+  name: Wistia Stats:Media API
+  description: The Stats:Media API from Wistia — 3 operation(s) for stats:media.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Stats:Media
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-stats-media-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-stats-projects-api
+  name: Wistia Stats:Projects API
+  description: The Stats:Projects API from Wistia — 1 operation(s) for stats:projects.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Stats:Projects
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-stats-projects-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-stats-visitors-api
+  name: Wistia Stats:Visitors API
+  description: The Stats:Visitors API from Wistia — 2 operation(s) for stats:visitors.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Stats:Visitors
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-stats-visitors-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-subfolders-api
+  name: Wistia Subfolders API
+  description: The Subfolders API from Wistia — 5 operation(s) for subfolders.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Subfolders
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-subfolders-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-taggings-api
+  name: Wistia Taggings API
+  description: The Taggings API from Wistia — 1 operation(s) for taggings.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Taggings
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-taggings-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-trims-api
+  name: Wistia Trims API
+  description: The Trims API from Wistia — 1 operation(s) for trims.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Trims
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-trims-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-webinar-collaborators-api
+  name: Wistia Webinar Collaborators API
+  description: The Webinar Collaborators API from Wistia — 2 operation(s) for webinar collaborators.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Webinar Collaborators
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-webinar-collaborators-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-webinar-registrations-api
+  name: Wistia Webinar Registrations API
+  description: The Webinar Registrations API from Wistia — 1 operation(s) for webinar registrations.
+  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  baseURL: https://api.wistia.com/v1
+  tags:
+  - Webinar Registrations
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-webinar-registrations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
 common:
   - type: AgenticAccess
     url: agentic-access/wistia-agentic-access.yml
