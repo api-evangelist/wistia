@@ -16,6 +16,18 @@ description: >-
   https://api.wistia.com/mcp/api, a Go CLI, a Speakeasy-generated
   TypeScript SDK, and the Aurora `<wistia-player>` web component.
 type: Index
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
@@ -1328,6 +1340,9 @@ apis:
   - type: RateLimits
     url: rate-limits/wistia-rate-limits.yml
 common:
+  - type: CapabilityMap
+    url: capabilities/wistia-capability-edges.yml
+    name: Wistia Business Capability Map
   - type: AgenticAccess
     url: agentic-access/wistia-agentic-access.yml
   - type: TrustCenter
