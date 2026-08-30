@@ -1,0 +1,219 @@
+openapi: 3.2.0
+info:
+  title: Wistia Trims API
+  version: '1.0'
+  description: 'Operations tagged Trims across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Trims
+  x-wistia-mcp-toolsets: media
+  x-displayName: Trims
+paths:
+  /medias/{mediaHashedId}/trims:
+    post:
+      summary: Create Media from Trims
+      description: 'Creates a new media that trims off parts of an existing media
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaHashedId
+        in: path
+        description: The hashed ID of the media.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                keep_trims:
+                  description: When set to true, the trims parameter is treated as ranges to keep rather than ranges to remove. Defaults to false.
+                  type: boolean
+                  default: false
+                trims:
+                  description: An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. The ranges should contain the earliest point of the trim first and the later point of the trim second.
+                  type: array
+                  items:
+                    type: string
+              required:
+              - trims
+      responses:
+        '200':
+          description: Successful queueing of trims worker.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  background_job_status:
+                    unevaluatedProperties: false
+                    type: object
+                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                      bulk archiving media, translating media, etc.
+
+                      '
+                    properties:
+                      id:
+                        description: The ID of the background job that's been queued for the request.
+                        type: integer
+                      status:
+                        description: The status of the background job that's been queued for the request.
+                        type: string
+                        enum:
+                        - queued
+                        - started
+                        - finished
+                        - failed
+                    required:
+                    - id
+                    - status
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  errors:
+                    unevaluatedProperties: false
+                    description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                    example:
+                      trims:
+                      - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
+                      media:
+                      - must be part of a project
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Trims
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  responses:
+    '422':
+      description: Unprocessable entity, the request parameters were invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+                example:
+                  trims:
+                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
+                  media:
+                  - must be part of a project
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  schemas:
+    BackgroundJobStatus:
+      type: object
+      description: Status of the background job.
+      properties:
+        id:
+          description: The ID of the background job that's been queued for the request.
+          type: integer
+        status:
+          description: The status of the background job that's been queued for the request.
+          type: string
+          enum:
+          - queued
+          - started
+          - finished
+          - failed
+      required:
+      - id
+      - status
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

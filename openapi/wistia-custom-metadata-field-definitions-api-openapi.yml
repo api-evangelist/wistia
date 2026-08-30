@@ -1,0 +1,1522 @@
+openapi: 3.2.0
+info:
+  title: Custom Metadata Field Definitions API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Custom Metadata Field Definitions
+  x-wistia-mcp-toolsets: media
+  x-displayName: Custom Metadata Field Definitions
+paths:
+  /custom_metadata_field_definitions:
+    get:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: List Custom Metadata Field Definitions
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads custom metadata field definitions from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-wistia-mcp-tool-name: get-custom-metadata-field-definitions
+      x-wistia-mcp-description: 'List, get, show, browse, or find custom metadata field definitions — the
+
+        account''s custom fields that can be attached to media. Use this when someone
+
+        wants to see which custom metadata fields exist on their account or look up a
+
+        field''s key, label, type, or options. Results are ordered by position and
+
+        support pagination. Set include_archived to also return archived fields.
+
+        '
+      description: 'Use this endpoint to request a list of custom metadata field definitions in your Wistia account, ordered by position. This request supports paging.
+
+
+        Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Definitions
+      parameters:
+      - name: include_archived
+        in: query
+        description: Include archived fields in the response
+        required: false
+        schema:
+          type: boolean
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: A list of custom metadata field definitions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  unevaluatedProperties: false
+                  properties:
+                    key:
+                      description: The field's immutable identifier, unique within the account. Use this (not the label) to address the field.
+                      type: string
+                      examples:
+                      - client
+                    label:
+                      description: The field's editable display name.
+                      type: string
+                      examples:
+                      - Client
+                    field_type:
+                      description: The field's data type. Immutable after creation.
+                      type: string
+                      enum:
+                      - text
+                      - number
+                      - date
+                      - boolean
+                      - single_select
+                      - short_text
+                      - url
+                      - email
+                      - money
+                      - time
+                      - datetime
+                      - multi_select
+                      - contact_ref
+                      - contact_multi_ref
+                      examples:
+                      - single_select
+                    position:
+                      description: The field's display order within the account, ascending from 0. May be null.
+                      type:
+                      - integer
+                      - 'null'
+                      examples:
+                      - 0
+                    archived_at:
+                      description: When the field was archived, or null if it is active.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                      examples:
+                      - null
+                    config:
+                      description: 'Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
+
+                        '
+                      unevaluatedProperties: false
+                      oneOf:
+                      - type: object
+                        unevaluatedProperties: false
+                        required:
+                        - options
+                        properties:
+                          options:
+                            description: The field's active options, in display order.
+                            type: array
+                            items:
+                              type: object
+                              unevaluatedProperties: false
+                              properties:
+                                key:
+                                  description: The option's immutable identifier, unique within the field.
+                                  type: string
+                                  examples:
+                                  - high
+                                label:
+                                  description: The option's editable display name.
+                                  type: string
+                                  examples:
+                                  - High
+                                position:
+                                  description: The option's display order within the field, ascending from 0. May be null.
+                                  type:
+                                  - integer
+                                  - 'null'
+                                  examples:
+                                  - 0
+                      - type: object
+                        unevaluatedProperties: false
+                        required:
+                        - used_currencies
+                        properties:
+                          used_currencies:
+                            description: Distinct currency codes among this field's values, ascending.
+                            type: array
+                            items:
+                              type: string
+                            examples:
+                            - - EUR
+                              - USD
+                      - type: object
+                        unevaluatedProperties: false
+                        required:
+                        - allows_group_refs
+                        properties:
+                          allows_group_refs:
+                            description: Whether values may reference contact groups in addition to contacts.
+                            type: boolean
+                            examples:
+                            - false
+                    created_at:
+                      description: The date that the field was originally created.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2026-07-13T18:47:39Z'
+                    updated_at:
+                      description: The date that the field was last updated.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2026-07-17T21:47:00Z'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+    post:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: Create Custom Metadata Field Definition
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new custom metadata field definition in the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool only adds a new field definition; existing data is not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      x-wistia-mcp-tool-name: create-custom-metadata-field-definition
+      x-wistia-mcp-description: 'Create, add, or define a new custom metadata field definition for the
+
+        account. Use this when someone wants a new custom field that can be attached
+
+        to media. The key is immutable and must be lowercase letters, numbers,
+
+        underscores, or hyphens; the field_type is immutable after creation. Provide
+
+        config.options for single_select and multi_select fields. To list existing fields use
+
+        get-custom-metadata-field-definitions.
+
+        '
+      description: 'Creates a new custom metadata field definition. The key is immutable, must match `/\A[a-z0-9_-]+\z/`, cannot start with an underscore, and cannot be a reserved name. The label must be unique per account among active fields (case-insensitive). The field_type is immutable after creation.
+
+
+        Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Definitions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              required:
+              - key
+              - label
+              - field_type
+              properties:
+                key:
+                  description: The field's immutable identifier, unique within the account. Lowercase letters, numbers, underscores, and hyphens only; cannot start with an underscore or be a reserved name.
+                  type: string
+                  examples:
+                  - client
+                label:
+                  description: The field's display name. Must be unique per account among active fields (case-insensitive).
+                  type: string
+                  examples:
+                  - Client
+                field_type:
+                  description: The field's data type. Immutable after creation.
+                  type: string
+                  enum:
+                  - text
+                  - number
+                  - date
+                  - boolean
+                  - single_select
+                  - short_text
+                  - url
+                  - email
+                  - money
+                  - time
+                  - datetime
+                  - multi_select
+                  - contact_ref
+                  - contact_multi_ref
+                  examples:
+                  - single_select
+                default_value:
+                  description: An optional default value for the field, matching the field_type's format.
+                  type:
+                  - string
+                  - 'null'
+                  examples:
+                  - high
+                position:
+                  description: The field's display order within the account, ascending from 0.
+                  type:
+                  - integer
+                  - 'null'
+                  examples:
+                  - 0
+                config:
+                  description: 'Type-specific configuration. Only valid for field types that have any: the select options for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.
+
+                    '
+                  unevaluatedProperties: false
+                  oneOf:
+                  - type: object
+                    unevaluatedProperties: false
+                    required:
+                    - options
+                    properties:
+                      options:
+                        description: The options to create on a single_select or multi_select field.
+                        type: array
+                        items:
+                          type: object
+                          unevaluatedProperties: false
+                          required:
+                          - label
+                          properties:
+                            key:
+                              description: The option's immutable identifier, unique within the field. Defaults to a parameterized label.
+                              type: string
+                              examples:
+                              - high
+                            label:
+                              description: The option's display name.
+                              type: string
+                              examples:
+                              - High
+                            position:
+                              description: The option's display order within the field, ascending from 0.
+                              type:
+                              - integer
+                              - 'null'
+                              examples:
+                              - 0
+                  - type: object
+                    unevaluatedProperties: false
+                    required:
+                    - allows_group_refs
+                    properties:
+                      allows_group_refs:
+                        description: For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only).
+                        type: boolean
+                        examples:
+                        - false
+      responses:
+        '201':
+          description: Custom metadata field definition created
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  key:
+                    description: The field's immutable identifier, unique within the account. Use this (not the label) to address the field.
+                    type: string
+                    examples:
+                    - client
+                  label:
+                    description: The field's editable display name.
+                    type: string
+                    examples:
+                    - Client
+                  field_type:
+                    description: The field's data type. Immutable after creation.
+                    type: string
+                    enum:
+                    - text
+                    - number
+                    - date
+                    - boolean
+                    - single_select
+                    - short_text
+                    - url
+                    - email
+                    - money
+                    - time
+                    - datetime
+                    - multi_select
+                    - contact_ref
+                    - contact_multi_ref
+                    examples:
+                    - single_select
+                  position:
+                    description: The field's display order within the account, ascending from 0. May be null.
+                    type:
+                    - integer
+                    - 'null'
+                    examples:
+                    - 0
+                  archived_at:
+                    description: When the field was archived, or null if it is active.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - null
+                  config:
+                    description: 'Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
+
+                      '
+                    unevaluatedProperties: false
+                    oneOf:
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - options
+                      properties:
+                        options:
+                          description: The field's active options, in display order.
+                          type: array
+                          items:
+                            type: object
+                            unevaluatedProperties: false
+                            properties:
+                              key:
+                                description: The option's immutable identifier, unique within the field.
+                                type: string
+                                examples:
+                                - high
+                              label:
+                                description: The option's editable display name.
+                                type: string
+                                examples:
+                                - High
+                              position:
+                                description: The option's display order within the field, ascending from 0. May be null.
+                                type:
+                                - integer
+                                - 'null'
+                                examples:
+                                - 0
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - used_currencies
+                      properties:
+                        used_currencies:
+                          description: Distinct currency codes among this field's values, ascending.
+                          type: array
+                          items:
+                            type: string
+                          examples:
+                          - - EUR
+                            - USD
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - allows_group_refs
+                      properties:
+                        allows_group_refs:
+                          description: Whether values may reference contact groups in addition to contacts.
+                          type: boolean
+                          examples:
+                          - false
+                  created_at:
+                    description: The date that the field was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-13T18:47:39Z'
+                  updated_at:
+                    description: The date that the field was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-17T21:47:00Z'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: A single error message describing what went wrong.
+                    type: string
+                  errors:
+                    description: Array of error messages describing what went wrong.
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                    - - Title is required
+                      - Event duration must be at least 15 minutes
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /custom_metadata_field_definitions/{key}:
+    get:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: Show Custom Metadata Field Definition
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads a single custom metadata field definition from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-wistia-mcp-tool-name: get-custom-metadata-field-definition
+      x-wistia-mcp-description: 'Get, show, or look up a single custom metadata field definition by its key.
+
+        Use this when someone references a specific custom field by key and wants its
+
+        label, type, position, or options. The key lookup is case-insensitive.
+
+        '
+      description: 'Get details for a specific custom metadata field definition by its key. The lookup is case-insensitive.
+
+
+        Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Definitions
+      parameters:
+      - name: key
+        in: path
+        description: The field's immutable key
+        required: true
+        schema:
+          type: string
+          examples:
+          - client
+      responses:
+        '200':
+          description: Custom metadata field definition details
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  key:
+                    description: The field's immutable identifier, unique within the account. Use this (not the label) to address the field.
+                    type: string
+                    examples:
+                    - client
+                  label:
+                    description: The field's editable display name.
+                    type: string
+                    examples:
+                    - Client
+                  field_type:
+                    description: The field's data type. Immutable after creation.
+                    type: string
+                    enum:
+                    - text
+                    - number
+                    - date
+                    - boolean
+                    - single_select
+                    - short_text
+                    - url
+                    - email
+                    - money
+                    - time
+                    - datetime
+                    - multi_select
+                    - contact_ref
+                    - contact_multi_ref
+                    examples:
+                    - single_select
+                  position:
+                    description: The field's display order within the account, ascending from 0. May be null.
+                    type:
+                    - integer
+                    - 'null'
+                    examples:
+                    - 0
+                  archived_at:
+                    description: When the field was archived, or null if it is active.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - null
+                  config:
+                    description: 'Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
+
+                      '
+                    unevaluatedProperties: false
+                    oneOf:
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - options
+                      properties:
+                        options:
+                          description: The field's active options, in display order.
+                          type: array
+                          items:
+                            type: object
+                            unevaluatedProperties: false
+                            properties:
+                              key:
+                                description: The option's immutable identifier, unique within the field.
+                                type: string
+                                examples:
+                                - high
+                              label:
+                                description: The option's editable display name.
+                                type: string
+                                examples:
+                                - High
+                              position:
+                                description: The option's display order within the field, ascending from 0. May be null.
+                                type:
+                                - integer
+                                - 'null'
+                                examples:
+                                - 0
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - used_currencies
+                      properties:
+                        used_currencies:
+                          description: Distinct currency codes among this field's values, ascending.
+                          type: array
+                          items:
+                            type: string
+                          examples:
+                          - - EUR
+                            - USD
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - allows_group_refs
+                      properties:
+                        allows_group_refs:
+                          description: Whether values may reference contact groups in addition to contacts.
+                          type: boolean
+                          examples:
+                          - false
+                  created_at:
+                    description: The date that the field was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-13T18:47:39Z'
+                  updated_at:
+                    description: The date that the field was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-17T21:47:00Z'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+    put:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: Update Custom Metadata Field Definition
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool updates an existing custom metadata field definition, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool edits mutable attributes of an existing field definition; it does not delete data.
+        idempotent_hint: true
+        idempotent_hint_justification: Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
+      x-wistia-mcp-tool-name: update-custom-metadata-field-definition
+      x-wistia-mcp-description: 'Update, edit, or rename an existing custom metadata field definition by its
+
+        key. Use this to change the label, default value, position, or select
+
+        config.options of a field. The key and field_type cannot be changed. To list
+
+        existing fields use get-custom-metadata-field-definitions.
+
+        '
+      description: 'Updates the editable attributes of a custom metadata field definition addressed by its immutable key: `label`, `default_value`, `position`, and single_select or multi_select options via `config.options` (add, edit, or remove). The `key` and `field_type` are immutable — attempting to change them returns a 422.
+
+
+        Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Definitions
+      parameters:
+      - name: key
+        in: path
+        description: The field's immutable key
+        required: true
+        schema:
+          type: string
+          examples:
+          - client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              properties:
+                label:
+                  description: The field's display name. Must be unique per account among active fields (case-insensitive).
+                  type: string
+                  examples:
+                  - Client
+                default_value:
+                  description: A default value for the field, matching the field_type's format.
+                  type:
+                  - string
+                  - 'null'
+                  examples:
+                  - high
+                position:
+                  description: The field's display order within the account, ascending from 0.
+                  type:
+                  - integer
+                  - 'null'
+                  examples:
+                  - 0
+                config:
+                  description: 'Type-specific configuration changes. Only valid for field types that have any: option add, edit, or remove operations for a single_select or multi_select field, or `allows_group_refs` for a contact_ref or contact_multi_ref field.
+
+                    '
+                  unevaluatedProperties: false
+                  oneOf:
+                  - type: object
+                    unevaluatedProperties: false
+                    required:
+                    - options
+                    properties:
+                      options:
+                        description: Option add, edit, or remove operations, matched by their immutable key.
+                        type: array
+                        items:
+                          type: object
+                          unevaluatedProperties: false
+                          properties:
+                            key:
+                              description: The option's immutable identifier. Required to edit or remove an existing option; defaults to a parameterized label when adding.
+                              type: string
+                              examples:
+                              - high
+                            label:
+                              description: The option's display name. Required when adding a new option.
+                              type: string
+                              examples:
+                              - High
+                            position:
+                              description: The option's display order within the field, ascending from 0.
+                              type:
+                              - integer
+                              - 'null'
+                              examples:
+                              - 0
+                            destroy:
+                              description: When true, removes the option identified by key instead of adding or editing it.
+                              type: boolean
+                              examples:
+                              - false
+                            force:
+                              description: When true, allows removing an option that is still in use by media values.
+                              type: boolean
+                              examples:
+                              - false
+                  - type: object
+                    unevaluatedProperties: false
+                    required:
+                    - allows_group_refs
+                    properties:
+                      allows_group_refs:
+                        description: For contact_ref and contact_multi_ref fields, whether values may reference contact groups in addition to contacts. Defaults to false (contacts only).
+                        type: boolean
+                        examples:
+                        - false
+      responses:
+        '200':
+          description: Custom metadata field definition updated
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  key:
+                    description: The field's immutable identifier, unique within the account. Use this (not the label) to address the field.
+                    type: string
+                    examples:
+                    - client
+                  label:
+                    description: The field's editable display name.
+                    type: string
+                    examples:
+                    - Client
+                  field_type:
+                    description: The field's data type. Immutable after creation.
+                    type: string
+                    enum:
+                    - text
+                    - number
+                    - date
+                    - boolean
+                    - single_select
+                    - short_text
+                    - url
+                    - email
+                    - money
+                    - time
+                    - datetime
+                    - multi_select
+                    - contact_ref
+                    - contact_multi_ref
+                    examples:
+                    - single_select
+                  position:
+                    description: The field's display order within the account, ascending from 0. May be null.
+                    type:
+                    - integer
+                    - 'null'
+                    examples:
+                    - 0
+                  archived_at:
+                    description: When the field was archived, or null if it is active.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - null
+                  config:
+                    description: 'Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
+
+                      '
+                    unevaluatedProperties: false
+                    oneOf:
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - options
+                      properties:
+                        options:
+                          description: The field's active options, in display order.
+                          type: array
+                          items:
+                            type: object
+                            unevaluatedProperties: false
+                            properties:
+                              key:
+                                description: The option's immutable identifier, unique within the field.
+                                type: string
+                                examples:
+                                - high
+                              label:
+                                description: The option's editable display name.
+                                type: string
+                                examples:
+                                - High
+                              position:
+                                description: The option's display order within the field, ascending from 0. May be null.
+                                type:
+                                - integer
+                                - 'null'
+                                examples:
+                                - 0
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - used_currencies
+                      properties:
+                        used_currencies:
+                          description: Distinct currency codes among this field's values, ascending.
+                          type: array
+                          items:
+                            type: string
+                          examples:
+                          - - EUR
+                            - USD
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - allows_group_refs
+                      properties:
+                        allows_group_refs:
+                          description: Whether values may reference contact groups in addition to contacts.
+                          type: boolean
+                          examples:
+                          - false
+                  created_at:
+                    description: The date that the field was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-13T18:47:39Z'
+                  updated_at:
+                    description: The date that the field was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-17T21:47:00Z'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: A single error message describing what went wrong.
+                    type: string
+                  errors:
+                    description: Array of error messages describing what went wrong.
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                    - - Title is required
+                      - Event duration must be at least 15 minutes
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+    delete:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: Archive Custom Metadata Field Definition
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool archives a custom metadata field definition, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool archives the field definition; it can be restored, but the field stops appearing on media until it is.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-wistia-mcp-tool-name: archive-custom-metadata-field-definition
+      x-wistia-mcp-description: 'Archive, soft-delete, or remove a custom metadata field definition by its
+
+        key. Archiving is reversible — the field is hidden but can be restored with
+
+        restore-custom-metadata-field-definition. Archived labels become reusable by
+
+        new fields. Use this when someone wants to retire a custom field.
+
+        '
+      description: 'Archives (soft-deletes) a custom metadata field definition by its immutable key. Archiving is reversible via the restore endpoint. Once archived, the field''s label may be reused by a new active field.
+
+
+        Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Definitions
+      parameters:
+      - name: key
+        in: path
+        description: The field's immutable key
+        required: true
+        schema:
+          type: string
+          examples:
+          - client
+      responses:
+        '200':
+          description: Custom metadata field definition archived
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /custom_metadata_field_definitions/{key}/restore:
+    post:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: Restore Custom Metadata Field Definition
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool restores an archived custom metadata field definition, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool reactivates an archived field definition; it does not delete data.
+        idempotent_hint: true
+        idempotent_hint_justification: Restoring a definition that is not archived is a no-op, so repeating the request has no additional effect.
+      x-wistia-mcp-tool-name: restore-custom-metadata-field-definition
+      x-wistia-mcp-description: 'Restore, unarchive, or reactivate a previously archived custom metadata field
+
+        definition by its key. Use this to bring back a field that was archived with
+
+        archive-custom-metadata-field-definition.
+
+        '
+      description: 'Restores (unarchives) a custom metadata field definition by its immutable key, making it active again. If the field is already active this is a no-op.
+
+
+        Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Definitions
+      parameters:
+      - name: key
+        in: path
+        description: The field's immutable key
+        required: true
+        schema:
+          type: string
+          examples:
+          - client
+      responses:
+        '200':
+          description: Custom metadata field definition restored
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  key:
+                    description: The field's immutable identifier, unique within the account. Use this (not the label) to address the field.
+                    type: string
+                    examples:
+                    - client
+                  label:
+                    description: The field's editable display name.
+                    type: string
+                    examples:
+                    - Client
+                  field_type:
+                    description: The field's data type. Immutable after creation.
+                    type: string
+                    enum:
+                    - text
+                    - number
+                    - date
+                    - boolean
+                    - single_select
+                    - short_text
+                    - url
+                    - email
+                    - money
+                    - time
+                    - datetime
+                    - multi_select
+                    - contact_ref
+                    - contact_multi_ref
+                    examples:
+                    - single_select
+                  position:
+                    description: The field's display order within the account, ascending from 0. May be null.
+                    type:
+                    - integer
+                    - 'null'
+                    examples:
+                    - 0
+                  archived_at:
+                    description: When the field was archived, or null if it is active.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - null
+                  config:
+                    description: 'Type-specific configuration. Present only for field types that have any: an object with `options` for single_select and multi_select fields, an object with `used_currencies` for money fields, and an object with `allows_group_refs` for contact_ref and contact_multi_ref fields.
+
+                      '
+                    unevaluatedProperties: false
+                    oneOf:
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - options
+                      properties:
+                        options:
+                          description: The field's active options, in display order.
+                          type: array
+                          items:
+                            type: object
+                            unevaluatedProperties: false
+                            properties:
+                              key:
+                                description: The option's immutable identifier, unique within the field.
+                                type: string
+                                examples:
+                                - high
+                              label:
+                                description: The option's editable display name.
+                                type: string
+                                examples:
+                                - High
+                              position:
+                                description: The option's display order within the field, ascending from 0. May be null.
+                                type:
+                                - integer
+                                - 'null'
+                                examples:
+                                - 0
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - used_currencies
+                      properties:
+                        used_currencies:
+                          description: Distinct currency codes among this field's values, ascending.
+                          type: array
+                          items:
+                            type: string
+                          examples:
+                          - - EUR
+                            - USD
+                    - type: object
+                      unevaluatedProperties: false
+                      required:
+                      - allows_group_refs
+                      properties:
+                        allows_group_refs:
+                          description: Whether values may reference contact groups in addition to contacts.
+                          type: boolean
+                          examples:
+                          - false
+                  created_at:
+                    description: The date that the field was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-13T18:47:39Z'
+                  updated_at:
+                    description: The date that the field was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-17T21:47:00Z'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

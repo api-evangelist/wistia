@@ -1,0 +1,225 @@
+openapi: 3.2.0
+info:
+  title: Data Resource URLs API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Resource URLs
+  x-wistia-mcp-toolsets:
+  - media
+  - folders
+  - channels
+  - webinars
+  - remix
+  x-displayName: Resource URLs
+paths:
+  /resource_urls:
+    get:
+      summary: Resolve Resource URLs
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads a resource's URLs from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: resourceUrls
+      x-speakeasy-name-override: resolve
+      description: 'Resolves a resource''s hashed ID and type to its canonical app URL(s) — deep
+
+        links an authorized user can open in the Wistia UI. The URL is only returned
+
+        when the authenticated user is allowed to view the resource.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: resolve-resource-urls
+      x-wistia-mcp-description: 'Resolve a Wistia resource''s hashed ID and type to its canonical app URL(s) —
+
+        a deep link an authorized user can open in the Wistia UI (e.g. a media''s
+
+        page, a folder, a channel, a channel episode, a webinar, or a remix). Use
+
+        this when you have a hashed ID and want a link a person can click.
+
+        '
+      parameters:
+      - name: type
+        in: query
+        description: The kind of resource the hashed ID refers to.
+        required: true
+        schema:
+          type: string
+          enum:
+          - media
+          - folder
+          - channel
+          - channel_episode
+          - webinar
+          - remix
+      - name: hashed_id
+        in: query
+        description: The hashed ID of the resource.
+        required: true
+        schema:
+          type: string
+        example: 4d23503f70
+      responses:
+        '200':
+          description: The resource's canonical URLs
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: The kind of resource that was resolved.
+                  hashed_id:
+                    type: string
+                    description: The hashed ID of the resolved resource.
+                  urls:
+                    unevaluatedProperties: false
+                    type: object
+                    description: The resource's canonical app URLs, keyed by kind.
+                    properties:
+                      show:
+                        type: string
+                        description: The page where the resource is viewed.
+                    required:
+                    - show
+                required:
+                - type
+                - hashed_id
+                - urls
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Resource URLs
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

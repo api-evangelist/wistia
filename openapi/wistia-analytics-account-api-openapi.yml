@@ -1,0 +1,1068 @@
+openapi: 3.2.0
+info:
+  title: Data Analytics:Account API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Analytics:Account
+  x-wistia-mcp-toolsets: analytics
+  x-displayName: Analytics:Account
+paths:
+  /analytics/account:
+    get:
+      summary: Show Account Analytics
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads account analytics and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsAccount
+      x-speakeasy-name-override: get
+      description: 'Retrieve aggregate analytics for the entire account over a date range. This endpoint
+
+        provides Bottler-powered analytics across all of the account''s media including plays,
+
+        loads, engagement rate, play rate, and conversion metrics.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Success response with aggregate analytics for the account.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    unique_loads:
+                      description: The number of unique video loads.
+                      type:
+                      - integer
+                      - 'null'
+                    unique_plays:
+                      description: The number of unique video plays.
+                      type:
+                      - integer
+                      - 'null'
+                    plays:
+                      description: The total number of video plays.
+                      type:
+                      - integer
+                      - 'null'
+                    play_rate:
+                      description: The percentage of loads that resulted in a play (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    played_time:
+                      description: Total time spent watching the video in seconds.
+                      type:
+                      - integer
+                      - 'null'
+                    unique_visitors:
+                      description: The number of unique visitors who loaded the video.
+                      type:
+                      - integer
+                      - 'null'
+                    engagement_rate:
+                      description: The average percentage of the video watched (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    form_conversions:
+                      description: The number of form submissions.
+                      type:
+                      - integer
+                      - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Account
+      security:
+      - BearerAuth: []
+  /analytics/account/timeseries:
+    get:
+      summary: Show Account Analytics Timeseries
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads account analytics timeseries and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsAccount
+      x-speakeasy-name-override: getTimeseries
+      description: 'Retrieve analytics timeseries data for the entire account over a date range with
+
+        configurable granularity. Returns an array of timestamped metric buckets aggregated
+
+        across all of the account''s media.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: granularity
+        in: query
+        description: The time granularity for the timeseries data.
+        required: true
+        schema:
+          type: string
+          enum:
+          - daily
+          - weekly
+          - monthly
+      responses:
+        '200':
+          description: Success response with timeseries analytics data for the account.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  allOf:
+                  - type: object
+                    properties:
+                      timestamp:
+                        description: The start of the time bucket in ISO 8601 format.
+                        type: string
+                        format: date-time
+                  - type: object
+                    properties:
+                      unique_loads:
+                        description: The number of unique video loads.
+                        type:
+                        - integer
+                        - 'null'
+                      unique_plays:
+                        description: The number of unique video plays.
+                        type:
+                        - integer
+                        - 'null'
+                      plays:
+                        description: The total number of video plays.
+                        type:
+                        - integer
+                        - 'null'
+                      play_rate:
+                        description: The percentage of loads that resulted in a play (between 0 and 1).
+                        type:
+                        - number
+                        - 'null'
+                        format: float
+                      played_time:
+                        description: Total time spent watching the video in seconds.
+                        type:
+                        - integer
+                        - 'null'
+                      unique_visitors:
+                        description: The number of unique visitors who loaded the video.
+                        type:
+                        - integer
+                        - 'null'
+                      engagement_rate:
+                        description: The average percentage of the video watched (between 0 and 1).
+                        type:
+                        - number
+                        - 'null'
+                        format: float
+                      form_conversions:
+                        description: The number of form submissions.
+                        type:
+                        - integer
+                        - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Account
+      security:
+      - BearerAuth: []
+  /analytics/account/top_content:
+    get:
+      summary: Show Account Top Content
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads account content rankings and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsAccount
+      x-speakeasy-name-override: getTopContent
+      description: 'Rank the account''s content by a chosen metric over a date range. Returns the top
+
+        media, channels, or folders (controlled by `group_by`) with their analytics,
+
+        answering questions like "what were my most-played videos last month?".
+
+
+        Optionally pass `hashed_ids` to scope the ranking to a specific set of media
+
+        instead of the whole account — useful for fetching analytics for a known list
+
+        of videos, still sorted by `sort_by`.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: group_by
+        in: query
+        description: The type of content to rank.
+        required: false
+        schema:
+          type: string
+          enum:
+          - media
+          - channel
+          - project
+          default: media
+      - name: hashed_ids[]
+        in: query
+        description: Scope the ranking to these specific media's hashed IDs, rather than the whole account. Only valid with group_by=media.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          maxItems: 1000
+        explode: true
+        style: form
+      - name: sort_by
+        in: query
+        description: The metric to rank content by.
+        required: false
+        schema:
+          type: string
+          enum:
+          - plays
+          - loads
+          - play_rate
+          - engagement_rate
+          - played_time
+          - unique_visitors
+          default: plays
+      - name: sort_direction
+        in: query
+        description: The sort direction.
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: per_page
+        in: query
+        description: Number of results to return. Defaults to the number of hashed_ids requested, or 10 when hashed_ids is not given.
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+      responses:
+        '200':
+          description: Success response with ranked content analytics. Entry shape depends on `group_by`.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  oneOf:
+                  - unevaluatedProperties: false
+                    allOf:
+                    - type: object
+                      properties:
+                        plays:
+                          description: The total number of plays.
+                          type:
+                          - integer
+                          - 'null'
+                        play_rate:
+                          description: The percentage of loads that resulted in a play (between 0 and 1).
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                        engagement_rate:
+                          description: The average percentage of the content watched (between 0 and 1).
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                        unique_visitors:
+                          description: The number of unique visitors.
+                          type:
+                          - integer
+                          - 'null'
+                        played_time:
+                          description: Total time spent watching in seconds.
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                    - type: object
+                      properties:
+                        media_name:
+                          description: The name of the media.
+                          type:
+                          - string
+                          - 'null'
+                        media_hashed_id:
+                          description: The hashed ID of the media.
+                          type:
+                          - string
+                          - 'null'
+                        media_type:
+                          description: The type of the media (e.g., "Video", "Audio").
+                          type:
+                          - string
+                          - 'null'
+                        media_thumbnail_url:
+                          description: URL of the media's thumbnail image.
+                          type:
+                          - string
+                          - 'null'
+                        media_duration:
+                          description: The duration of the media in seconds.
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                        media_uploaded_at:
+                          description: When the media was uploaded, in ISO 8601 format.
+                          type:
+                          - string
+                          - 'null'
+                        media_deleted_at:
+                          description: When the media was deleted, in ISO 8601 format. Null for media that still exist.
+                          type:
+                          - string
+                          - 'null'
+                        unique_loads:
+                          description: The number of unique video loads.
+                          type:
+                          - integer
+                          - 'null'
+                        unique_plays:
+                          description: The number of unique video plays.
+                          type:
+                          - integer
+                          - 'null'
+                        form_conversions:
+                          description: The number of form submissions.
+                          type:
+                          - integer
+                          - 'null'
+                  - unevaluatedProperties: false
+                    allOf:
+                    - type: object
+                      properties:
+                        plays:
+                          description: The total number of plays.
+                          type:
+                          - integer
+                          - 'null'
+                        play_rate:
+                          description: The percentage of loads that resulted in a play (between 0 and 1).
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                        engagement_rate:
+                          description: The average percentage of the content watched (between 0 and 1).
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                        unique_visitors:
+                          description: The number of unique visitors.
+                          type:
+                          - integer
+                          - 'null'
+                        played_time:
+                          description: Total time spent watching in seconds.
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                    - type: object
+                      properties:
+                        channel_title:
+                          description: The title of the channel.
+                          type:
+                          - string
+                          - 'null'
+                        channel_hashed_id:
+                          description: The hashed ID of the channel.
+                          type:
+                          - string
+                          - 'null'
+                        channel_episode_count:
+                          description: The number of episodes in the channel.
+                          type:
+                          - integer
+                          - 'null'
+                        channel_created_at:
+                          description: When the channel was created, in ISO 8601 format.
+                          type:
+                          - string
+                          - 'null'
+                        channel_url:
+                          description: The URL of the channel.
+                          type:
+                          - string
+                          - 'null'
+                  - unevaluatedProperties: false
+                    allOf:
+                    - type: object
+                      properties:
+                        plays:
+                          description: The total number of plays.
+                          type:
+                          - integer
+                          - 'null'
+                        play_rate:
+                          description: The percentage of loads that resulted in a play (between 0 and 1).
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                        engagement_rate:
+                          description: The average percentage of the content watched (between 0 and 1).
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                        unique_visitors:
+                          description: The number of unique visitors.
+                          type:
+                          - integer
+                          - 'null'
+                        played_time:
+                          description: Total time spent watching in seconds.
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                    - type: object
+                      properties:
+                        project_name:
+                          description: The name of the folder.
+                          type:
+                          - string
+                          - 'null'
+                        project_hashed_id:
+                          description: The hashed ID of the folder.
+                          type:
+                          - string
+                          - 'null'
+                        project_created_at:
+                          description: When the folder was created, in ISO 8601 format.
+                          type:
+                          - string
+                          - 'null'
+                        project_url:
+                          description: The URL of the folder.
+                          type:
+                          - string
+                          - 'null'
+                        project_video_count:
+                          description: The number of videos in the folder.
+                          type:
+                          - integer
+                          - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: One or more of the requested hashed_ids were not found or do not belong to the account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Account
+      security:
+      - BearerAuth: []
+  /analytics/account/embed_locations:
+    get:
+      summary: Show Account Embed Locations
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads account embed locations and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsAccount
+      x-speakeasy-name-override: getEmbedLocations
+      description: 'Retrieve embed location analytics for the entire account. Returns a list of domains
+
+        where the account''s media are embedded, ranked by the chosen metric.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: sort_by
+        in: query
+        description: The metric to sort embed locations by.
+        required: false
+        schema:
+          type: string
+          enum:
+          - plays
+          - loads
+          - engagement_rate
+          - play_rate
+          - played_time
+          - unique_visitors
+          default: plays
+      - name: sort_direction
+        in: query
+        description: The sort direction.
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: per_page
+        in: query
+        description: Number of results to return (max 100).
+        required: false
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: Success response with embed location analytics for the account.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    embed_domain:
+                      description: The domain where the account's media are embedded.
+                      type:
+                      - string
+                      - 'null'
+                    media_count:
+                      description: The number of distinct media embedded on this domain.
+                      type:
+                      - integer
+                      - 'null'
+                    loads:
+                      description: The number of media loads from this domain.
+                      type:
+                      - integer
+                      - 'null'
+                    plays:
+                      description: The number of media plays from this domain.
+                      type:
+                      - integer
+                      - 'null'
+                    play_rate:
+                      description: The play rate from this domain (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    played_time:
+                      description: Total time spent watching from this domain in seconds.
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    engagement_rate:
+                      description: The average engagement rate from this domain (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    unique_visitors:
+                      description: The number of unique visitors from this domain.
+                      type:
+                      - integer
+                      - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Account
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

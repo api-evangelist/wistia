@@ -1,0 +1,377 @@
+openapi: 3.2.0
+info:
+  title: Wistia Stats:Visitors API
+  version: '1.0'
+  description: 'Operations tagged Stats:Visitors across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Stats:Visitors
+  x-wistia-mcp-toolsets: stats
+  x-displayName: Stats:Visitors
+paths:
+  /stats/visitors:
+    get:
+      summary: List Visitors
+      description: 'This endpoint provides a list of visitors that have watched videos in your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: page
+        in: query
+        description: The page of results based on the per_page parameter.
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The maximum number of results to return, capped at 100.
+        schema:
+          type: integer
+      - name: filter
+        in: query
+        description: Filtering parameter to narrow down the list of visitors.
+        schema:
+          type: string
+          enum:
+          - has_name
+          - has_email
+          - identified_by_email_gate
+      - name: search
+        in: query
+        description: Search for visitors based on name or email address.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response with a list of visitors.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    visitor_key:
+                      description: A unique identifier for the visitor.
+                      type: string
+                    created_at:
+                      description: When the visitor was created.
+                      type: string
+                      format: date-time
+                    last_active_at:
+                      description: The last time the visitor played a video.
+                      type: string
+                      format: date-time
+                    last_event_key:
+                      description: The event key for the last video play action.
+                      type: string
+                    load_count:
+                      description: The total number of videos loaded by the visitor.
+                      type: integer
+                    play_count:
+                      description: The total number of videos played by the visitor.
+                      type: integer
+                    visitor_identity:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        email:
+                          type:
+                          - string
+                          - 'null'
+                        org:
+                          unevaluatedProperties: false
+                          type: object
+                          properties:
+                            name:
+                              type:
+                              - string
+                              - 'null'
+                            title:
+                              type:
+                              - string
+                              - 'null'
+                    user_agent_details:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        browser:
+                          type: string
+                        browser_version:
+                          type: string
+                        platform:
+                          type: string
+                        mobile:
+                          type: boolean
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Visitors
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /stats/visitors/{visitorKey}:
+    get:
+      summary: Show Visitor
+      description: 'This endpoint provides detailed information about a specific visitor.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: visitorKey
+        in: path
+        description: The unique key of the visitor.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response with details of a single visitor.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  visitor_key:
+                    description: A unique identifier for the visitor.
+                    type: string
+                  created_at:
+                    description: When the visitor was created.
+                    type: string
+                    format: date-time
+                  last_active_at:
+                    description: The last time the visitor played a video.
+                    type: string
+                    format: date-time
+                  last_event_key:
+                    description: The event key for the last video play action.
+                    type: string
+                  load_count:
+                    description: The total number of videos loaded by the visitor.
+                    type: integer
+                  play_count:
+                    description: The total number of videos played by the visitor.
+                    type: integer
+                  visitor_identity:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      email:
+                        type:
+                        - string
+                        - 'null'
+                      org:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          name:
+                            type:
+                            - string
+                            - 'null'
+                          title:
+                            type:
+                            - string
+                            - 'null'
+                  user_agent_details:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      browser:
+                        type: string
+                      browser_version:
+                        type: string
+                      platform:
+                        type: string
+                      mobile:
+                        type: boolean
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Visitor not found
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Visitors
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  schemas:
+    Visitor:
+      type: object
+      properties:
+        visitor_key:
+          description: A unique identifier for the visitor.
+          type: string
+        created_at:
+          description: When the visitor was created.
+          type: string
+          format: date-time
+        last_active_at:
+          description: The last time the visitor played a video.
+          type: string
+          format: date-time
+        last_event_key:
+          description: The event key for the last video play action.
+          type: string
+        load_count:
+          description: The total number of videos loaded by the visitor.
+          type: integer
+        play_count:
+          description: The total number of videos played by the visitor.
+          type: integer
+        visitor_identity:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type:
+              - string
+              - 'null'
+            org:
+              type: object
+              properties:
+                name:
+                  type:
+                  - string
+                  - 'null'
+                title:
+                  type:
+                  - string
+                  - 'null'
+        user_agent_details:
+          type: object
+          properties:
+            browser:
+              type: string
+            browser_version:
+              type: string
+            platform:
+              type: string
+            mobile:
+              type: boolean
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

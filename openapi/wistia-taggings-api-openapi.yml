@@ -1,0 +1,146 @@
+openapi: 3.2.0
+info:
+  title: Wistia Taggings API
+  version: '1.0'
+  description: 'Operations tagged Taggings across 2 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Taggings
+  x-wistia-mcp-toolsets: tags
+  x-displayName: Taggings
+paths:
+  /taggings/bulk_create:
+    post:
+      summary: Bulk Tag Media
+      description: 'This method accepts a list of medias to tag. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.
+
+
+        The tags will be added to the existing tags on each media file, not replaced.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                hashed_ids:
+                  description: An array of the media hashed IDs to be tagged.
+                  type: array
+                  items:
+                    type: string
+                tag_names:
+                  description: An array of tag names to add to each media.
+                  type: array
+                  items:
+                    type: string
+              required:
+              - hashed_ids
+              - tag_names
+      responses:
+        '200':
+          description: Successful tagging of media.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  message:
+                    description: A confirmation message that the background job has been queued.
+                    type: string
+                  background_job_status:
+                    unevaluatedProperties: false
+                    type: object
+                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                      bulk archiving media, translating media, etc.
+
+                      '
+                    properties:
+                      id:
+                        description: The ID of the background job that's been queued for the request.
+                        type: integer
+                      status:
+                        description: The status of the background job that's been queued for the request.
+                        type: string
+                        enum:
+                        - queued
+                        - started
+                        - finished
+                        - failed
+                    required:
+                    - id
+                    - status
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '422':
+          description: Unprocessable entity, e.g. missing required parameters.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Taggings
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml

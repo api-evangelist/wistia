@@ -1,0 +1,366 @@
+openapi: 3.2.0
+info:
+  title: Wistia Stats:Media API
+  version: '1.0'
+  description: 'Operations tagged Stats:Media across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Stats:Media
+  x-wistia-mcp-toolsets: stats
+  x-displayName: Stats:Media
+paths:
+  /stats/medias/{mediaId}:
+    get:
+      summary: Show Media Stats
+      description: 'Retrieve stats for a video. This endpoint provides statistics for a specific video identified by its media-id.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID or ID of the video for which you want to retrieve stats.
+        required: true
+        schema:
+          description: The hashed ID or numeric ID of the media (e.g., "4d23503f70" or "22570")
+          type: string
+      responses:
+        '200':
+          description: Success response with the stats of the video.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  load_count:
+                    description: The total number of times this video has been loaded.
+                    type: integer
+                  play_count:
+                    description: The total number of times this video has been played.
+                    type: integer
+                  play_rate:
+                    description: The percentage of visitors who clicked play (between 0 and 1).
+                    type: number
+                    format: float
+                  hours_watched:
+                    description: The total time spent watching this video.
+                    type: number
+                    format: float
+                  engagement:
+                    description: The average percentage of the video that gets viewed (between 0 and 1).
+                    type: number
+                    format: float
+                  visitors:
+                    description: The total number of unique people that have loaded this video.
+                    type: integer
+                  actions:
+                    type: array
+                    items:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        text:
+                          description: For action types that include display text (e.g., post-roll CTA), the text shown to the viewer.
+                          type:
+                          - string
+                          - 'null'
+                        url:
+                          description: For action types that link out (e.g., post-roll CTA), the URL the viewer was directed to.
+                          type:
+                          - string
+                          - 'null'
+                        type:
+                          description: Type of action (e.g., "Call to Action").
+                          type: string
+                        action_count:
+                          description: Number of actions performed.
+                          type: integer
+                        impression_count:
+                          description: Number of times the action was shown.
+                          type: integer
+                        rate:
+                          description: The rate of actions performed over impressions.
+                          type: number
+                          format: float
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Media
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /stats/medias/{mediaId}/by_date:
+    get:
+      summary: Show Media Stats by Date
+      description: 'Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The ID of the media
+        required: true
+        schema:
+          type: string
+      - name: start_date
+        in: query
+        description: The start date for the stats, formatted YYYY-MM-DD
+        required: false
+        schema:
+          type: string
+          format: date
+        example: '2024-02-21'
+      - name: end_date
+        in: query
+        description: The end date for the stats, formatted YYYY-MM-DD
+        required: false
+        schema:
+          type: string
+          format: date
+        example: '2024-02-23'
+      responses:
+        '200':
+          description: A list of media stats by date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+                    load_count:
+                      type: integer
+                    play_count:
+                      type: integer
+                    hours_watched:
+                      type: number
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Media
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /stats/medias/{mediaId}/engagement:
+    get:
+      summary: Show Media Engagement
+      description: 'Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID or ID of the video for which you want to retrieve engagement data.
+        required: true
+        schema:
+          description: The hashed ID or numeric ID of the media (e.g., "4d23503f70" or "22570")
+          type: string
+      responses:
+        '200':
+          description: Success response with the engagement data of the video.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  engagement:
+                    description: The percentage of the video that was viewed, averaged across all viewing sessions.
+                    type: number
+                    format: float
+                  engagement_data:
+                    description: An array for creating an engagement graph.
+                    type: array
+                    items:
+                      type: integer
+                  rewatch_data:
+                    description: An array for creating the rewatch block on an engagement graph.
+                    type: array
+                    items:
+                      type: integer
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Media
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

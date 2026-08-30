@@ -1,0 +1,724 @@
+openapi: 3.2.0
+info:
+  title: Data Share Links API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Share Links
+  x-wistia-mcp-toolsets: sharing
+  x-displayName: Share Links
+paths:
+  /share_links/{identifier}:
+    get:
+      summary: Resolve share link
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only looks up an existing share link; it never creates or modifies records.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool only reads a share link.
+        idempotent_hint: true
+        idempotent_hint_justification: Repeated lookups of the same identifier return the same result.
+      x-speakeasy-group: shareLinks
+      x-speakeasy-name-override: resolve
+      description: 'Resolves a share link URL segment — the part after `/s/` in a share
+
+        link like `https://example.wistia.com/s/summer-sale` — to the share
+
+        link and the media it points to, including the media''s hashed ID.
+
+
+        The identifier may be the share link''s hashed ID or its custom slug.
+
+        Historical slugs that were later changed still resolve to the link.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: resolve-share-link
+      x-wistia-mcp-description: 'Resolve or look up a share link by the identifier in its URL — the part
+
+        after /s/ in a link like https://example.wistia.com/s/summer-sale. Works
+
+        with both hashed IDs and custom slugs, including historical slugs. Returns
+
+        the share link along with the hashed ID of the media it points to
+
+        (media_id). Use this when someone has a /s/ share link URL and needs the
+
+        underlying media, for example to build an embed code.
+
+        '
+      parameters:
+      - name: identifier
+        in: path
+        description: The share link's URL segment — its hashed ID or custom slug.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A shareable link for a single media. Each media can have at most one
+
+                  share link, and the link''s `visibility` controls who can view the
+
+                  media when visiting the link.
+
+                  '
+                required:
+                - id
+                - media_id
+                - url
+                - slug
+                - visibility
+                - created_at
+                - updated_at
+                properties:
+                  id:
+                    type: string
+                    description: The hashed ID of the share link. This appears in the link's URL.
+                  media_id:
+                    type: string
+                    description: The hashed ID of the media this share link points to.
+                  url:
+                    type: string
+                    format: uri
+                    description: The full URL viewers can use to view the media via this share link.
+                  slug:
+                    type:
+                    - string
+                    - 'null'
+                    description: 'The share link''s custom slug, if one is set. When present, the slug
+
+                      replaces the hashed ID in the link''s URL.
+
+                      '
+                  visibility:
+                    type: string
+                    enum:
+                    - unlocked
+                    - account
+                    - locked
+                    - domain_verified
+                    description: "Controls who can view the media via this share link.\n\n- `unlocked`: anyone with the link can view the media.\n- `account`: only signed-in members of the media's account can view.\n- `locked`: only contacts with access to the media's folder can view.\n- `domain_verified`: only viewers signed in with an email address at a\n  domain verified on the media's account can view. Requires the account\n  to be enrolled in the domain validation gate; otherwise setting this\n  value returns 400.\n"
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: When the share link was created.
+                  updated_at:
+                    type: string
+                    format: date-time
+                    description: When the share link was last updated.
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Share Links
+      security:
+      - BearerAuth: []
+  /medias/{mediaId}/share_link:
+    get:
+      summary: Show share link
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool returns the existing share link for a media, but auto-provisions one with a default visibility derived from the parent folder if none exists yet.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool only reads or creates a share link; it never modifies an existing one.
+        idempotent_hint: true
+        idempotent_hint_justification: The share link is created once on first request; repeated calls return the same link, so there is no additional effect.
+      x-speakeasy-group: shareLinks
+      x-speakeasy-name-override: get
+      description: 'Fetches the share link for a single media. If the media does not have a
+
+        share link yet, one is created on first request with a default
+
+        visibility derived from the parent folder.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: show-media-share-link
+      x-wistia-mcp-description: 'Show, get, or fetch the share link for a single media — the shareable public
+
+        URL for a video or audio file. If the media has no share link yet, one is
+
+        auto-created on first request with a default visibility derived from the
+
+        parent folder. Use this when someone wants the public sharing URL for a
+
+        media. To change its visibility use update-media-share-link, or
+
+        delete-media-share-link to revoke it.
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the media.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A shareable link for a single media. Each media can have at most one
+
+                  share link, and the link''s `visibility` controls who can view the
+
+                  media when visiting the link.
+
+                  '
+                required:
+                - id
+                - media_id
+                - url
+                - slug
+                - visibility
+                - created_at
+                - updated_at
+                properties:
+                  id:
+                    type: string
+                    description: The hashed ID of the share link. This appears in the link's URL.
+                  media_id:
+                    type: string
+                    description: The hashed ID of the media this share link points to.
+                  url:
+                    type: string
+                    format: uri
+                    description: The full URL viewers can use to view the media via this share link.
+                  slug:
+                    type:
+                    - string
+                    - 'null'
+                    description: 'The share link''s custom slug, if one is set. When present, the slug
+
+                      replaces the hashed ID in the link''s URL.
+
+                      '
+                  visibility:
+                    type: string
+                    enum:
+                    - unlocked
+                    - account
+                    - locked
+                    - domain_verified
+                    description: "Controls who can view the media via this share link.\n\n- `unlocked`: anyone with the link can view the media.\n- `account`: only signed-in members of the media's account can view.\n- `locked`: only contacts with access to the media's folder can view.\n- `domain_verified`: only viewers signed in with an email address at a\n  domain verified on the media's account can view. Requires the account\n  to be enrolled in the domain validation gate; otherwise setting this\n  value returns 400.\n"
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: When the share link was created.
+                  updated_at:
+                    type: string
+                    format: date-time
+                    description: When the share link was last updated.
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Share Links
+      security:
+      - BearerAuth: []
+    put:
+      summary: Update share link
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool updates the share link's visibility (or creates the link if none exists), which modifies who can view the media.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Changing visibility can broaden or restrict who can view the media via the link.
+        idempotent_hint: true
+        idempotent_hint_justification: Re-sending the same share link settings leaves the link in the same state, so repeating the request has no additional effect.
+      x-speakeasy-group: shareLinks
+      x-speakeasy-name-override: update
+      description: 'Updates the share link for a single media. If the media does not have a
+
+        share link yet, one is created with the supplied visibility.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: update-media-share-link
+      x-wistia-mcp-description: 'Update, edit, or change the visibility of a media''s share link — the
+
+        shareable public URL for a video or audio file — controlling who can view
+
+        the media through it. If no share link exists yet, one is created with the
+
+        supplied visibility. Use this when someone wants to make a media''s share URL
+
+        more public or more restricted. To just read it use show-media-share-link,
+
+        or delete-media-share-link to revoke it.
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the media.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              description: Fields that can be set when updating a share link.
+              required:
+              - visibility
+              properties:
+                visibility:
+                  type: string
+                  enum:
+                  - unlocked
+                  - account
+                  - locked
+                  - domain_verified
+                  description: "Controls who can view the media via this share link.\n\n- `unlocked`: anyone with the link can view the media.\n- `account`: only signed-in members of the media's account can view.\n- `locked`: only contacts with access to the media's folder can view.\n- `domain_verified`: only viewers signed in with an email address at a\n  domain verified on the media's account can view. Requires the account\n  to be enrolled in the domain validation gate; otherwise setting this\n  value returns 400.\n"
+      responses:
+        '200':
+          description: Share link update successful
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A shareable link for a single media. Each media can have at most one
+
+                  share link, and the link''s `visibility` controls who can view the
+
+                  media when visiting the link.
+
+                  '
+                required:
+                - id
+                - media_id
+                - url
+                - slug
+                - visibility
+                - created_at
+                - updated_at
+                properties:
+                  id:
+                    type: string
+                    description: The hashed ID of the share link. This appears in the link's URL.
+                  media_id:
+                    type: string
+                    description: The hashed ID of the media this share link points to.
+                  url:
+                    type: string
+                    format: uri
+                    description: The full URL viewers can use to view the media via this share link.
+                  slug:
+                    type:
+                    - string
+                    - 'null'
+                    description: 'The share link''s custom slug, if one is set. When present, the slug
+
+                      replaces the hashed ID in the link''s URL.
+
+                      '
+                  visibility:
+                    type: string
+                    enum:
+                    - unlocked
+                    - account
+                    - locked
+                    - domain_verified
+                    description: "Controls who can view the media via this share link.\n\n- `unlocked`: anyone with the link can view the media.\n- `account`: only signed-in members of the media's account can view.\n- `locked`: only contacts with access to the media's folder can view.\n- `domain_verified`: only viewers signed in with an email address at a\n  domain verified on the media's account can view. Requires the account\n  to be enrolled in the domain validation gate; otherwise setting this\n  value returns 400.\n"
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: When the share link was created.
+                  updated_at:
+                    type: string
+                    format: date-time
+                    description: When the share link was last updated.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Share Links
+      security:
+      - BearerAuth: []
+    delete:
+      summary: Delete share link
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool deletes the share link for a media, which modifies the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Deleting the share link revokes the URL and cannot be undone; a new share link gets a new URL when created.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-speakeasy-group: shareLinks
+      x-speakeasy-name-override: delete
+      description: 'Deletes the share link for a media, revoking the URL. A new share link
+
+        can be created later with a fresh URL by calling the show or update
+
+        endpoint again.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: delete-media-share-link
+      x-wistia-mcp-description: 'Delete, remove, or revoke the share link for a media — the shareable public
+
+        URL that lets people view a single video or audio file. This invalidates the
+
+        existing URL and cannot be undone; a new share link with a fresh URL can be
+
+        created later via show-media-share-link or update-media-share-link. Use this
+
+        when someone wants to revoke or disable a media''s public share URL.
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the media.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Share link deleted
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Share Links
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

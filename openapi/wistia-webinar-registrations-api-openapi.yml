@@ -1,0 +1,626 @@
+openapi: 3.2.0
+info:
+  title: Wistia Webinar Registrations API
+  version: '1.0'
+  description: 'Operations tagged Webinar Registrations across 2 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Webinar Registrations
+  x-wistia-mcp-toolsets: webinars
+  x-displayName: Webinar Registrations
+paths:
+  /webinars/{webinarId}/registrations:
+    post:
+      summary: Create Webinar Registration
+      description: 'Register a person for a webinar by providing their email, first name, and last name.
+
+
+        This endpoint generates a unique visitor key and returns a personalized webinar URL for the registrant.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: webinarId
+        in: path
+        description: Hashed ID of the webinar
+        required: true
+        schema:
+          description: Hashed ID of the webinar (e.g., "abc123xyz")
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              required:
+              - email
+              - first_name
+              - last_name
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email address of the registrant
+                  example: john.doe@example.com
+                first_name:
+                  type: string
+                  description: First name of the registrant
+                  example: John
+                last_name:
+                  type: string
+                  description: Last name of the registrant
+                  example: Doe
+      responses:
+        '201':
+          description: Registration created successfully
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                required:
+                - visitor_key
+                - personalized_event_url
+                properties:
+                  visitor_key:
+                    type: string
+                    description: Unique visitor key generated for the registrant
+                    example: iv_1234567890
+                  personalized_event_url:
+                    type: string
+                    format: uri
+                    description: Personalized URL for the registrant to access the webinar
+                    example: https://wistia.com/webinars/registration?vk=iv_1234567890&uid=john.doe@example.com
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  errors:
+                    unevaluatedProperties: false
+                    description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                    example:
+                      email:
+                      - is invalid
+                      - can't be blank
+                      first_name:
+                      - can't be blank
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Webinar Registrations
+      security:
+      - BearerAuth: []
+    get:
+      summary: List Webinar Registrations
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads webinar registrations from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      description: 'Retrieve a paginated list of registrations for a webinar. Returns contact
+
+        information, attendance status, engagement metrics, and attribution data
+
+        for each registrant.
+
+
+        Pagination uses cursor-based pagination with a `page_info` object in the
+
+        response rather than per-record cursors. Use `page_info.end_cursor` as
+
+        the `cursor` parameter to fetch the next page.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: list-webinar-registrations
+      x-wistia-mcp-description: 'List, get, show, or find the registrations (registrants/attendees) for a webinar —
+
+        the people who signed up or enrolled for a live or scheduled online video event.
+
+        Use this when someone wants to see who registered or attended a webinar. Returns
+
+        contact information, attendance status, engagement metrics, and attribution data
+
+        for each registrant. Uses cursor-based pagination with a `page_info` object; use
+
+        `page_info.end_cursor` as the `cursor` parameter to fetch the next page. Use
+
+        get-webinars to find the webinar, or create-webinar-registration to enroll a new
+
+        attendee.
+
+        '
+      parameters:
+      - name: webinarId
+        in: path
+        description: Hashed ID of the webinar.
+        required: true
+        schema:
+          description: Hashed ID of the webinar (e.g., "abc123xyz")
+          type: string
+      - name: per_page
+        in: query
+        description: Number of results to return per page (max 100).
+        required: false
+        schema:
+          type: integer
+          default: 100
+          minimum: 1
+          maximum: 100
+      - name: cursor
+        in: query
+        description: Cursor for pagination. Use the value from the previous response's `page_info.end_cursor` or `page_info.start_cursor`.
+        required: false
+        schema:
+          type: string
+      - name: sort_direction
+        in: query
+        description: Sort direction (0 = desc/previous page, 1 = asc/next page; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+          default: 1
+      - name: attendance
+        in: query
+        description: Filter registrations by attendance status.
+        required: false
+        schema:
+          type: string
+          enum:
+          - all
+          - attendees
+          - non_attendees
+          default: all
+      - name: restriction
+        in: query
+        description: Filter registrations by restriction status.
+        required: false
+        schema:
+          type: string
+          enum:
+          - all
+          - restricted
+          - allowed
+          default: all
+      - name: emails[]
+        in: query
+        description: Filter registrations by email addresses.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Successful response with a paginated list of registrations.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  registrations:
+                    type: array
+                    items:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        visitor_key:
+                          type:
+                          - string
+                          - 'null'
+                          description: Unique visitor key for the registrant.
+                          example: iv_abc123
+                        email:
+                          type:
+                          - string
+                          - 'null'
+                          description: Registrant's email address.
+                          example: john@example.com
+                        first_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Registrant's first name.
+                          example: John
+                        last_name:
+                          type:
+                          - string
+                          - 'null'
+                          description: Registrant's last name.
+                          example: Doe
+                        phone_number:
+                          type:
+                          - string
+                          - 'null'
+                          description: Registrant's phone number.
+                        company:
+                          type:
+                          - string
+                          - 'null'
+                          description: Registrant's company name.
+                        job_title:
+                          type:
+                          - string
+                          - 'null'
+                          description: Registrant's job title.
+                        country:
+                          type:
+                          - string
+                          - 'null'
+                          description: Registrant's country.
+                        registered_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: When the person registered.
+                          example: '2026-01-15T10:00:00Z'
+                        attended_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: When the person first attended the webinar.
+                          example: '2026-01-15T11:00:00Z'
+                        restriction_status:
+                          type:
+                          - string
+                          - 'null'
+                          description: Whether the registrant is restricted or allowed.
+                          enum:
+                          - restricted
+                          - allowed
+                          - null
+                        origin_method:
+                          type:
+                          - string
+                          - 'null'
+                          description: How the registrant was added (e.g., "form", "email").
+                          example: form
+                        form_field_data:
+                          type: array
+                          description: Custom form field responses submitted by the registrant.
+                          items:
+                            unevaluatedProperties: false
+                            type: object
+                            properties:
+                              value:
+                                type: string
+                                description: The registrant's response.
+                              label:
+                                type: string
+                                description: The form field label.
+                        utm_campaign:
+                          type:
+                          - string
+                          - 'null'
+                          description: UTM campaign parameter captured at registration.
+                        utm_source:
+                          type:
+                          - string
+                          - 'null'
+                          description: UTM source parameter captured at registration.
+                        utm_medium:
+                          type:
+                          - string
+                          - 'null'
+                          description: UTM medium parameter captured at registration.
+                        utm_content:
+                          type:
+                          - string
+                          - 'null'
+                          description: UTM content parameter captured at registration.
+                        utm_term:
+                          type:
+                          - string
+                          - 'null'
+                          description: UTM term parameter captured at registration.
+                        referrer_domain:
+                          type:
+                          - string
+                          - 'null'
+                          description: HTTP referrer domain at time of registration.
+                        ip_region:
+                          type:
+                          - string
+                          - 'null'
+                          description: Region derived from IP address.
+                        ip_country:
+                          type:
+                          - string
+                          - 'null'
+                          description: Country derived from IP address.
+                        ip_city:
+                          type:
+                          - string
+                          - 'null'
+                          description: City derived from IP address.
+                        engagement_rate:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Engagement rate between 0.0 and 1.0.
+                          example: 0.85
+                        focused_rate:
+                          type:
+                          - number
+                          - 'null'
+                          format: float
+                          description: Focused engagement rate between 0.0 and 1.0.
+                        played_time:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total seconds of video watched.
+                        focused_played_time:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total seconds watched in focused state.
+                        chat_count:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of chat messages sent.
+                        chats:
+                          type: array
+                          description: Chat messages sent by the registrant.
+                          items:
+                            unevaluatedProperties: false
+                            type: object
+                            properties:
+                              rounded_player_position:
+                                type: integer
+                                description: Video position in seconds (rounded).
+                              chats:
+                                type: array
+                                items:
+                                  type: string
+                        qa_questions:
+                          type: array
+                          description: Q&A questions asked by the registrant.
+                          items:
+                            unevaluatedProperties: false
+                            type: object
+                            properties:
+                              rounded_player_position:
+                                type: integer
+                                description: Video position in seconds (rounded).
+                              qa_questions:
+                                type: array
+                                items:
+                                  unevaluatedProperties: false
+                                  type: object
+                                  properties:
+                                    question_text:
+                                      type: string
+                        qa_answers:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of Q&A answers.
+                        poll_responses:
+                          type: array
+                          description: Poll responses submitted by the registrant.
+                          items:
+                            unevaluatedProperties: false
+                            type: object
+                            properties:
+                              poll_question_text:
+                                type:
+                                - string
+                                - 'null'
+                              poll_option_text:
+                                type:
+                                - string
+                                - 'null'
+                        poll_responses_count:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Number of poll responses submitted.
+                        annotation_click_count:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Total number of annotation clicks.
+                        attendee_histogram:
+                          description: Per-bucket attendance data for this registrant.
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - integer
+                            - 'null'
+                        focused_attendee_histogram:
+                          description: Per-bucket focused attendance data for this registrant.
+                          type:
+                          - array
+                          - 'null'
+                          items:
+                            type:
+                            - integer
+                            - 'null'
+                  page_info:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      has_next_page:
+                        description: Whether there are more results after this page.
+                        type: boolean
+                      has_previous_page:
+                        description: Whether there are results before this page.
+                        type: boolean
+                      end_cursor:
+                        description: Cursor to use for fetching the next page.
+                        type:
+                        - string
+                        - 'null'
+                      start_cursor:
+                        description: Cursor to use for fetching the previous page.
+                        type:
+                        - string
+                        - 'null'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Webinar feature not available
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Live streaming is not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Webinar Registrations
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml

@@ -1,0 +1,570 @@
+openapi: 3.2.0
+info:
+  title: Wistia Stats:Events API
+  version: '1.0'
+  description: 'Operations tagged Stats:Events across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Stats:Events
+  x-wistia-mcp-toolsets: stats
+  x-displayName: Stats:Events
+paths:
+  /stats/events:
+    get:
+      summary: List Events
+      description: 'Retrieve a list of events. Please note that due to our data retention policy,
+
+        only events from the last 2 years are available.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: media_id
+        in: query
+        description: An optional identifier for a specific video.
+        schema:
+          type: string
+      - name: visitor_key
+        in: query
+        description: An optional identifier for a specific visitor.
+        schema:
+          type: string
+      - name: per_page
+        in: query
+        description: Maximum number of events to retrieve (capped at 100).
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: The page of events to get data from.
+        schema:
+          type: integer
+      - name: start_date
+        in: query
+        description: Start date in the format 'YYYY-MM-DD'.
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date in the format 'YYYY-MM-DD'.
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Successful response with a list of events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    received_at:
+                      description: Date and time when the event occurred.
+                      type: string
+                      format: date-time
+                    event_key:
+                      description: Unique identifier for the event.
+                      type: string
+                    visitor_key:
+                      description: Identifier for the visitor.
+                      type: string
+                    embed_url:
+                      description: URL of the page where the video was viewed.
+                      type: string
+                    percent_viewed:
+                      description: Decimal number denoting how much of the video was watched.
+                      type: number
+                      format: float
+                    ip:
+                      description: IP address of the viewer.
+                      type: string
+                    org:
+                      description: Organization associated with the IP address.
+                      type: string
+                    country:
+                      description: Country based on IP.
+                      type: string
+                    region:
+                      description: Region based on IP.
+                      type: string
+                    city:
+                      description: City based on IP.
+                      type: string
+                    lat:
+                      description: Latitude based on IP.
+                      type: number
+                      format: float
+                    lon:
+                      description: Longitude based on IP.
+                      type: number
+                      format: float
+                    email:
+                      description: Email of the viewer (if available).
+                      type:
+                      - string
+                      - 'null'
+                    media_id:
+                      description: Identifier for the video that was watched.
+                      type: string
+                    media_name:
+                      description: Name of the video.
+                      type: string
+                    media_url:
+                      description: URL of the video in Wistia.
+                      type: string
+                    iframe_heatmap_url:
+                      description: URL for the heatmap of the event.
+                      type: string
+                    thumbnail:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                        width:
+                          type: integer
+                        height:
+                          type: integer
+                        fileSize:
+                          type: integer
+                        contentType:
+                          type: string
+                        type:
+                          type: string
+                    conversion_type:
+                      unevaluatedProperties: false
+                      description: Type of conversion.
+                      oneOf:
+                      - type: integer
+                      - type: string
+                    conversion_data:
+                      unevaluatedProperties: false
+                      description: Additional data related to the conversion.
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                        first_name:
+                          type: string
+                        is_new_lead:
+                          type: boolean
+                        last_name:
+                          type: string
+                    user_agent_details:
+                      unevaluatedProperties: false
+                      description: Details about the user agent of the viewer.
+                      type: object
+                      properties:
+                        browser:
+                          type: string
+                        browser_version:
+                          type: string
+                        platform:
+                          type: string
+                        mobile:
+                          type: boolean
+                    attributes:
+                      unevaluatedProperties: true
+                      description: Raw event attributes returned by the underlying analytics store. The keys mirror the top-level event fields.
+                      type: object
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message describing why the request could not be processed.
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Events
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /stats/events/{eventKey}:
+    get:
+      summary: Show Event
+      description: 'Retrieve information for a single event. Please note that due to our data retention policy,
+
+        only events from the last 2 years are available.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: eventKey
+        in: path
+        description: The unique key of the event.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response with the details of a single event.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  received_at:
+                    description: Date and time when the event occurred.
+                    type: string
+                    format: date-time
+                  event_key:
+                    description: Unique identifier for the event.
+                    type: string
+                  visitor_key:
+                    description: Identifier for the visitor.
+                    type: string
+                  embed_url:
+                    description: URL of the page where the video was viewed.
+                    type: string
+                  percent_viewed:
+                    description: Decimal number denoting how much of the video was watched.
+                    type: number
+                    format: float
+                  ip:
+                    description: IP address of the viewer.
+                    type: string
+                  org:
+                    description: Organization associated with the IP address.
+                    type: string
+                  country:
+                    description: Country based on IP.
+                    type: string
+                  region:
+                    description: Region based on IP.
+                    type: string
+                  city:
+                    description: City based on IP.
+                    type: string
+                  lat:
+                    description: Latitude based on IP.
+                    type: number
+                    format: float
+                  lon:
+                    description: Longitude based on IP.
+                    type: number
+                    format: float
+                  email:
+                    description: Email of the viewer (if available).
+                    type:
+                    - string
+                    - 'null'
+                  media_id:
+                    description: Identifier for the video that was watched.
+                    type: string
+                  media_name:
+                    description: Name of the video.
+                    type: string
+                  media_url:
+                    description: URL of the video in Wistia.
+                    type: string
+                  iframe_heatmap_url:
+                    description: URL for the heatmap of the event.
+                    type: string
+                  thumbnail:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                      width:
+                        type: integer
+                      height:
+                        type: integer
+                      fileSize:
+                        type: integer
+                      contentType:
+                        type: string
+                      type:
+                        type: string
+                  conversion_type:
+                    unevaluatedProperties: false
+                    description: Type of conversion.
+                    oneOf:
+                    - type: integer
+                    - type: string
+                  conversion_data:
+                    unevaluatedProperties: false
+                    description: Additional data related to the conversion.
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      first_name:
+                        type: string
+                      is_new_lead:
+                        type: boolean
+                      last_name:
+                        type: string
+                  user_agent_details:
+                    unevaluatedProperties: false
+                    description: Details about the user agent of the viewer.
+                    type: object
+                    properties:
+                      browser:
+                        type: string
+                      browser_version:
+                        type: string
+                      platform:
+                        type: string
+                      mobile:
+                        type: boolean
+                  attributes:
+                    unevaluatedProperties: true
+                    description: Raw event attributes returned by the underlying analytics store. The keys mirror the top-level event fields.
+                    type: object
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Event not found
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Events
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  responses:
+    422_stats:
+      description: Unprocessable entity, the request parameters were invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                description: Error message describing why the request could not be processed.
+                type: string
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  schemas:
+    Event:
+      type: object
+      properties:
+        received_at:
+          description: Date and time when the event occurred.
+          type: string
+          format: date-time
+        event_key:
+          description: Unique identifier for the event.
+          type: string
+        visitor_key:
+          description: Identifier for the visitor.
+          type: string
+        embed_url:
+          description: URL of the page where the video was viewed.
+          type: string
+        percent_viewed:
+          description: Decimal number denoting how much of the video was watched.
+          type: number
+          format: float
+        ip:
+          description: IP address of the viewer.
+          type: string
+        org:
+          description: Organization associated with the IP address.
+          type: string
+        country:
+          description: Country based on IP.
+          type: string
+        region:
+          description: Region based on IP.
+          type: string
+        city:
+          description: City based on IP.
+          type: string
+        lat:
+          description: Latitude based on IP.
+          type: number
+          format: float
+        lon:
+          description: Longitude based on IP.
+          type: number
+          format: float
+        email:
+          description: Email of the viewer (if available).
+          type:
+          - string
+          - 'null'
+        media_id:
+          description: Identifier for the video that was watched.
+          type: string
+        media_name:
+          description: Name of the video.
+          type: string
+        media_url:
+          description: URL of the video in Wistia.
+          type: string
+        iframe_heatmap_url:
+          description: URL for the heatmap of the event.
+          type: string
+        thumbnail:
+          type: object
+          properties:
+            url:
+              type: string
+            width:
+              type: integer
+            height:
+              type: integer
+            fileSize:
+              type: integer
+            contentType:
+              type: string
+            type:
+              type: string
+        conversion_type:
+          description: Type of conversion.
+          oneOf:
+          - type: integer
+          - type: string
+        conversion_data:
+          description: Additional data related to the conversion.
+          type: object
+          properties:
+            email:
+              type: string
+            first_name:
+              type: string
+            is_new_lead:
+              type: boolean
+            last_name:
+              type: string
+        user_agent_details:
+          description: Details about the user agent of the viewer.
+          type: object
+          properties:
+            browser:
+              type: string
+            browser_version:
+              type: string
+            platform:
+              type: string
+            mobile:
+              type: boolean
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

@@ -1,0 +1,1002 @@
+openapi: 3.2.0
+info:
+  title: Wistia Search API
+  version: '1.0'
+  description: 'Operations tagged Search across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Search
+  x-wistia-mcp-toolsets:
+  - media
+  - folders
+  - channels
+  x-displayName: Search
+paths:
+  /search:
+    get:
+      summary: Search
+      description: 'Searches across folders, medias, channels, and channel episodes.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: q
+        in: query
+        description: The search query string
+        required: true
+        schema:
+          type: string
+        example: screencast
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  data:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      webinars:
+                        type: array
+                        items:
+                          unevaluatedProperties: false
+                          type: object
+                          description: 'A webinar is an event which allows you to stream a video
+
+                            to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
+
+                            for more info.
+
+                            '
+                          properties:
+                            id:
+                              description: The hashed ID of the webinar
+                              type: string
+                              examples:
+                              - abc123def456
+                            title:
+                              description: The title of the webinar
+                              type: string
+                              examples:
+                              - 'Wellness Session: Coping with Outie Memories'
+                            description:
+                              description: The description of the webinar
+                              type:
+                              - string
+                              - 'null'
+                              examples:
+                              - A comprehensive session on managing work-life balance
+                            scheduled_for:
+                              description: The scheduled start time in W3C format with timezone
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              examples:
+                              - '2024-03-20T15:30:00-05:00'
+                            event_duration:
+                              description: Duration of the webinar in minutes
+                              type:
+                              - integer
+                              - 'null'
+                              examples:
+                              - 60
+                            lifecycle_status:
+                              description: Current lifecycle status of the event
+                              type: string
+                              examples:
+                              - scheduled
+                            registration_status:
+                              description: Registration status of the event
+                              type: string
+                              examples:
+                              - published
+                            created_at:
+                              description: When the event was created (UTC)
+                              type: string
+                              format: date-time
+                              examples:
+                              - '2024-03-15T10:30:00Z'
+                            updated_at:
+                              description: When the event was last updated (UTC)
+                              type: string
+                              format: date-time
+                              examples:
+                              - '2024-03-15T10:30:00Z'
+                            audience_link:
+                              description: Link for the audience to join the event
+                              type: string
+                              examples:
+                              - https://lumon-industries.wistia.com/live/events/abc123def456
+                            host_link:
+                              description: Link for the host to manage the event
+                              type: string
+                              examples:
+                              - https://lumon-industries.wistia.com/live/events/abc123def456/onair
+                            panelist_link:
+                              description: Link for panelists to join the event
+                              type: string
+                              examples:
+                              - https://lumon-industries.wistia.com/live/events/abc123def456/onair/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                            cursor:
+                              description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                              type:
+                              - string
+                              - 'null'
+                          required:
+                          - id
+                          - title
+                          - lifecycle_status
+                          - registration_status
+                          - created_at
+                          - updated_at
+                          - audience_link
+                          - host_link
+                          - panelist_link
+                      subfolders:
+                        type: array
+                        items:
+                          type: object
+                          description: A subfolder within a folder that contains media.
+                          properties:
+                            hashed_id:
+                              description: A unique alphanumeric identifier for this subfolder.
+                              type: string
+                              examples:
+                              - abc123def4
+                            name:
+                              description: The display name of the subfolder.
+                              type:
+                              - string
+                              - 'null'
+                              examples:
+                              - Marketing Videos
+                            description:
+                              description: A description for the subfolder.
+                              type:
+                              - string
+                              - 'null'
+                              examples:
+                              - Collection of all marketing and promotional videos
+                            position:
+                              description: The position of this subfolder within its folder, used for ordering.
+                              type:
+                              - integer
+                              - 'null'
+                              examples:
+                              - 1
+                            created:
+                              description: The date when the subfolder was created.
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              examples:
+                              - '2024-01-15T10:30:00+00:00'
+                            updated:
+                              description: The date when the subfolder was last modified.
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              examples:
+                              - '2024-01-20T14:45:00+00:00'
+                            cursor:
+                              description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                              type:
+                              - string
+                              - 'null'
+                          required:
+                          - hashed_id
+                          - position
+                          - created
+                          - updated
+                      folders:
+                        type: array
+                        items:
+                          unevaluatedProperties: false
+                          type: object
+                          description: 'A folder (previously called a project) is a container in which to organize media into. It can be
+
+                            used to set permissions that apply to all the media in the folder as well as
+
+                            organizing media into subfolders (previously called media groups).
+
+                            '
+                          properties:
+                            personal_library:
+                              description: 'Whether this folder is someone''s personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+
+                                '
+                              type: boolean
+                              examples:
+                              - false
+                            kind:
+                              description: 'Indicates the folder''s access scope, relative to the requesting user. One of:
+
+                                - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+
+                                - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact''s library that the requester has been granted access to.
+
+                                - `account`: a folder shared with the whole account (everyone in the company can see it).
+
+                                '
+                              type: string
+                              enum:
+                              - library
+                              - shared
+                              - account
+                              examples:
+                              - shared
+                            id:
+                              description: A unique numeric identifier for the folder within the system.
+                              type: integer
+                              examples:
+                              - 22570
+                            name:
+                              description: The folder’s display name.
+                              type: string
+                              examples:
+                              - My Folder Title
+                            description:
+                              description: The folder’s description.
+                              type:
+                              - string
+                              - 'null'
+                              examples:
+                              - About My Folder
+                            media_count:
+                              description: The number of different medias that have been uploaded to the folder.
+                              type: integer
+                              examples:
+                              - 2
+                            medias:
+                              description: A link to where you can fetch the medias for this folder.
+                              type: object
+                              properties:
+                                protected:
+                                  description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                                  type:
+                                  - boolean
+                                  - 'null'
+                                id:
+                                  description: A unique numeric identifier for the media within the system.
+                                  type: integer
+                                name:
+                                  description: The display name of the media.
+                                  type: string
+                                type:
+                                  description: A string representing what type of media this is.
+                                  type: string
+                                  enum:
+                                  - Video
+                                  - Audio
+                                  - Image
+                                  - PdfDocument
+                                  - MicrosoftOfficeDocument
+                                  - Swf
+                                  - UnknownType
+                                archived:
+                                  description: Whether or not the media is archived, either true or false.
+                                  type: boolean
+                                created:
+                                  description: The date when the media was originally uploaded.
+                                  type: string
+                                  format: date-time
+                                updated:
+                                  description: The date when the media was last changed.
+                                  type: string
+                                  format: date-time
+                                duration:
+                                  unevaluatedProperties: false
+                                  description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+                                  oneOf:
+                                  - type: number
+                                  - type: 'null'
+                                embedCode:
+                                  description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+                                    '
+                                  type: string
+                                  deprecated: true
+                                hashed_id:
+                                  description: A unique alphanumeric identifier for this media.
+                                  type: string
+                                description:
+                                  description: A description for the media which usually appears near the top of the sidebar on the media's page.
+                                  type: string
+                                progress:
+                                  description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+                                  type: number
+                                  maximum: 1
+                                  minimum: 0
+                                status:
+                                  description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+                                    '
+                                  type: string
+                                  enum:
+                                  - queued
+                                  - processing
+                                  - ready
+                                  - failed
+                                section:
+                                  unevaluatedProperties: false
+                                  description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+                                  oneOf:
+                                  - type: string
+                                  - type: 'null'
+                                thumbnail:
+                                  unevaluatedProperties: false
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                                    width:
+                                      type: integer
+                                    height:
+                                      type: integer
+                            created:
+                              description: The date that the folder was originally created.
+                              type: string
+                              format: date-time
+                              examples:
+                              - '2010-08-13T18:47:39+00:00'
+                            updated:
+                              description: The date that the folder was last updated.
+                              type: string
+                              format: date-time
+                              examples:
+                              - '2010-08-19T21:47:00+00:00'
+                            hashed_id:
+                              description: A private hashed id, uniquely identifying the folder within the system.
+                              type: string
+                              examples:
+                              - 4d23503f70
+                            public:
+                              description: A boolean indicating whether the folder is available for public (anonymous) viewing.
+                              type: boolean
+                              examples:
+                              - false
+                            public_id:
+                              description: If the folder is public, this field contains a string representing the ID used for referencing the folder in public URLs.
+                              type:
+                              - string
+                              - 'null'
+                              examples:
+                              - 4bD
+                            anonymous_can_upload:
+                              type: boolean
+                              examples:
+                              - false
+                            anonymous_can_download:
+                              type: boolean
+                              examples:
+                              - false
+                            cursor:
+                              description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                              type:
+                              - string
+                              - 'null'
+                          required:
+                          - id
+                          - name
+                          - media_count
+                          - created
+                          - updated
+                          - hashed_id
+                          - public
+                          - public_id
+                          - medias
+                      medias:
+                        type: array
+                        items:
+                          unevaluatedProperties: false
+                          allOf:
+                          - type: object
+                            description: 'A media generally represents a video or an audio which can be embedded into your website.
+
+
+                              CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+
+                              For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
+
+                              '
+                            properties:
+                              protected:
+                                description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                                type:
+                                - boolean
+                                - 'null'
+                              id:
+                                description: A unique numeric identifier for the media within the system.
+                                type: integer
+                              name:
+                                description: The display name of the media.
+                                type: string
+                              type:
+                                description: A string representing what type of media this is.
+                                type: string
+                                enum:
+                                - Video
+                                - Audio
+                                - Image
+                                - PdfDocument
+                                - MicrosoftOfficeDocument
+                                - Swf
+                                - UnknownType
+                              archived:
+                                description: Whether or not the media is archived, either true or false.
+                                type: boolean
+                              created:
+                                description: The date when the media was originally uploaded.
+                                type: string
+                                format: date-time
+                              updated:
+                                description: The date when the media was last changed.
+                                type: string
+                                format: date-time
+                              duration:
+                                unevaluatedProperties: false
+                                description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+                                oneOf:
+                                - type: number
+                                - type: 'null'
+                              embedCode:
+                                description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+                                  '
+                                type: string
+                                deprecated: true
+                              hashed_id:
+                                description: A unique alphanumeric identifier for this media.
+                                type: string
+                              description:
+                                description: A description for the media which usually appears near the top of the sidebar on the media's page.
+                                type: string
+                              progress:
+                                description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+                                type: number
+                                maximum: 1
+                                minimum: 0
+                              status:
+                                description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+                                  '
+                                type: string
+                                enum:
+                                - queued
+                                - processing
+                                - ready
+                                - failed
+                              section:
+                                unevaluatedProperties: false
+                                description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+                                oneOf:
+                                - type: string
+                                - type: 'null'
+                              thumbnail:
+                                unevaluatedProperties: false
+                                type: object
+                                properties:
+                                  url:
+                                    type: string
+                                  width:
+                                    type: integer
+                                  height:
+                                    type: integer
+                          - type: object
+                            properties:
+                              folder_hashed_id:
+                                description: The hashed ID of the folder this media belongs to
+                                type:
+                                - string
+                                - 'null'
+                                examples:
+                                - 4d23503f70
+                              transcript_matches:
+                                description: Array of transcript matches with timestamps
+                                type: array
+                                items:
+                                  unevaluatedProperties: false
+                                  type: object
+                                  properties:
+                                    text:
+                                      type: string
+                                      description: The matched transcript text with context
+                                      example: today we'll talk about product demo
+                                    start_time_seconds:
+                                      type: number
+                                      description: Start time of the match in seconds
+                                      example: 3
+                                    start_time_formatted:
+                                      type: string
+                                      description: Human-readable start time (e.g., "0:03" or "1:23:45")
+                                      example: 0:03
+                                    thumbnail_url:
+                                      type:
+                                      - string
+                                      - 'null'
+                                      description: Thumbnail URL at the match timestamp
+                                      example: https://example.com/thumb.jpg?video_still_time=3.0
+                                  required:
+                                  - text
+                                  - start_time_seconds
+                                  - start_time_formatted
+                                  - thumbnail_url
+                            required:
+                            - folder_hashed_id
+                            - transcript_matches
+                      channels:
+                        type: array
+                        items:
+                          unevaluatedProperties: false
+                          type: object
+                          properties:
+                            custom_url:
+                              description: The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
+                              type:
+                              - string
+                              - 'null'
+                            podcast_enabled:
+                              description: Whether podcasting is enabled for the channel.
+                              type:
+                              - boolean
+                              - 'null'
+                            auto_publish_enabled:
+                              description: Whether episodes are automatically published when added to the channel.
+                              type:
+                              - boolean
+                              - 'null'
+                            live_stream_event_count:
+                              description: The number of live stream events in the channel.
+                              type: integer
+                            id:
+                              description: A unique numeric identifier for the channel within the system.
+                              type: integer
+                            hashed_id:
+                              description: A unique alphanumeric identifier for this channel.
+                              type: string
+                            name:
+                              description: The display name for the channel.
+                              type: string
+                            description:
+                              description: The channel's description.
+                              type: string
+                            media_count:
+                              description: The number of medias in the channel.
+                              type: integer
+                            created:
+                              description: The date when the channel was originally created.
+                              type: string
+                              format: date-time
+                            updated:
+                              description: The date when the channel was last updated.
+                              type: string
+                              format: date-time
+                          required:
+                          - id
+                          - hashed_id
+                          - name
+                          - description
+                          - media_count
+                          - created
+                          - updated
+                      channel_episodes:
+                        type: array
+                        items:
+                          unevaluatedProperties: false
+                          type: object
+                          properties:
+                            live_stream_event_hashed_id:
+                              description: The hashed ID of the live stream event associated with this channel episode, if any.
+                              type:
+                              - string
+                              - 'null'
+                            id:
+                              description: A unique numeric identifier for the channel episode within the system.
+                              type: integer
+                            hashed_id:
+                              description: A unique alphanumeric identifier for this channel episode.
+                              type: string
+                            title:
+                              description: The title of the channel episode.
+                              type:
+                              - string
+                              - 'null'
+                            description:
+                              description: The episode notes for the channel episode.
+                              type: string
+                            summary:
+                              description: The description of the channel episode.
+                              type: string
+                            channel_hashed_id:
+                              description: The hashed ID of the channel this episode belongs to.
+                              type:
+                              - string
+                              - 'null'
+                            media_hashed_id:
+                              description: The hashed ID of the media associated with this channel episode.
+                              type:
+                              - string
+                              - 'null'
+                            published:
+                              description: Whether the channel episode is published.
+                              type: boolean
+                            created:
+                              description: The date when the channel episode was originally created.
+                              type: string
+                              format: date-time
+                            updated:
+                              description: The date when the channel episode was last updated.
+                              type: string
+                              format: date-time
+                            publish_at:
+                              description: The scheduled publish date (only present if scheduled).
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                          required:
+                          - id
+                          - hashed_id
+                          - description
+                          - summary
+                          - channel_hashed_id
+                          - media_hashed_id
+                          - published
+                          - created
+                          - updated
+                    required:
+                    - folders
+                    - medias
+                    - channels
+                    - channel_episodes
+                required:
+                - data
+        '400':
+          description: Bad request - missing query parameter
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - the "q" parameter should specify the search query, e.g. "q=screencast"
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Search
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  schemas:
+    SearchChannel:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the channel within the system.
+          type: integer
+        hashedId:
+          description: A unique alphanumeric identifier for this channel.
+          type: string
+        name:
+          description: The display name for the channel.
+          type: string
+        description:
+          description: The channel's description.
+          type: string
+        mediaCount:
+          description: The number of medias in the channel.
+          type: integer
+        created:
+          description: The date when the channel was originally created.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the channel was last updated.
+          type: string
+          format: date-time
+      required:
+      - id
+      - hashedId
+      - name
+      - description
+      - mediaCount
+      - created
+      - updated
+    Project:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the project within the system.
+          type: integer
+          examples:
+          - 22570
+        name:
+          description: The project’s display name.
+          type: string
+          examples:
+          - My Project Title
+        description:
+          description: The project’s description.
+          type:
+          - string
+          - 'null'
+          examples:
+          - About My Project
+        mediaCount:
+          description: The number of different medias that have been uploaded to the project.
+          type: integer
+          examples:
+          - 2
+        created:
+          description: The date that the project was originally created.
+          type: string
+          format: date-time
+          examples:
+          - '2010-08-13T18:47:39+00:00'
+        updated:
+          description: The date that the project was last updated.
+          type: string
+          format: date-time
+          examples:
+          - '2010-08-19T21:47:00+00:00'
+        hashedId:
+          description: A private hashed id, uniquely identifying the project within the system.
+          type: string
+          examples:
+          - 4d23503f70
+        public:
+          description: A boolean indicating whether the project is available for public (anonymous) viewing.
+          type: boolean
+          examples:
+          - false
+        publicId:
+          description: If the project is public, this field contains a string representing the ID used for referencing the project in public URLs.
+          type:
+          - string
+          - 'null'
+          examples:
+          - 4bD
+        anonymousCanUpload:
+          type: boolean
+          examples:
+          - false
+        anonymousCanDownload:
+          type: boolean
+          examples:
+          - false
+      required:
+      - id
+      - name
+      - mediaCount
+      - created
+      - updated
+      - hashedId
+      - public
+      - publicId
+    MediaProperties:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the media within the system.
+          type: integer
+        name:
+          description: The display name of the media.
+          type: string
+        type:
+          description: A string representing what type of media this is.
+          type: string
+          enum:
+          - Video
+          - Audio
+          - Image
+          - PdfDocument
+          - MicrosoftOfficeDocument
+          - Swf
+          - UnknownType
+        archived:
+          description: Whether or not the media is archived, either true or false.
+          type: boolean
+        created:
+          description: The date when the media was originally uploaded.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the media was last changed.
+          type: string
+          format: date-time
+        duration:
+          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+          type: number
+        embedCode:
+          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+            '
+          type: string
+          deprecated: true
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        description:
+          description: A description for the media which usually appears near the top of the sidebar on the media's page.
+          type: string
+        progress:
+          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+          type: number
+          maximum: 1
+          minimum: 0
+        status:
+          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+            '
+          type: string
+          enum:
+          - queued
+          - processing
+          - ready
+          - failed
+        section:
+          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+          type: string
+        thumbnail:
+          $ref: '#/components/schemas/Thumbnail'
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    SearchChannelEpisode:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the channel episode within the system.
+          type: integer
+        hashedId:
+          description: A unique alphanumeric identifier for this channel episode.
+          type: string
+        title:
+          description: The title of the channel episode.
+          type:
+          - string
+          - 'null'
+        description:
+          description: The episode notes for the channel episode.
+          type: string
+        summary:
+          description: The description of the channel episode.
+          type: string
+        channelHashedId:
+          description: The hashed ID of the channel this episode belongs to.
+          type: string
+        mediaHashedId:
+          description: The hashed ID of the media associated with this channel episode.
+          type: string
+        published:
+          description: Whether the channel episode is published.
+          type: boolean
+        created:
+          description: The date when the channel episode was originally created.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the channel episode was last updated.
+          type: string
+          format: date-time
+        publish_at:
+          description: The scheduled publish date (only present if scheduled).
+          type:
+          - string
+          - 'null'
+          format: date-time
+      required:
+      - id
+      - hashedId
+      - description
+      - summary
+      - channelHashedId
+      - mediaHashedId
+      - published
+      - created
+      - updated
+    SearchMedia:
+      allOf:
+      - $ref: '#/components/schemas/MediaProperties'
+      - type: object
+        properties:
+          projectHashedId:
+            description: The hashed ID of the project this media belongs to
+            type: string
+            examples:
+            - 4d23503f70
+        required:
+        - projectHashedId
+  responses:
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

@@ -1,0 +1,505 @@
+openapi: 3.2.0
+info:
+  title: Data Deleted Media API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Deleted Media
+  x-wistia-mcp-toolsets: media
+  x-displayName: Deleted Media
+paths:
+  /deleted_media:
+    get:
+      summary: List Deleted Media
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads soft-deleted media from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-wistia-mcp-tool-name: list-deleted-media
+      x-wistia-mcp-description: 'List, show, or browse media that has been deleted and is still within the
+
+        restore window (the "Recently Deleted" area). Use this when someone wants to
+
+        see what they recently deleted or find a deleted video/audio to bring back.
+
+        Deleted media can only be restored for a limited time — 30 days on most plans,
+
+        14 days on free plans (configurable up to 90) — after which it is permanently
+
+        purged; each item''s restore_expires_at is the deadline. Filter by hashed_ids to
+
+        batch-fetch specific items. Use restore-deleted-media to bring media back.
+
+        '
+      description: 'Lists media that has been soft-deleted and is still inside the account''s
+
+        restore window. Media is listed only while it can still be restored — 30 days
+
+        on most plans, 14 on free plans. After which it is permanently purged.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Deleted Media
+      parameters:
+      - name: hashed_ids[]
+        in: query
+        description: Restrict the results to the deleted media with these hashed IDs.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: sort_by
+        in: query
+        description: Field to order by. When omitted, results are ordered most-recently-deleted first.
+        required: false
+        schema:
+          type: string
+          enum:
+          - id
+          - deleted
+          - name
+          - type
+          - created
+      - name: sort_direction
+        in: query
+        description: Direction to order by. (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      responses:
+        '200':
+          description: Deleted media retrieval successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  unevaluatedProperties: false
+                  properties:
+                    hashed_id:
+                      description: A unique alphanumeric identifier for this media.
+                      type: string
+                    name:
+                      description: The media display name.
+                      type: string
+                      examples:
+                      - My deleted video
+                    type:
+                      description: The type of media (e.g. Video, Audio).
+                      type: string
+                      examples:
+                      - Video
+                    duration:
+                      description: The length of the media in seconds.
+                      type:
+                      - number
+                      - 'null'
+                    deleted_at:
+                      description: When the media was deleted, in ISO 8601 format.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2026-06-20T18:47:39+00:00'
+                    restore_expires_at:
+                      description: The deadline after which this media is permanently purged and can no longer be restored (deleted_at plus the account's restore window).
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2026-07-20T18:47:39+00:00'
+                    folder:
+                      description: The folder the media will return to if restored without an explicit target. Null if the original folder was also deleted.
+                      type:
+                      - object
+                      - 'null'
+                      unevaluatedProperties: false
+                      properties:
+                        hashed_id:
+                          type: string
+                        name:
+                          type:
+                          - string
+                          - 'null'
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /deleted_media/restore:
+    post:
+      summary: Restore Deleted Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool restores soft-deleted media, which changes account data by bringing media back.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and Wistia's own storage; it does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: Restoring media only brings back previously deleted media; it does not delete or overwrite anything.
+        idempotent_hint: true
+        idempotent_hint_justification: Media that is already restored is skipped, so repeating the request has no additional effect.
+      x-wistia-mcp-tool-name: restore-deleted-media
+      x-wistia-mcp-description: 'Restore (un-delete, recover, bring back) media that was recently deleted. Use
+
+        this when someone wants to undo a deletion or recover videos/audio they
+
+        deleted. Provide the hashed ids of the media to restore (media_hashed_ids), up
+
+        to 1000 at a time. By default each media returns to the folder it was deleted
+
+        from; pass folder_id to restore them all into a specific folder instead. Only
+
+        media still inside the restore window can be recovered. Restoring runs
+
+        asynchronously, returning a background_job_status to poll for completion.
+
+        '
+      description: 'Restores one or more soft-deleted media. By default each media returns to the
+
+        folder it was deleted from; pass folder_id to restore them into a specific
+
+        folder instead. Only media still inside the restore window can be recovered.
+
+        The restore runs asynchronously and the response includes a background job
+
+        status.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Upload and view media
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Deleted Media
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              properties:
+                media_hashed_ids:
+                  description: The hashed ids of the soft-deleted media to restore. Up to 1000 at a time.
+                  type: array
+                  items:
+                    type: string
+                  examples:
+                  - abc123
+                  - abc124
+                folder_id:
+                  description: Optional hashed id of the folder to restore the media into. If omitted, each media returns to the folder it was deleted from.
+                  type: string
+                  examples:
+                  - folder123
+              required:
+              - media_hashed_ids
+      responses:
+        '202':
+          description: Restore request accepted and queued for processing.
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - Restoring 3 media.
+                  background_job_status:
+                    type: object
+                    unevaluatedProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      hashed_id:
+                        type: string
+                      status:
+                        type: string
+                        examples:
+                        - queued
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

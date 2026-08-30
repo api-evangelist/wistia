@@ -1,0 +1,1176 @@
+openapi: 3.2.0
+info:
+  title: Data Extended Audio Descriptions API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Extended Audio Descriptions
+  x-wistia-mcp-toolsets: captions
+  x-displayName: Extended Audio Descriptions
+paths:
+  /media_extended_audio_descriptions:
+    get:
+      x-speakeasy-group: mediaExtendedAudioDescriptions
+      summary: List Media Extended Audio Descriptions
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media extended audio descriptions from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      description: 'Lists all extended audio descriptions belonging to the account. Supports pagination and sorting.
+
+        '
+      x-wistia-mcp-tool-name: get-media-extended-audio-descriptions
+      x-wistia-mcp-description: 'List, get, or find all extended audio descriptions (EADs) in the account —
+
+        the accessibility audio tracks that narrate on-screen visuals for blind and
+
+        low-vision viewers. Supports pagination, filtering by hashed_ids, and
+
+        sorting. Use this when someone wants to see existing audio descriptions. For
+
+        a single one use show-media-extended-audio-description, or
+
+        order-media-extended-audio-description to buy a new one.
+
+        '
+      tags:
+      - Extended Audio Descriptions
+      parameters:
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      - name: hashed_ids[]
+        in: query
+        description: Filter extended audio descriptions to only those matching these hashed ids.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      - name: sort_by
+        in: query
+        description: Field to order by. The default is id.
+        required: false
+        schema:
+          type: string
+          enum:
+          - language
+          - created
+          - updated
+          - id
+      - name: sort_direction
+        in: query
+        description: Direction to order by. (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      responses:
+        '200':
+          description: Media Extended Audio Descriptions retrieval successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  allOf:
+                  - type: object
+                    properties:
+                      id:
+                        type: string
+                      ietf_language_tag:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+                      media:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          id:
+                            description: A unique alphanumeric identifier for the record.
+                            type: string
+                          index_url:
+                            description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                              to do a batch fetch for this records type.
+
+                              '
+                            type: string
+                          url:
+                            description: A URL that can be used to fetch this record.
+                            type: string
+                        required:
+                        - id
+                        - index_url
+                        - url
+                      provided_media_file:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          id:
+                            description: A unique alphanumeric identifier for the record.
+                            type: string
+                          index_url:
+                            description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                              to do a batch fetch for this records type.
+
+                              '
+                            type: string
+                          url:
+                            description: A URL that can be used to fetch this record.
+                            type: string
+                        required:
+                        - id
+                        - index_url
+                        - url
+                      contact:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          id:
+                            description: A unique alphanumeric identifier for the record.
+                            type: string
+                          index_url:
+                            description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                              to do a batch fetch for this records type.
+
+                              '
+                            type: string
+                          url:
+                            description: A URL that can be used to fetch this record.
+                            type: string
+                        required:
+                        - id
+                        - index_url
+                        - url
+                      cursor:
+                        description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                        type:
+                        - string
+                        - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /media_extended_audio_descriptions/{id}:
+    get:
+      x-speakeasy-group: mediaExtendedAudioDescriptions
+      summary: Show Media Extended Audio Description
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media extended audio description from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      description: 'Retrieves a single extended audio description by its hashed id, including download links.
+
+        '
+      x-wistia-mcp-tool-name: show-media-extended-audio-description
+      x-wistia-mcp-description: 'Show, get, or retrieve a single extended audio description (EAD) by its
+
+        hashed id, including download links — the accessibility audio track that
+
+        narrates on-screen visuals for blind and low-vision viewers. Use this when
+
+        someone wants details or download URLs for one audio description. To list
+
+        many use get-media-extended-audio-descriptions, or
+
+        delete-media-extended-audio-description to remove one.
+
+        '
+      tags:
+      - Extended Audio Descriptions
+      parameters:
+      - name: id
+        description: The hashed id of the Media Extended Audio Description
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Media Extended Audio Description fetched successful
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                    ietf_language_tag:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    media:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        id:
+                          description: A unique alphanumeric identifier for the record.
+                          type: string
+                        index_url:
+                          description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                            to do a batch fetch for this records type.
+
+                            '
+                          type: string
+                        url:
+                          description: A URL that can be used to fetch this record.
+                          type: string
+                      required:
+                      - id
+                      - index_url
+                      - url
+                    provided_media_file:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        id:
+                          description: A unique alphanumeric identifier for the record.
+                          type: string
+                        index_url:
+                          description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                            to do a batch fetch for this records type.
+
+                            '
+                          type: string
+                        url:
+                          description: A URL that can be used to fetch this record.
+                          type: string
+                      required:
+                      - id
+                      - index_url
+                      - url
+                    contact:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        id:
+                          description: A unique alphanumeric identifier for the record.
+                          type: string
+                        index_url:
+                          description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                            to do a batch fetch for this records type.
+
+                            '
+                          type: string
+                        url:
+                          description: A URL that can be used to fetch this record.
+                          type: string
+                      required:
+                      - id
+                      - index_url
+                      - url
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+                - type: object
+                  properties:
+                    assets:
+                      type: object
+                      unevaluatedProperties: false
+                      description: Download links for the audio description files.
+                      required:
+                      - mp3_url
+                      - webvtt
+                      - webvtt_extended
+                      properties:
+                        mp3_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: URL to download the MP3 audio file.
+                        webvtt:
+                          type:
+                          - string
+                          - 'null'
+                          description: 'The WebVTT file contents with cue timings relative to the original video. Start and
+
+                            end times show when the text is relative to the scene
+
+                            '
+                        webvtt_extended:
+                          type:
+                          - string
+                          - 'null'
+                          description: 'The extended WebVTT file contents with timings that include pause durations. Start and
+
+                            end times correspond to when an audio description starts and ends. During this time
+
+                            the video will be paused.
+
+                            '
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+    delete:
+      x-speakeasy-group: mediaExtendedAudioDescriptions
+      summary: Delete Media Extended Audio Description
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool deletes a media extended audio description from the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool permanently deletes the media extended audio description and cannot be undone.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      description: 'Deletes an extended audio description by its hashed id.
+
+        '
+      x-wistia-mcp-tool-name: delete-media-extended-audio-description
+      x-wistia-mcp-description: 'Delete (remove) an extended audio description (EAD) by its hashed id — the
+
+        accessibility audio track that narrates on-screen visuals for blind and
+
+        low-vision viewers. This permanently removes the EAD and cannot be undone.
+
+        Use this when someone wants to delete or remove audio descriptions from a
+
+        media. To look one up first use show-media-extended-audio-description, or
+
+        get-media-extended-audio-descriptions to list them.
+
+        '
+      tags:
+      - Extended Audio Descriptions
+      parameters:
+      - name: id
+        description: The hashed id of the Media Extended Audio Description
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Media Extended Audio Description deleted successful
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    id:
+                      type: string
+                    ietf_language_tag:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+                    updated_at:
+                      type: string
+                      format: date-time
+                    media:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        id:
+                          description: A unique alphanumeric identifier for the record.
+                          type: string
+                        index_url:
+                          description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                            to do a batch fetch for this records type.
+
+                            '
+                          type: string
+                        url:
+                          description: A URL that can be used to fetch this record.
+                          type: string
+                      required:
+                      - id
+                      - index_url
+                      - url
+                    provided_media_file:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        id:
+                          description: A unique alphanumeric identifier for the record.
+                          type: string
+                        index_url:
+                          description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                            to do a batch fetch for this records type.
+
+                            '
+                          type: string
+                        url:
+                          description: A URL that can be used to fetch this record.
+                          type: string
+                      required:
+                      - id
+                      - index_url
+                      - url
+                    contact:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        id:
+                          description: A unique alphanumeric identifier for the record.
+                          type: string
+                        index_url:
+                          description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                            to do a batch fetch for this records type.
+
+                            '
+                          type: string
+                        url:
+                          description: A URL that can be used to fetch this record.
+                          type: string
+                      required:
+                      - id
+                      - index_url
+                      - url
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /media_extended_audio_descriptions/order:
+    post:
+      x-speakeasy-group: mediaExtendedAudioDescriptions
+      summary: Order Extended Audio Description
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool orders an extended audio description, which incurs a charge and modifies the account.
+        open_world_hint: true
+        open_world_hint_justification: This tool submits the order to an external vendor.
+        destructive_hint: true
+        destructive_hint_justification: The order incurs a charge and cannot be undone.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call places another paid order.
+      x-wistia-is-purchase: true
+      description: 'Orders an extended audio description for a media. The request will charge the credit card on the account when the order is ready.
+
+        Only accounts on paid plans with the `order_audio_descriptions` feature can use this endpoint.
+
+        '
+      x-wistia-mcp-tool-name: order-media-extended-audio-description
+      x-wistia-mcp-description: 'Order, purchase, or buy an extended audio description (EAD) for a media — an
+
+        accessibility audio track that narrates on-screen visuals for blind and
+
+        low-vision viewers. This places a paid order and charges the account''s
+
+        credit card when the order is ready; only paid plans with the
+
+        order_audio_descriptions feature can use it. Use this when someone wants to
+
+        add audio descriptions to a video. Poll
+
+        show-media-extended-audio-description-order-status to track the order, or
+
+        use get-media-extended-audio-descriptions to list existing ones.
+
+        '
+      tags:
+      - Extended Audio Descriptions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                media_id:
+                  description: The hashed id of the media to order the extended audio description for.
+                  type: string
+                enabled:
+                  description: Whether the extended audio description should be automatically enabled once the order is complete.
+                  type: boolean
+                  default: true
+                ai_enabled:
+                  description: Whether to use AI-generated audio descriptions (cheaper) or human-generated (higher quality). AI is only available for English orders.
+                  type: boolean
+                  default: true
+                order_instructions:
+                  description: Optional instructions for the audio description provider.
+                  type: string
+                ietf_language_tag:
+                  description: 'IETF language tag for the audio description. Defaults to `eng` (English).
+
+                    Non-English orders must set `ai_enabled: false` — AI-generated audio
+
+                    descriptions are only available in English.
+
+
+                    Spanish (`es-419`) orders are only accepted when the source media is
+
+                    tagged as a Spanish-language variant or has no detected language
+
+                    (e.g. silent videos). Spanish orders against a media in another
+
+                    language return `400`.
+
+                    '
+                  type: string
+                  enum:
+                  - eng
+                  - es-419
+                  default: eng
+              required:
+              - media_id
+      responses:
+        '200':
+          description: Extended audio description ordered successfully.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  message:
+                    description: Success message indicating the order has been placed.
+                    type: string
+                    examples:
+                    - Extended audio description ordered. Your account will be charged when the order is ready.
+                  order:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      id:
+                        description: The hashed ID of the order. Use this to poll order status via the order_status endpoint.
+                        type: string
+                      order_status:
+                        description: The current status of the order.
+                        type: string
+                        enum:
+                        - in_progress
+                        - completed
+                        - cancelled
+                        - failed
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+                      ietf_language_tag:
+                        description: IETF language tag the audio description was ordered in (e.g. `eng`, `es-419`).
+                        type: string
+                      media:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          id:
+                            description: A unique alphanumeric identifier for the record.
+                            type: string
+                          index_url:
+                            description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                              to do a batch fetch for this records type.
+
+                              '
+                            type: string
+                          url:
+                            description: A URL that can be used to fetch this record.
+                            type: string
+                        required:
+                        - id
+                        - index_url
+                        - url
+                      media_extended_audio_description:
+                        unevaluatedProperties: false
+                        description: Link to the resulting media extended audio description. Null while the order is in progress.
+                        oneOf:
+                        - unevaluatedProperties: false
+                          type: object
+                          properties:
+                            id:
+                              description: A unique alphanumeric identifier for the record.
+                              type: string
+                            index_url:
+                              description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                                to do a batch fetch for this records type.
+
+                                '
+                              type: string
+                            url:
+                              description: A URL that can be used to fetch this record.
+                              type: string
+                          required:
+                          - id
+                          - index_url
+                          - url
+                        - type: 'null'
+                    required:
+                    - id
+                    - order_status
+                    - ietf_language_tag
+                    - media
+                    - created_at
+                    - updated_at
+                required:
+                - message
+                - order
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /media_extended_audio_descriptions/order_status/{id}:
+    get:
+      x-speakeasy-group: mediaExtendedAudioDescriptions
+      summary: Get Order Status
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media extended audio description order status from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      description: 'Returns the current status of an extended audio description order. Use the order id returned
+
+        from the order endpoint to poll for status updates.
+
+        '
+      x-wistia-mcp-tool-name: show-media-extended-audio-description-order-status
+      x-wistia-mcp-description: 'Show, get, or check the current status of an extended audio description
+
+        (EAD) order — the paid accessibility audio track ordered for a media. Pass
+
+        the order id returned by order-media-extended-audio-description and poll this
+
+        to track progress until the order completes. Use this when someone wants to
+
+        know whether their audio description order is ready. List finished ones with
+
+        get-media-extended-audio-descriptions.
+
+        '
+      tags:
+      - Extended Audio Descriptions
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The hashed ID of the order returned from the order endpoint.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Order status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  order:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      id:
+                        description: The hashed ID of the order. Use this to poll order status via the order_status endpoint.
+                        type: string
+                      order_status:
+                        description: The current status of the order.
+                        type: string
+                        enum:
+                        - in_progress
+                        - completed
+                        - cancelled
+                        - failed
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+                      ietf_language_tag:
+                        description: IETF language tag the audio description was ordered in (e.g. `eng`, `es-419`).
+                        type: string
+                      media:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          id:
+                            description: A unique alphanumeric identifier for the record.
+                            type: string
+                          index_url:
+                            description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                              to do a batch fetch for this records type.
+
+                              '
+                            type: string
+                          url:
+                            description: A URL that can be used to fetch this record.
+                            type: string
+                        required:
+                        - id
+                        - index_url
+                        - url
+                      media_extended_audio_description:
+                        unevaluatedProperties: false
+                        description: Link to the resulting media extended audio description. Null while the order is in progress.
+                        oneOf:
+                        - unevaluatedProperties: false
+                          type: object
+                          properties:
+                            id:
+                              description: A unique alphanumeric identifier for the record.
+                              type: string
+                            index_url:
+                              description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                                to do a batch fetch for this records type.
+
+                                '
+                              type: string
+                            url:
+                              description: A URL that can be used to fetch this record.
+                              type: string
+                          required:
+                          - id
+                          - index_url
+                          - url
+                        - type: 'null'
+                    required:
+                    - id
+                    - order_status
+                    - ietf_language_tag
+                    - media
+                    - created_at
+                    - updated_at
+                required:
+                - order
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

@@ -1,0 +1,351 @@
+openapi: 3.2.0
+info:
+  title: Data Push Devices API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Push Devices
+  x-wistia-mcp-toolsets: account
+  x-displayName: Push Devices
+paths:
+  /devices:
+    post:
+      x-readme-hidden: true
+      x-wistia-mcp-ignore: true
+      summary: Register Push Device
+      x-speakeasy-group: pushDevices
+      x-speakeasy-name-override: create
+      description: 'Registers a push notification device token for the current contact. Used by
+
+        the Wistia desktop app to receive activity notifications (new comments and
+
+        views) for media created via the app. Re-registering an existing
+
+        token updates its registration in place.
+
+        '
+      tags:
+      - Push Devices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                device_token:
+                  description: The APNs device token, hex encoded.
+                  type: string
+                  examples:
+                  - 6a41c6f2e5b1d3f4a7c8e9b0d1f2a3c4e5b6d7f8a9c0b1d2e3f4a5b6c7d8e9f0
+                bundle_id:
+                  description: The app bundle identifier the token was issued for.
+                  type: string
+                  examples:
+                  - com.wistia.glass
+                environment:
+                  description: The APNs environment the token belongs to.
+                  type: string
+                  enum:
+                  - sandbox
+                  - production
+              required:
+              - device_token
+              - bundle_id
+              - environment
+      responses:
+        '201':
+          description: Push device registered successfully.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A registered push notification device token for the Wistia desktop app.
+
+                  Used to deliver activity notifications (new comments and views)
+
+                  for media created via the desktop app.
+
+                  '
+                properties:
+                  device_token:
+                    description: The APNs device token, hex encoded.
+                    type: string
+                    examples:
+                    - 6a41c6f2e5b1d3f4a7c8e9b0d1f2a3c4e5b6d7f8a9c0b1d2e3f4a5b6c7d8e9f0
+                  bundle_id:
+                    description: The app bundle identifier the token was issued for.
+                    type: string
+                    examples:
+                    - com.wistia.glass
+                  environment:
+                    description: The APNs environment the token belongs to.
+                    type: string
+                    enum:
+                    - sandbox
+                    - production
+                  created_at:
+                    description: The date the device was first registered.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-07T18:47:39+00:00'
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - device_token
+                - bundle_id
+                - environment
+                - created_at
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /devices/{deviceToken}:
+    delete:
+      x-readme-hidden: true
+      x-wistia-mcp-ignore: true
+      summary: Unregister Push Device
+      x-speakeasy-group: pushDevices
+      x-speakeasy-name-override: delete
+      description: 'Unregisters a push notification device token for the current contact, so no
+
+        further activity notifications are delivered to that device.
+
+        '
+      tags:
+      - Push Devices
+      parameters:
+      - name: deviceToken
+        in: path
+        description: The APNs device token to unregister, hex encoded.
+        required: true
+        schema:
+          type: string
+          examples:
+          - 6a41c6f2e5b1d3f4a7c8e9b0d1f2a3c4e5b6d7f8a9c0b1d2e3f4a5b6c7d8e9f0
+      responses:
+        '200':
+          description: Push device unregistered successfully.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A registered push notification device token for the Wistia desktop app.
+
+                  Used to deliver activity notifications (new comments and views)
+
+                  for media created via the desktop app.
+
+                  '
+                properties:
+                  device_token:
+                    description: The APNs device token, hex encoded.
+                    type: string
+                    examples:
+                    - 6a41c6f2e5b1d3f4a7c8e9b0d1f2a3c4e5b6d7f8a9c0b1d2e3f4a5b6c7d8e9f0
+                  bundle_id:
+                    description: The app bundle identifier the token was issued for.
+                    type: string
+                    examples:
+                    - com.wistia.glass
+                  environment:
+                    description: The APNs environment the token belongs to.
+                    type: string
+                    enum:
+                    - sandbox
+                    - production
+                  created_at:
+                    description: The date the device was first registered.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-07T18:47:39+00:00'
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - device_token
+                - bundle_id
+                - environment
+                - created_at
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

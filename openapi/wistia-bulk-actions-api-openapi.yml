@@ -1,0 +1,506 @@
+openapi: 3.2.0
+info:
+  title: Data Bulk Actions API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Bulk Actions
+  x-wistia-mcp-toolsets:
+  - media
+  - folders
+  - channels
+  - account
+  x-displayName: Bulk Actions
+paths:
+  /bulk:
+    post:
+      summary: Create Bulk Actions
+      description: 'Submits a batch of up to 1000 create, update, delete, and move actions to be
+
+        processed asynchronously. Returns a background job status whose Show
+
+        endpoint reports aggregate progress and per-action results, including the
+
+        hashed IDs of created records.
+
+
+        Supported resource types are `media`, `folder`, `subfolder`, `channel`,
+
+        `channel_episode`, `captions`, and the ten `customization_*` concerns. A
+
+        `folder` is a top-level folder (previously called a project); a `subfolder`
+
+        is nested inside one and requires `folder_id` and `name` when created. A
+
+        `captions` action operates on one caption track -- one media in one
+
+        language.
+
+
+        Because caption actions carry SRT contents inline, they are the resource
+
+        type most likely to reach the request body limit before the action cap.
+
+        Purchasing captions is not available here -- it has its own endpoint.
+
+
+        A `move` action targets one media and accepts a destination `folder_id` and
+
+        optional `subfolder_id`. Bulk moves can use different destinations and are
+
+        not subject to the Move Media endpoint''s 100-item limit or separate throttle.
+
+
+        Player customizations are addressed one concern at a time
+
+        (`customization_appearance`, `customization_playback`, and so on), matching
+
+        the Update Customizations endpoints; each accepts `update` only, takes the
+
+        media''s hashed ID as its `id`, and takes the same payload as its
+
+        corresponding endpoint. There is no batch equivalent of the broad customize
+
+        endpoint, so a batch always states which slice of the player it is changing.
+
+
+        Deleting a folder or subfolder also soft-deletes its media. An account owner
+
+        or manager can restore that media from the trash until it purges. To keep the
+
+        media when deleting a subfolder, use the Delete Subfolder endpoint; it moves
+
+        the media to the folder''s root level instead.
+
+
+        Each action in the batch is authorized and processed independently:
+
+        failures (including authorization failures) are reported per action and do
+
+        not prevent other actions from completing. Media creation is not supported
+
+        -- uploads and URL imports have their own endpoints.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      x-wistia-mcp-tool-name: create-bulk-actions
+      x-wistia-mcp-description: 'Submits a batch of up to 1000 create, update, delete, and move actions (for
+
+        medias, folders, subfolders, channels, channel episodes, captions, and
+
+        player customizations) to be processed asynchronously. Prefer this over
+
+        repeated single calls when changing many records at once. For subfolders,
+
+        use resource_type "subfolder"; creates require folder_id and name.
+
+        resource_type "folder" means a top-level folder (previously called a
+
+        project).
+
+
+        To change player customizations, pick the resource_type for the concern you
+
+        are changing -- customization_appearance, customization_playback,
+
+        customization_thumbnail, customization_accessibility, customization_chapters,
+
+        customization_engagement, customization_related_media, customization_sharing,
+
+        customization_lead_capture, or customization_access. Each takes operation
+
+        "update", the media''s hashed ID as id, and the same payload as the matching
+
+        update-*-customizations tool; call the matching show-*-customizations tool
+
+        first if you need the field names. Sending a field that belongs to a
+
+        different concern fails that action, so pick the concern that owns each
+
+        setting rather than guessing.
+
+
+        resource_type "captions" batches caption tracks: create takes media_id and
+
+        caption_file (the SRT contents as a string) plus an optional language,
+
+        update takes caption_file, and delete takes the track''s own id from
+
+        get-captions. Caption files travel inside the request, so a caption batch
+
+        usually reaches the 2 MB body limit before the action cap -- send several
+
+        smaller batches rather than one large one. Purchasing captions is not
+
+        available through this tool.
+
+
+        For moves, use resource_type "media" with the media id, folder_id, and
+
+        optional subfolder_id. Prefer this tool for larger moves, multiple
+
+        destinations, or mixed actions.
+
+
+        Deleting a folder or subfolder also sends its media to the trash. Confirm
+
+        with the user before submitting a folder or subfolder delete. An account
+
+        owner or manager can restore the media until it purges. To keep the media
+
+        when deleting a subfolder, use delete-subfolder; it moves the media to the
+
+        folder''s root level instead.
+
+
+        Returns a background job status; if you''re a headless agent, poll
+
+        get-background-job-status for progress and per-action results, including
+
+        created record IDs. UI-enabled MCP hosts handle polling for you, so a single
+
+        submit call is enough. Media creation is not supported.
+
+        '
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates, updates, deletes, or moves records in the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Batches can delete records and nested media or move media from its prior folder. Owners and managers can restore deleted media until purge.
+        idempotent_hint: false
+        idempotent_hint_justification: Submitting the same request again re-runs all of the requested actions.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: A request containing an array of actions to process in bulk.
+              unevaluatedProperties: false
+              properties:
+                actions:
+                  type: array
+                  description: 'An array of actions to process. Maximum 1000 actions per request, and
+
+                    the request body must stay under 2 MB -- whichever limit is reached
+
+                    first. An oversized body is rejected with a `413` and no action in it
+
+                    runs. Each action specifies an operation (create, update, delete, or
+
+                    move), a resource type, and the relevant payload or record ID.
+
+                    '
+                  minItems: 1
+                  maxItems: 1000
+                  items:
+                    type: object
+                    description: A single action within a bulk request.
+                    unevaluatedProperties: false
+                    properties:
+                      operation:
+                        type: string
+                        description: 'The operation to perform. Media creation is not supported here --
+
+                          uploads and URL imports have their own endpoints.
+
+
+                          `delete` also soft-deletes media inside a `folder` or `subfolder`. An
+
+                          account owner or manager can restore it from the trash until it purges.
+
+
+                          `move` applies to `media` only, one action per media. Each action
+
+                          carries its own destination, so a single request can move media into
+
+                          many different folders.
+
+                          '
+                        enum:
+                        - create
+                        - update
+                        - delete
+                        - move
+                      resource_type:
+                        type: string
+                        description: 'The type of resource to operate on. `folder` means a top-level folder
+
+                          (previously called a project); use `subfolder` for a folder nested
+
+                          inside one. `captions` operates on a single caption track -- one media
+
+                          in one language.
+
+
+                          The `customization_*` types each write one concern of a media''s player
+
+                          customizations and accept `update` only. Their `id` is the media''s
+
+                          hashed ID, and their payload matches the corresponding Update
+
+                          Customizations endpoint (for example, `customization_appearance` takes
+
+                          the same fields as Update Appearance Customizations). Sending a field
+
+                          another concern owns fails that action rather than writing it, so a
+
+                          batch can never quietly overwrite unrelated player settings.
+
+                          '
+                        enum:
+                        - media
+                        - folder
+                        - subfolder
+                        - channel
+                        - channel_episode
+                        - captions
+                        - customization_access
+                        - customization_accessibility
+                        - customization_appearance
+                        - customization_chapters
+                        - customization_engagement
+                        - customization_lead_capture
+                        - customization_playback
+                        - customization_related_media
+                        - customization_sharing
+                        - customization_thumbnail
+                      id:
+                        type: string
+                        description: 'The hashed ID of the resource. Required for update, delete, and move
+
+                          operations.
+
+
+                          For `captions` this is the caption track''s own ID (the `id` field
+
+                          returned by List Captions), not the media''s -- a media can have a track
+
+                          per language.
+
+                          '
+                        examples:
+                        - abc123
+                      payload:
+                        type: object
+                        description: 'The data for the operation. Required for create, update, and move
+
+                          operations.
+
+                          The accepted fields depend on the resource type and match the corresponding
+
+                          create or update endpoint''s request body (for example, a channel_episode
+
+                          create takes the same fields as the Create Channel Episode endpoint,
+
+                          including channel_id).
+
+
+                          Creating a subfolder requires `folder_id` (the parent folder''s hashed ID)
+
+                          and `name`.
+
+
+                          Creating captions requires `media_id` and `caption_file` (the SRT
+
+                          contents as a string; the multipart file upload the Create Captions
+
+                          endpoint accepts is not available here) and takes an optional
+
+                          `language`, detected from the file when omitted. Updating captions
+
+                          takes `caption_file`; the track''s language is fixed by the record.
+
+                          Creating captions for a language that already has a track replaces it,
+
+                          matching the Create Captions endpoint.
+
+
+                          Moving a media requires `folder_id` (the destination folder''s hashed ID)
+
+                          and accepts an optional `subfolder_id`, which must belong to that
+
+                          folder. Omit `subfolder_id` to move the media to the folder''s root
+
+                          level.
+
+
+                          A `customization_*` payload is a partial update of that concern only:
+
+                          just the fields you send are changed, and a field naming another
+
+                          concern''s setting fails the action.
+
+                          '
+                        unevaluatedProperties: true
+                    required:
+                    - operation
+                    - resource_type
+              required:
+              - actions
+      responses:
+        '202':
+          description: Bulk request accepted and queued for processing
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    message:
+                      description: A confirmation message that the background job has been queued.
+                      type: string
+                    background_job_status:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                          bulk archiving media, translating media, etc.
+
+                          '
+                        properties:
+                          id:
+                            description: The ID of the background job that's been queued for the request.
+                            type: integer
+                          hashed_id:
+                            description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                            type: string
+                          status:
+                            description: The status of the background job that's been queued for the request.
+                            type: string
+                            enum:
+                            - queued
+                            - started
+                            - finished
+                            - failed
+                        required:
+                        - id
+                        - hashed_id
+                        - status
+                  required:
+                  - message
+                  - background_job_status
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Bulk Actions
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

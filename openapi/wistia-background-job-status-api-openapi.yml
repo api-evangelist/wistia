@@ -1,0 +1,166 @@
+openapi: 3.2.0
+info:
+  title: Wistia Background Job Status API
+  version: '1.0'
+  description: 'Operations tagged Background Job Status across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Background Job Status
+  x-wistia-mcp-toolsets: account
+  x-displayName: Background Job Status
+paths:
+  /background_job_status/{backgroundJobStatusId}:
+    get:
+      summary: Show Background Job Status
+      description: 'Retrieves the status of a background job.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: backgroundJobStatusId
+        in: path
+        description: The numeric ID of the background job
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  background_job_status:
+                    unevaluatedProperties: false
+                    type: object
+                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                      bulk archiving media, translating media, etc.
+
+                      '
+                    properties:
+                      id:
+                        description: The ID of the background job that's been queued for the request.
+                        type: integer
+                      status:
+                        description: The status of the background job that's been queued for the request.
+                        type: string
+                        enum:
+                        - queued
+                        - started
+                        - finished
+                        - failed
+                    required:
+                    - id
+                    - status
+                required:
+                - background_job_status
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Background Job Status
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  responses:
+    404-2:
+      description: Resource not found
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  schemas:
+    BackgroundJobStatus:
+      type: object
+      description: Status of the background job.
+      properties:
+        id:
+          description: The ID of the background job that's been queued for the request.
+          type: integer
+        status:
+          description: The status of the background job that's been queued for the request.
+          type: string
+          enum:
+          - queued
+          - started
+          - finished
+          - failed
+      required:
+      - id
+      - status
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

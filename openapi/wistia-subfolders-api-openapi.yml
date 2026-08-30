@@ -1,0 +1,1727 @@
+openapi: 3.2.0
+info:
+  title: Wistia Subfolders API
+  version: '1.0'
+  description: 'Operations tagged Subfolders across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Subfolders
+  x-wistia-mcp-toolsets: folders
+  x-displayName: Subfolders
+paths:
+  /folders/{folderId}/subfolders:
+    get:
+      summary: List Subfolders
+      description: 'Lists subfolders in a specific folder.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: The hashed ID of the folder
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set than cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set than cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      - name: sort_by
+        in: query
+        description: 'Field to sort by. When using cursor pagination (see cursor param),
+
+          only `id` is supported.
+
+          '
+        required: false
+        schema:
+          type: string
+          default: position
+          enum:
+          - name
+          - created
+          - updated
+          - position
+          - id
+      - name: sort_direction
+        in: query
+        description: Sort direction (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          default: 1
+          enum:
+          - 0
+          - 1
+      - name: hashed_ids[]
+        in: query
+        description: Filter subfolders by their hashed IDs
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      responses:
+        '200':
+          description: A list of subfolders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: A subfolder within a folder that contains media.
+                  properties:
+                    hashed_id:
+                      description: A unique alphanumeric identifier for this subfolder.
+                      type: string
+                      examples:
+                      - abc123def4
+                    name:
+                      description: The display name of the subfolder.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - Marketing Videos
+                    description:
+                      description: A description for the subfolder.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - Collection of all marketing and promotional videos
+                    position:
+                      description: The position of this subfolder within its folder, used for ordering.
+                      type:
+                      - integer
+                      - 'null'
+                      examples:
+                      - 1
+                    created:
+                      description: The date when the subfolder was created.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                      examples:
+                      - '2024-01-15T10:30:00+00:00'
+                    updated:
+                      description: The date when the subfolder was last modified.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                      examples:
+                      - '2024-01-20T14:45:00+00:00'
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+                  required:
+                  - hashed_id
+                  - position
+                  - created
+                  - updated
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID abc123def4 not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    post:
+      summary: Create Subfolder
+      description: 'Creates a new subfolder within a folder. The subfolder will be created with the next available position.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: The hashed ID of the folder
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      requestBody:
+        description: Subfolder data
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              description: Input data for creating or updating a subfolder.
+              properties:
+                name:
+                  description: The display name of the subfolder.
+                  type: string
+                  examples:
+                  - Marketing Videos
+                  maxLength: 255
+                description:
+                  description: A description for the subfolder.
+                  type:
+                  - string
+                  - 'null'
+                  examples:
+                  - Collection of all marketing and promotional videos
+                  maxLength: 1000
+              required:
+              - name
+            example:
+              name: Marketing Videos
+              description: Collection of all marketing and promotional videos
+      responses:
+        '201':
+          description: Subfolder created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                description: A subfolder within a folder that contains media.
+                properties:
+                  hashed_id:
+                    description: A unique alphanumeric identifier for this subfolder.
+                    type: string
+                    examples:
+                    - abc123def4
+                  name:
+                    description: The display name of the subfolder.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - Marketing Videos
+                  description:
+                    description: A description for the subfolder.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - Collection of all marketing and promotional videos
+                  position:
+                    description: The position of this subfolder within its folder, used for ordering.
+                    type:
+                    - integer
+                    - 'null'
+                    examples:
+                    - 1
+                  created:
+                    description: The date when the subfolder was created.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - '2024-01-15T10:30:00+00:00'
+                  updated:
+                    description: The date when the subfolder was last modified.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - '2024-01-20T14:45:00+00:00'
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - hashed_id
+                - position
+                - created
+                - updated
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID abc123def4 not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /folders/{folderId}/subfolders/{subfolderId}:
+    get:
+      summary: Show Subfolder
+      description: 'Retrieves detailed information about a specific subfolder, including all media contained within it.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: The hashed ID of the folder
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      - name: subfolderId
+        in: path
+        description: The hashed ID of the subfolder
+        required: true
+        schema:
+          type: string
+          examples:
+          - xyz789ghi0
+      - name: description_format
+        in: query
+        description: Format for media descriptions
+        required: false
+        schema:
+          type: string
+          examples:
+          - markdown
+          const: markdown
+      responses:
+        '200':
+          description: Subfolder details with contained media
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: A subfolder with its contained media files.
+                allOf:
+                - type: object
+                  description: A subfolder within a folder that contains media.
+                  properties:
+                    hashed_id:
+                      description: A unique alphanumeric identifier for this subfolder.
+                      type: string
+                      examples:
+                      - abc123def4
+                    name:
+                      description: The display name of the subfolder.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - Marketing Videos
+                    description:
+                      description: A description for the subfolder.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - Collection of all marketing and promotional videos
+                    position:
+                      description: The position of this subfolder within its folder, used for ordering.
+                      type:
+                      - integer
+                      - 'null'
+                      examples:
+                      - 1
+                    created:
+                      description: The date when the subfolder was created.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                      examples:
+                      - '2024-01-15T10:30:00+00:00'
+                    updated:
+                      description: The date when the subfolder was last modified.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                      examples:
+                      - '2024-01-20T14:45:00+00:00'
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+                  required:
+                  - hashed_id
+                  - position
+                  - created
+                  - updated
+                - type: object
+                  properties:
+                    medias:
+                      description: Array of media files contained in this subfolder.
+                      type: array
+                      items:
+                        type: object
+                        description: 'A media generally represents a video or an audio which can be embedded into your website.
+
+
+                          CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+
+                          For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
+
+                          '
+                        properties:
+                          protected:
+                            description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                            type:
+                            - boolean
+                            - 'null'
+                          id:
+                            description: A unique numeric identifier for the media within the system.
+                            type: integer
+                          name:
+                            description: The display name of the media.
+                            type: string
+                          type:
+                            description: A string representing what type of media this is.
+                            type: string
+                            enum:
+                            - Video
+                            - Audio
+                            - Image
+                            - PdfDocument
+                            - MicrosoftOfficeDocument
+                            - Swf
+                            - UnknownType
+                          archived:
+                            description: Whether or not the media is archived, either true or false.
+                            type: boolean
+                          created:
+                            description: The date when the media was originally uploaded.
+                            type: string
+                            format: date-time
+                          updated:
+                            description: The date when the media was last changed.
+                            type: string
+                            format: date-time
+                          duration:
+                            unevaluatedProperties: false
+                            description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+                            oneOf:
+                            - type: number
+                            - type: 'null'
+                          embedCode:
+                            description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+                              '
+                            type: string
+                            deprecated: true
+                          hashed_id:
+                            description: A unique alphanumeric identifier for this media.
+                            type: string
+                          description:
+                            description: A description for the media which usually appears near the top of the sidebar on the media's page.
+                            type: string
+                          progress:
+                            description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+                            type: number
+                            maximum: 1
+                            minimum: 0
+                          status:
+                            description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+                              '
+                            type: string
+                            enum:
+                            - queued
+                            - processing
+                            - ready
+                            - failed
+                          section:
+                            unevaluatedProperties: false
+                            description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+                            oneOf:
+                            - type: string
+                            - type: 'null'
+                          thumbnail:
+                            unevaluatedProperties: false
+                            type: object
+                            properties:
+                              url:
+                                type: string
+                              width:
+                                type: integer
+                              height:
+                                type: integer
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Folder or subfolder not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Subfolder with ID xyz789ghi0 not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    put:
+      summary: Update Subfolder
+      description: "Updates a subfolder's name and/or description. \n\nRetrieves detailed information about a specific subfolder, including all media contained within it.\n\n<!--- HIDE-MCP -->\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n<!--- /HIDE-MCP -->\n"
+      parameters:
+      - name: folderId
+        in: path
+        description: The hashed ID of the folder
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      - name: subfolderId
+        in: path
+        description: The hashed ID of the subfolder
+        required: true
+        schema:
+          type: string
+          examples:
+          - xyz789ghi0
+      requestBody:
+        description: Updated subfolder data
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                name:
+                  description: The new name for the subfolder
+                  type: string
+                  examples:
+                  - Updated Marketing Videos
+                  maxLength: 255
+                description:
+                  description: The new description for the subfolder
+                  type:
+                  - string
+                  - 'null'
+                  examples:
+                  - Updated collection of marketing materials
+                  maxLength: 1000
+            example:
+              name: Updated Marketing Videos
+              description: Updated collection of marketing materials
+      responses:
+        '200':
+          description: Subfolder updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                description: A subfolder within a folder that contains media.
+                properties:
+                  hashed_id:
+                    description: A unique alphanumeric identifier for this subfolder.
+                    type: string
+                    examples:
+                    - abc123def4
+                  name:
+                    description: The display name of the subfolder.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - Marketing Videos
+                  description:
+                    description: A description for the subfolder.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - Collection of all marketing and promotional videos
+                  position:
+                    description: The position of this subfolder within its folder, used for ordering.
+                    type:
+                    - integer
+                    - 'null'
+                    examples:
+                    - 1
+                  created:
+                    description: The date when the subfolder was created.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - '2024-01-15T10:30:00+00:00'
+                  updated:
+                    description: The date when the subfolder was last modified.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - '2024-01-20T14:45:00+00:00'
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - hashed_id
+                - position
+                - created
+                - updated
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Folder or subfolder not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Subfolder with ID xyz789ghi0 not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    delete:
+      summary: Delete Subfolder
+      description: 'Deletes one subfolder and moves its media to the folder''s root level. The subfolder is soft-deleted and is no longer accessible via the API. To delete multiple subfolders and their media, use the Bulk Delete Subfolders endpoint.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: The hashed ID of the folder
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      - name: subfolderId
+        in: path
+        description: The hashed ID of the subfolder
+        required: true
+        schema:
+          type: string
+          examples:
+          - xyz789ghi0
+      responses:
+        '200':
+          description: Subfolder deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                description: A subfolder within a folder that contains media.
+                properties:
+                  hashed_id:
+                    description: A unique alphanumeric identifier for this subfolder.
+                    type: string
+                    examples:
+                    - abc123def4
+                  name:
+                    description: The display name of the subfolder.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - Marketing Videos
+                  description:
+                    description: A description for the subfolder.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - Collection of all marketing and promotional videos
+                  position:
+                    description: The position of this subfolder within its folder, used for ordering.
+                    type:
+                    - integer
+                    - 'null'
+                    examples:
+                    - 1
+                  created:
+                    description: The date when the subfolder was created.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - '2024-01-15T10:30:00+00:00'
+                  updated:
+                    description: The date when the subfolder was last modified.
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+                    examples:
+                    - '2024-01-20T14:45:00+00:00'
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - hashed_id
+                - position
+                - created
+                - updated
+              example:
+                id: 123
+                hashed_id: xyz789ghi0
+                name: Marketing Videos
+                description: Collection of all marketing and promotional videos
+                position: 1
+                created: '2024-01-15T10:30:00+00:00'
+                updated: '2024-01-20T14:45:00+00:00'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Folder or subfolder not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Subfolder with ID xyz789ghi0 not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /folders/{folderId}/subfolders/bulk_delete:
+    delete:
+      summary: Bulk Delete Subfolders
+      description: 'Deletes multiple subfolders asynchronously. Their media is also soft-deleted and can be restored from the trash by an account owner or manager until it is purged. To keep the media, use the Delete Subfolder endpoint, which moves it to the folder''s root level.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: The hashed ID of the folder containing the subfolders
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                hashed_ids:
+                  description: An array of the subfolder hashed IDs to be deleted.
+                  type: array
+                  items:
+                    type: string
+              required:
+              - hashed_ids
+      responses:
+        '200':
+          description: Successful queuing of subfolder deletion.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  message:
+                    description: A confirmation message that the background job has been queued.
+                    type: string
+                  background_job_status:
+                    unevaluatedProperties: false
+                    type: object
+                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                      bulk archiving media, translating media, etc.
+
+                      '
+                    properties:
+                      id:
+                        description: The ID of the background job that's been queued for the request.
+                        type: integer
+                      status:
+                        description: The status of the background job that's been queued for the request.
+                        type: string
+                        enum:
+                        - queued
+                        - started
+                        - finished
+                        - failed
+                    required:
+                    - id
+                    - status
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Folder not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Project with ID abc123def4 not found.
+        '422':
+          description: Unprocessable entity, e.g. missing required parameters.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /projects/{projectId}/subfolders:
+    get:
+      summary: Subfolder List
+      description: 'Use this endpoint to request a list of subfolders in a specific project. This request supports paging and sorting.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        Read all folder and media data
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: The hashed ID of the project
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      - name: page
+        in: query
+        description: Page number to retrieve
+        required: false
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        description: Number of subfolders per page
+        required: false
+        schema:
+          type: integer
+          default: 100
+          maximum: 100
+          minimum: 1
+      - name: sort_by
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          default: position
+          enum:
+          - name
+          - created
+          - updated
+          - position
+          - id
+      - name: sort_direction
+        in: query
+        description: Sort direction (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          default: 1
+          enum:
+          - 0
+          - 1
+      responses:
+        '200':
+          description: A list of subfolders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subfolder'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Project with ID abc123def4 not found.
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    post:
+      summary: Create Subfolder
+      description: 'Create a new subfolder within a project. The subfolder will be created with the next available position.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: The hashed ID of the project
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      requestBody:
+        description: Subfolder data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubfolderInput'
+            example:
+              name: Marketing Videos
+              description: Collection of all marketing and promotional videos
+      responses:
+        '201':
+          description: Subfolder created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subfolder'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Project with ID abc123def4 not found.
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/v1
+  /projects/{projectId}/subfolders/{subfolderId}:
+    get:
+      summary: Show Subfolder
+      description: 'Retrieve detailed information about a specific subfolder, including all media files contained within it.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        Read all folder and media data
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: The hashed ID of the project
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      - name: subfolderId
+        in: path
+        description: The hashed ID of the subfolder
+        required: true
+        schema:
+          type: string
+          examples:
+          - xyz789ghi0
+      - name: description_format
+        in: query
+        description: Format for media descriptions
+        required: false
+        schema:
+          type: string
+          examples:
+          - markdown
+          const: markdown
+      responses:
+        '200':
+          description: Subfolder details with contained media
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubfolderWithMedia'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Project or subfolder not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Subfolder with ID xyz789ghi0 not found.
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    put:
+      summary: Update Subfolder
+      description: "Update a subfolder's name and/or description. \n\n## Requires api token with one of the following permissions\n```\nRead, update & delete anything\n```\n"
+      parameters:
+      - name: projectId
+        in: path
+        description: The hashed ID of the project
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      - name: subfolderId
+        in: path
+        description: The hashed ID of the subfolder
+        required: true
+        schema:
+          type: string
+          examples:
+          - xyz789ghi0
+      requestBody:
+        description: Updated subfolder data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: The new name for the subfolder
+                  type: string
+                  examples:
+                  - Updated Marketing Videos
+                  maxLength: 255
+                description:
+                  description: The new description for the subfolder
+                  type:
+                  - string
+                  - 'null'
+                  examples:
+                  - Updated collection of marketing materials
+                  maxLength: 1000
+            example:
+              name: Updated Marketing Videos
+              description: Updated collection of marketing materials
+      responses:
+        '200':
+          description: Subfolder updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subfolder'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Project or subfolder not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Subfolder with ID xyz789ghi0 not found.
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    delete:
+      summary: Delete Subfolder
+      description: 'Delete a subfolder from a project. All media files in the subfolder will be moved to the project''s root level.
+
+
+        The subfolder is soft-deleted and may be recoverable through other means, but is no longer accessible via the API.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: The hashed ID of the project
+        required: true
+        schema:
+          type: string
+          examples:
+          - abc123def4
+      - name: subfolderId
+        in: path
+        description: The hashed ID of the subfolder
+        required: true
+        schema:
+          type: string
+          examples:
+          - xyz789ghi0
+      responses:
+        '200':
+          description: Subfolder deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subfolder'
+              example:
+                id: 123
+                hashed_id: xyz789ghi0
+                name: Marketing Videos
+                description: Collection of all marketing and promotional videos
+                position: 1
+                created: '2024-01-15T10:30:00+00:00'
+                updated: '2024-01-20T14:45:00+00:00'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          description: Project or subfolder not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Subfolder with ID xyz789ghi0 not found.
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Subfolders
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/v1
+components:
+  schemas:
+    Subfolder:
+      type: object
+      description: A subfolder within a project that contains media files.
+      properties:
+        hashed_id:
+          description: A unique alphanumeric identifier for this subfolder.
+          type: string
+          examples:
+          - abc123def4
+        name:
+          description: The display name of the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Marketing Videos
+        description:
+          description: A description for the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Collection of all marketing and promotional videos
+        position:
+          description: The position of this subfolder within its project, used for ordering.
+          type:
+          - integer
+          - 'null'
+          examples:
+          - 1
+        created:
+          description: The date when the subfolder was created.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-01-15T10:30:00+00:00'
+        updated:
+          description: The date when the subfolder was last modified.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-01-20T14:45:00+00:00'
+      required:
+      - hashed_id
+      - position
+      - created
+      - updated
+    MediaProperties:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the media within the system.
+          type: integer
+        name:
+          description: The display name of the media.
+          type: string
+        type:
+          description: A string representing what type of media this is.
+          type: string
+          enum:
+          - Video
+          - Audio
+          - Image
+          - PdfDocument
+          - MicrosoftOfficeDocument
+          - Swf
+          - UnknownType
+        archived:
+          description: Whether or not the media is archived, either true or false.
+          type: boolean
+        created:
+          description: The date when the media was originally uploaded.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the media was last changed.
+          type: string
+          format: date-time
+        duration:
+          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+          type: number
+        embedCode:
+          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+            '
+          type: string
+          deprecated: true
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        description:
+          description: A description for the media which usually appears near the top of the sidebar on the media's page.
+          type: string
+        progress:
+          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+          type: number
+          maximum: 1
+          minimum: 0
+        status:
+          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+            '
+          type: string
+          enum:
+          - queued
+          - processing
+          - ready
+          - failed
+        section:
+          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+          type: string
+        thumbnail:
+          $ref: '#/components/schemas/Thumbnail'
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    SubfolderInput:
+      type: object
+      description: Input data for creating or updating a subfolder.
+      properties:
+        name:
+          description: The display name of the subfolder.
+          type: string
+          examples:
+          - Marketing Videos
+          maxLength: 255
+        description:
+          description: A description for the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Collection of all marketing and promotional videos
+          maxLength: 1000
+      required:
+      - name
+    SubfolderWithMedia:
+      type: object
+      description: A subfolder with its contained media files.
+      allOf:
+      - $ref: '#/components/schemas/Subfolder'
+      - type: object
+        properties:
+          medias:
+            description: Array of media files contained in this subfolder.
+            type: array
+            items:
+              $ref: '#/components/schemas/MediaProperties'
+  responses:
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

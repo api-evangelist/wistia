@@ -1,0 +1,1079 @@
+openapi: 3.2.0
+info:
+  title: Wistia Folder Sharings API
+  version: '1.0'
+  description: 'Operations tagged Folder Sharings across 2 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Folder Sharings
+  x-wistia-mcp-toolsets: folders
+  x-displayName: Folder Sharings
+paths:
+  /folders/{folderId}/sharings:
+    get:
+      summary: List Folder Sharings
+      description: 'Lists the sharings of contacts and contact groups on a folder.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: Folder Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the folder (e.g., "4d23503f70")
+          type: string
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set than cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set than cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      - name: sort_by
+        in: query
+        description: 'Ordering. When using cursor pagination (see cursor param),
+
+          only `id` is supported.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - id
+          default: id
+      - name: sort_direction
+        in: query
+        description: Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+          default: 1
+      - name: hashed_ids[]
+        in: query
+        description: Filter sharings by their hashed IDs
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      responses:
+        '200':
+          description: Successfully retrieved list of sharings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  description: 'A sharing is an object that links either a contact or a contact group to a folder, including information about the contacts'' permissions to that folder.
+
+                    '
+                  properties:
+                    id:
+                      type: integer
+                      examples:
+                      - 14
+                    is_admin:
+                      type: boolean
+                      examples:
+                      - true
+                    can_share:
+                      type: boolean
+                      examples:
+                      - true
+                    can_download:
+                      type: boolean
+                      examples:
+                      - true
+                    can_upload:
+                      type: boolean
+                      examples:
+                      - true
+                    share:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          examples:
+                          - 3
+                        name:
+                          type: string
+                          examples:
+                          - Jim
+                        type:
+                          type: string
+                          examples:
+                          - Contact
+                        email:
+                          type: string
+                          format: email
+                          examples:
+                          - jim@wistia.com
+                      required:
+                      - id
+                      - name
+                      - type
+                      - email
+                    folder:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          examples:
+                          - 13
+                        name:
+                          type: string
+                          examples:
+                          - My Folder
+                      required:
+                      - id
+                      - name
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+                  required:
+                  - id
+                  - is_admin
+                  - can_share
+                  - can_download
+                  - can_upload
+                  - share
+                  - folder
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folder Sharings
+      security:
+      - BearerAuth: []
+    post:
+      summary: Create Folder Sharing
+      description: 'Creates a new sharing object for a folder by specifying the email of the person to share with and other optional parameters.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: Hashed ID of the folder to be shared
+        required: true
+        schema:
+          description: Hashed ID of the folder (e.g., "4d23503f70")
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                sharing:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    with:
+                      description: The email address of the person with whom you want to share the folder.
+                      type: string
+                      format: email
+                    requirePassword:
+                      unevaluatedProperties: false
+                      x-wistia-mcp-type: boolean
+                      oneOf:
+                      - type: string
+                        description: Default is "1". Set to "0" to allow access without a password.
+                        enum:
+                        - '0'
+                        - '1'
+                      - type: boolean
+                        description: A flag indicating whether or not a password is required.
+                        examples:
+                        - false
+                    canShare:
+                      unevaluatedProperties: false
+                      x-wistia-mcp-type: boolean
+                      oneOf:
+                      - type: string
+                        description: Default is "0". Set to "1" to allow the user to share the folder with others.
+                        enum:
+                        - '0'
+                        - '1'
+                      - type: boolean
+                        description: Whether the user is allowed to share the folder with others.
+                        examples:
+                        - false
+                    canDownload:
+                      unevaluatedProperties: false
+                      x-wistia-mcp-type: boolean
+                      oneOf:
+                      - type: string
+                        description: Default is "0". Set to "1" to allow the user to download files from the folder.
+                        enum:
+                        - '0'
+                        - '1'
+                      - type: boolean
+                        description: Whether the user is allowed to download files from the folder.
+                        examples:
+                        - false
+                    canUpload:
+                      unevaluatedProperties: false
+                      x-wistia-mcp-type: boolean
+                      oneOf:
+                      - type: string
+                        description: Default is "0". Set to "1" to allow the user to upload files to the folder.
+                        enum:
+                        - '0'
+                        - '1'
+                      - type: boolean
+                        description: Whether the user is allowed to upload files to the folder.
+                        examples:
+                        - false
+                    sendEmailNotification:
+                      description: Deprecated! Email notifications are always sent now.
+                      type: string
+                      enum:
+                      - '0'
+                      - '1'
+                      deprecated: true
+                  required:
+                  - with
+              required:
+              - sharing
+      responses:
+        '201':
+          description: Folder shared successfully
+          headers:
+            Location:
+              description: The API endpoint for the new sharing object.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: The response includes a link for the user to access the folder.
+                properties:
+                  project:
+                    description: The URL of the folder that was shared.
+                    type: string
+                    format: uri
+                    examples:
+                    - http://myaccount.wistia.com/folders/13
+                  folder:
+                    type: string
+                    format: uri
+                    examples:
+                    - http://myaccount.wistia.com/folders/13
+                  sharing:
+                    unevaluatedProperties: false
+                    type: object
+                    description: 'A sharing is an object that links either a contact or a contact group to a folder, including information about the contacts'' permissions to that folder.
+
+                      '
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 14
+                      is_admin:
+                        type: boolean
+                        examples:
+                        - true
+                      can_share:
+                        type: boolean
+                        examples:
+                        - true
+                      can_download:
+                        type: boolean
+                        examples:
+                        - true
+                      can_upload:
+                        type: boolean
+                        examples:
+                        - true
+                      share:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            examples:
+                            - 3
+                          name:
+                            type: string
+                            examples:
+                            - Jim
+                          type:
+                            type: string
+                            examples:
+                            - Contact
+                          email:
+                            type: string
+                            format: email
+                            examples:
+                            - jim@wistia.com
+                        required:
+                        - id
+                        - name
+                        - type
+                        - email
+                      folder:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            examples:
+                            - 13
+                          name:
+                            type: string
+                            examples:
+                            - My Folder
+                        required:
+                        - id
+                        - name
+                      cursor:
+                        description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                        type:
+                        - string
+                        - 'null'
+                    required:
+                    - id
+                    - is_admin
+                    - can_share
+                    - can_download
+                    - can_upload
+                    - share
+                    - folder
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Error message detailing the reason for the bad request.
+                examples:
+                - - email@example.com is already shared on this folder.
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folder Sharings
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /folders/{folderId}/sharings/{sharingId}:
+    get:
+      summary: Show Folder Sharing
+      description: 'Retrieves the details of a specific sharing object for a given folder.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: Hashed ID for the folder for which you'd like to see sharings.
+        required: true
+        schema:
+          description: Hashed ID of the folder (e.g., "4d23503f70")
+          type: string
+      - name: sharingId
+        in: path
+        description: The ID of the specific sharing object that you want to see.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successfully retrieved sharing details
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A sharing is an object that links either a contact or a contact group to a folder, including information about the contacts'' permissions to that folder.
+
+                  '
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                    - 14
+                  is_admin:
+                    type: boolean
+                    examples:
+                    - true
+                  can_share:
+                    type: boolean
+                    examples:
+                    - true
+                  can_download:
+                    type: boolean
+                    examples:
+                    - true
+                  can_upload:
+                    type: boolean
+                    examples:
+                    - true
+                  share:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 3
+                      name:
+                        type: string
+                        examples:
+                        - Jim
+                      type:
+                        type: string
+                        examples:
+                        - Contact
+                      email:
+                        type: string
+                        format: email
+                        examples:
+                        - jim@wistia.com
+                    required:
+                    - id
+                    - name
+                    - type
+                    - email
+                  folder:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 13
+                      name:
+                        type: string
+                        examples:
+                        - My Folder
+                    required:
+                    - id
+                    - name
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - is_admin
+                - can_share
+                - can_download
+                - can_upload
+                - share
+                - folder
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folder Sharings
+      security:
+      - BearerAuth: []
+    put:
+      summary: Update Folder Sharing
+      description: 'Updates a sharing on a folder.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: ID of the folder
+        required: true
+        schema:
+          type: string
+      - name: sharingId
+        in: path
+        description: ID of the sharing to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                sharing:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    canShare:
+                      description: Allow the user or group to share the folder with others.
+                      type: boolean
+                    canDownload:
+                      description: Allow the user or group to download media from the folder.
+                      type: boolean
+                    canUpload:
+                      description: Allow the user or group to upload media to the folder.
+                      type: boolean
+                    isAdmin:
+                      description: Give this user admin rights to the folder.
+                      type: boolean
+      responses:
+        '200':
+          description: Sharing updated successfully
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A sharing is an object that links either a contact or a contact group to a folder, including information about the contacts'' permissions to that folder.
+
+                  '
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                    - 14
+                  is_admin:
+                    type: boolean
+                    examples:
+                    - true
+                  can_share:
+                    type: boolean
+                    examples:
+                    - true
+                  can_download:
+                    type: boolean
+                    examples:
+                    - true
+                  can_upload:
+                    type: boolean
+                    examples:
+                    - true
+                  share:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 3
+                      name:
+                        type: string
+                        examples:
+                        - Jim
+                      type:
+                        type: string
+                        examples:
+                        - Contact
+                      email:
+                        type: string
+                        format: email
+                        examples:
+                        - jim@wistia.com
+                    required:
+                    - id
+                    - name
+                    - type
+                    - email
+                  folder:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 13
+                      name:
+                        type: string
+                        examples:
+                        - My Folder
+                    required:
+                    - id
+                    - name
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - is_admin
+                - can_share
+                - can_download
+                - can_upload
+                - share
+                - folder
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folder Sharings
+      security:
+      - BearerAuth: []
+    delete:
+      summary: Delete Folder Sharing
+      description: 'Deletes a sharing on a folder.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: folderId
+        in: path
+        description: Hashed ID of the folder
+        required: true
+        schema:
+          description: Hashed ID of the folder (e.g., "4d23503f70")
+          type: string
+      - name: sharingId
+        in: path
+        description: ID of the sharing to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Sharing deleted successfully
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A sharing is an object that links either a contact or a contact group to a folder, including information about the contacts'' permissions to that folder.
+
+                  '
+                properties:
+                  id:
+                    type: integer
+                    examples:
+                    - 14
+                  is_admin:
+                    type: boolean
+                    examples:
+                    - true
+                  can_share:
+                    type: boolean
+                    examples:
+                    - true
+                  can_download:
+                    type: boolean
+                    examples:
+                    - true
+                  can_upload:
+                    type: boolean
+                    examples:
+                    - true
+                  share:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 3
+                      name:
+                        type: string
+                        examples:
+                        - Jim
+                      type:
+                        type: string
+                        examples:
+                        - Contact
+                      email:
+                        type: string
+                        format: email
+                        examples:
+                        - jim@wistia.com
+                    required:
+                    - id
+                    - name
+                    - type
+                    - email
+                  folder:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 13
+                      name:
+                        type: string
+                        examples:
+                        - My Folder
+                    required:
+                    - id
+                    - name
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - is_admin
+                - can_share
+                - can_download
+                - can_upload
+                - share
+                - folder
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folder Sharings
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml

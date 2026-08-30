@@ -1,0 +1,1598 @@
+openapi: 3.2.0
+info:
+  title: Data Analytics:Media API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Analytics:Media
+  x-wistia-mcp-toolsets: analytics
+  x-displayName: Analytics:Media
+paths:
+  /analytics/medias/{mediaId}:
+    get:
+      summary: Show Media Analytics
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media analytics from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: get
+      description: 'Retrieve aggregate analytics for a video over a date range. This endpoint provides
+
+        Bottler-powered analytics including plays, loads, engagement rate, play rate, and
+
+        conversion metrics.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the video.
+        required: true
+        schema:
+          description: The hashed ID of the media (e.g., "4d23503f70")
+          type: string
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Success response with aggregate analytics for the video.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    unique_loads:
+                      description: The number of unique video loads.
+                      type:
+                      - integer
+                      - 'null'
+                    unique_plays:
+                      description: The number of unique video plays.
+                      type:
+                      - integer
+                      - 'null'
+                    plays:
+                      description: The total number of video plays.
+                      type:
+                      - integer
+                      - 'null'
+                    play_rate:
+                      description: The percentage of loads that resulted in a play (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    played_time:
+                      description: Total time spent watching the video in seconds.
+                      type:
+                      - integer
+                      - 'null'
+                    unique_visitors:
+                      description: The number of unique visitors who loaded the video.
+                      type:
+                      - integer
+                      - 'null'
+                    engagement_rate:
+                      description: The average percentage of the video watched (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    cta_impressions:
+                      description: The number of times a call-to-action was shown.
+                      type:
+                      - integer
+                      - 'null'
+                    cta_conversions:
+                      description: The number of times a call-to-action was clicked.
+                      type:
+                      - integer
+                      - 'null'
+                    cta_conversion_rate:
+                      description: The rate of CTA clicks over impressions (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    form_conversions:
+                      description: The number of form submissions.
+                      type:
+                      - integer
+                      - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Media
+      security:
+      - BearerAuth: []
+  /analytics/medias/{mediaId}/timeseries:
+    get:
+      summary: Show Media Analytics Timeseries
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media analytics timeseries from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getTimeseries
+      description: 'Retrieve analytics timeseries data for a video over a date range with configurable
+
+        granularity. Returns an array of timestamped metric buckets.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the video.
+        required: true
+        schema:
+          description: The hashed ID of the media (e.g., "4d23503f70")
+          type: string
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: granularity
+        in: query
+        description: The time granularity for the timeseries data.
+        required: true
+        schema:
+          type: string
+          enum:
+          - daily
+          - weekly
+          - monthly
+      responses:
+        '200':
+          description: Success response with timeseries analytics data.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  allOf:
+                  - type: object
+                    properties:
+                      timestamp:
+                        description: The start of the time bucket in ISO 8601 format.
+                        type: string
+                        format: date-time
+                  - type: object
+                    properties:
+                      unique_loads:
+                        description: The number of unique video loads.
+                        type:
+                        - integer
+                        - 'null'
+                      unique_plays:
+                        description: The number of unique video plays.
+                        type:
+                        - integer
+                        - 'null'
+                      plays:
+                        description: The total number of video plays.
+                        type:
+                        - integer
+                        - 'null'
+                      play_rate:
+                        description: The percentage of loads that resulted in a play (between 0 and 1).
+                        type:
+                        - number
+                        - 'null'
+                        format: float
+                      played_time:
+                        description: Total time spent watching the video in seconds.
+                        type:
+                        - integer
+                        - 'null'
+                      unique_visitors:
+                        description: The number of unique visitors who loaded the video.
+                        type:
+                        - integer
+                        - 'null'
+                      engagement_rate:
+                        description: The average percentage of the video watched (between 0 and 1).
+                        type:
+                        - number
+                        - 'null'
+                        format: float
+                      cta_impressions:
+                        description: The number of times a call-to-action was shown.
+                        type:
+                        - integer
+                        - 'null'
+                      cta_conversions:
+                        description: The number of times a call-to-action was clicked.
+                        type:
+                        - integer
+                        - 'null'
+                      cta_conversion_rate:
+                        description: The rate of CTA clicks over impressions (between 0 and 1).
+                        type:
+                        - number
+                        - 'null'
+                        format: float
+                      form_conversions:
+                        description: The number of form submissions.
+                        type:
+                        - integer
+                        - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Media
+      security:
+      - BearerAuth: []
+  /analytics/medias/{mediaId}/embed_locations:
+    get:
+      summary: Show Media Embed Locations
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media embed locations from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getEmbedLocations
+      description: 'Retrieve embed location analytics for a video. Returns a list of pages where the
+
+        video is embedded, ranked by the chosen metric.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the video.
+        required: true
+        schema:
+          description: The hashed ID of the media (e.g., "4d23503f70")
+          type: string
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: sort_by
+        in: query
+        description: The metric to sort embed locations by.
+        required: false
+        schema:
+          type: string
+          enum:
+          - plays
+          - loads
+          - engagement_rate
+          - play_rate
+          - played_time
+          - unique_visitors
+          default: plays
+      - name: sort_direction
+        in: query
+        description: The sort direction.
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: embed_url
+        in: query
+        description: 'Filter results to a single embed URL. When provided, only analytics for
+
+          the page matching this URL are returned. Must be a valid HTTP or HTTPS URL.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: uri
+          example: https://example.com/landing-page
+      - name: per_page
+        in: query
+        description: Number of results to return (max 100).
+        required: false
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: Success response with embed location analytics.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    embed_domain:
+                      description: The domain where the video is embedded.
+                      type: string
+                    embed_path:
+                      description: The path on the domain where the video is embedded.
+                      type: string
+                    embed_url:
+                      description: The full URL where the video is embedded.
+                      type: string
+                    page_title:
+                      description: The title of the page where the video is embedded.
+                      type: string
+                    loads:
+                      description: The number of video loads from this location.
+                      type: integer
+                    unique_loads:
+                      description: The number of unique video loads from this location (one per visitor session).
+                      type: integer
+                    plays:
+                      description: The number of video plays from this location.
+                      type: integer
+                    unique_plays:
+                      description: The number of unique video plays from this location (one per visitor session).
+                      type: integer
+                    play_rate:
+                      description: The play rate from this location (between 0 and 1).
+                      type: number
+                      format: float
+                    played_time:
+                      description: Total time spent watching from this location in seconds.
+                      type: number
+                      format: float
+                    engagement_rate:
+                      description: The average engagement rate from this location (between 0 and 1).
+                      type: number
+                      format: float
+                    unique_visitors:
+                      description: The number of unique visitors from this location.
+                      type: integer
+                    cta_conversion_rate:
+                      description: The CTA conversion rate from this location (between 0 and 1).
+                      type: number
+                      format: float
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Media
+      security:
+      - BearerAuth: []
+  /analytics/medias/{mediaId}/embed_locations_timeseries:
+    get:
+      summary: Show Media Embed Locations Timeseries
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media embed locations timeseries from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getEmbedLocationsTimeseries
+      description: 'Retrieve timeseries analytics for a video broken down by embed location. Returns
+
+        an array of timestamped buckets, each containing metrics for the top embed
+
+        locations (ranked by the chosen metric) plus an "All other" entry aggregating
+
+        the remaining locations.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the video.
+        required: true
+        schema:
+          description: The hashed ID of the media (e.g., "4d23503f70")
+          type: string
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: granularity
+        in: query
+        description: The time granularity for the timeseries data.
+        required: true
+        schema:
+          type: string
+          enum:
+          - daily
+          - weekly
+          - monthly
+      - name: sort_by
+        in: query
+        description: The metric used to rank and select the top embed locations.
+        required: false
+        schema:
+          type: string
+          enum:
+          - plays
+          - loads
+          - engagement_rate
+          - play_rate
+          - played_time
+          - unique_visitors
+          default: plays
+      - name: embed_url
+        in: query
+        description: 'Filter results to a single embed URL. When provided, only analytics for
+
+          the page matching this URL are returned. Must be a valid HTTP or HTTPS URL.
+
+          '
+        required: false
+        schema:
+          type: string
+          format: uri
+          example: https://example.com/landing-page
+      - name: per_page
+        in: query
+        description: Number of top embed locations per time bucket (max 100). Remaining locations are aggregated into an "All other" entry.
+        required: false
+        schema:
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: Success response with embed location timeseries data.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  unevaluatedProperties: false
+                  properties:
+                    timestamp:
+                      description: The start of the time bucket in ISO 8601 format.
+                      type: string
+                      format: date-time
+                    entries:
+                      description: Embed location metrics for this time bucket. Contains the top locations (ranked by the chosen metric) and optionally an "All other" entry.
+                      type: array
+                      items:
+                        type: object
+                        unevaluatedProperties: false
+                        properties:
+                          embed_domain:
+                            description: The domain where the video is embedded. Null for the "All other" entry.
+                            type:
+                            - string
+                            - 'null'
+                          embed_path:
+                            description: The path on the domain where the video is embedded. Null for the "All other" entry.
+                            type:
+                            - string
+                            - 'null'
+                          embed_url:
+                            description: The full URL where the video is embedded. Null for the "All other" entry.
+                            type:
+                            - string
+                            - 'null'
+                          page_title:
+                            description: The title of the page where the video is embedded. "All other" for the aggregated remainder entry.
+                            type:
+                            - string
+                            - 'null'
+                          loads:
+                            description: The number of video loads from this location.
+                            type: integer
+                          unique_loads:
+                            description: The number of unique video loads from this location (one per visitor session).
+                            type: integer
+                          plays:
+                            description: The number of video plays from this location.
+                            type: integer
+                          unique_plays:
+                            description: The number of unique video plays from this location (one per visitor session).
+                            type: integer
+                          play_rate:
+                            description: The play rate from this location (between 0 and 1).
+                            type: number
+                            format: float
+                          played_time:
+                            description: Total time spent watching from this location in seconds.
+                            type: number
+                            format: float
+                          engagement_rate:
+                            description: The average engagement rate from this location (between 0 and 1).
+                            type: number
+                            format: float
+                          unique_visitors:
+                            description: The number of unique visitors from this location.
+                            type: integer
+                          cta_conversion_rate:
+                            description: The CTA conversion rate from this location (between 0 and 1).
+                            type: number
+                            format: float
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Media
+      security:
+      - BearerAuth: []
+  /analytics/medias/{mediaId}/traffic:
+    get:
+      summary: Show Media Traffic Breakdown
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media traffic breakdown from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getTraffic
+      description: 'Retrieve traffic breakdown analytics for a video, grouped by a specified dimension
+
+        such as UTM campaign, UTM source, UTM medium, referrer domain, or viewer screen size.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the video.
+        required: true
+        schema:
+          description: The hashed ID of the media (e.g., "4d23503f70")
+          type: string
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: group_by
+        in: query
+        description: The dimension to group traffic data by.
+        required: true
+        schema:
+          type: string
+          enum:
+          - utm_campaign
+          - utm_source
+          - utm_medium
+          - referrer_domain
+          - viewer_screen_size
+      - name: sort_by
+        in: query
+        description: The metric to sort results by.
+        required: false
+        schema:
+          type: string
+          enum:
+          - plays
+          - loads
+          - engagement_rate
+          default: plays
+      - name: sort_direction
+        in: query
+        description: The sort direction.
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: per_page
+        in: query
+        description: Number of results to return (max 100).
+        required: false
+        schema:
+          type: integer
+          default: 100
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: Success response with traffic breakdown data.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  description: Each item contains the group_by field and associated metrics.
+                  properties:
+                    utm_campaign:
+                      description: The UTM campaign value (present when group_by is utm_campaign).
+                      type:
+                      - string
+                      - 'null'
+                    utm_source:
+                      description: The UTM source value (present when group_by is utm_source).
+                      type:
+                      - string
+                      - 'null'
+                    utm_medium:
+                      description: The UTM medium value (present when group_by is utm_medium).
+                      type:
+                      - string
+                      - 'null'
+                    referrer_domain:
+                      description: The referrer domain (present when group_by is referrer_domain).
+                      type:
+                      - string
+                      - 'null'
+                    viewer_screen_size:
+                      description: The viewer screen size (present when group_by is viewer_screen_size).
+                      type:
+                      - string
+                      - 'null'
+                    loads:
+                      description: The number of video loads for this group.
+                      type: integer
+                    plays:
+                      description: The number of video plays for this group.
+                      type: integer
+                    engagement_rate:
+                      description: The average engagement rate for this group (between 0 and 1).
+                      type: number
+                      format: float
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Media
+      security:
+      - BearerAuth: []
+  /analytics/medias/{mediaId}/conversions:
+    get:
+      summary: Show Media Form Conversions
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media form conversions from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getConversions
+      description: 'Retrieve form conversion data for a video. Returns a paginated list of form
+
+        submissions with visitor details and timestamps.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the video.
+        required: true
+        schema:
+          description: The hashed ID of the media (e.g., "4d23503f70")
+          type: string
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: per_page
+        in: query
+        description: Number of results to return (max 100).
+        required: false
+        schema:
+          type: integer
+          default: 25
+          minimum: 1
+          maximum: 100
+      - name: cursor
+        in: query
+        description: Cursor for pagination. Use the value from the previous response's page_info.end_cursor.
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success response with form conversion data.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        first_name:
+                          description: The first name of the form submitter.
+                          type:
+                          - string
+                          - 'null'
+                        last_name:
+                          description: The last name of the form submitter.
+                          type:
+                          - string
+                          - 'null'
+                        email:
+                          description: The email address of the form submitter.
+                          type:
+                          - string
+                          - 'null'
+                        converted_at:
+                          description: The timestamp when the form was submitted in ISO 8601 format.
+                          type: string
+                          format: date-time
+                  page_info:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      has_next_page:
+                        description: Whether there are more results after this page.
+                        type: boolean
+                      has_previous_page:
+                        description: Whether there are results before this page.
+                        type: boolean
+                      end_cursor:
+                        description: Cursor to use for fetching the next page.
+                        type:
+                        - string
+                        - 'null'
+                      start_cursor:
+                        description: Cursor to use for fetching the previous page.
+                        type:
+                        - string
+                        - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Media
+      security:
+      - BearerAuth: []
+  /analytics/medias/{mediaId}/languages:
+    get:
+      summary: Show Media Languages
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media languages from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsMedia
+      x-speakeasy-name-override: getLanguages
+      description: 'Retrieve language analytics for a video. Returns a breakdown of plays by
+
+        viewer browser language, sorted by number of plays in descending order.
+
+
+        The date range between `start_date` and `end_date` must not exceed 2 years.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: mediaId
+        in: path
+        description: The hashed ID of the video.
+        required: true
+        schema:
+          description: The hashed ID of the media (e.g., "4d23503f70")
+          type: string
+      - name: start_date
+        in: query
+        description: Start date for the analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: end_date
+        in: query
+        description: End date for the analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date.
+        required: true
+        schema:
+          type: string
+          format: date
+      - name: per_page
+        in: query
+        description: Number of results to return (max 100).
+        required: false
+        schema:
+          type: integer
+          default: 100
+          minimum: 1
+          maximum: 100
+      responses:
+        '200':
+          description: Success response with language analytics.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    language:
+                      description: The ISO 639-1 language code of the viewer's browser.
+                      type: string
+                    plays:
+                      description: The number of video plays from viewers with this language.
+                      type: integer
+                    percent_of_total_plays:
+                      description: The percentage of total plays from this language (between 0 and 1).
+                      type: number
+                      format: float
+                    captions_support:
+                      description: Whether captions are available for this language.
+                      type: boolean
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Media not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Media
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

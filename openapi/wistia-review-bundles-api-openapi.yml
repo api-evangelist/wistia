@@ -1,0 +1,650 @@
+openapi: 3.2.0
+info:
+  title: Data Review Bundles API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Review Bundles
+  x-wistia-mcp-toolsets: sharing
+  x-displayName: Review Bundles
+paths:
+  /review_bundles:
+    get:
+      x-readme-hidden: true
+      x-wistia-mcp-ignore: true
+      summary: List Review Bundles
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads review bundles from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-wistia-mcp-tool-name: get-review-bundles
+      x-wistia-mcp-description: 'List, get, show, browse, or find review bundles — named groups of media that
+
+        share a single review link. Use this when someone wants to see their review
+
+        bundles or look one up. Filter by hashed_ids (batch fetch by id), by name, by
+
+        media_hashed_id (bundles that include a given media), or by folder_hashed_id
+
+        (bundles that include any media from a folder). Supports sorting and
+
+        pagination. Use create-review-bundle to make a new one.
+
+        '
+      description: 'Lists review bundles belonging to an account. This endpoint can also be used to
+
+        do a batch fetch based off of the hashed id, or to find the bundles that include
+
+        a given media or any media from a folder.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Review Bundles
+      parameters:
+      - name: hashed_ids[]
+        in: query
+        description: Restrict the results to the review bundles with these hashed IDs.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: name
+        in: query
+        description: Restrict the results to review bundles whose name contains this value (case-insensitive).
+        required: false
+        schema:
+          type: string
+      - name: media_hashed_id
+        in: query
+        description: Restrict the results to review bundles that include the media with this hashed ID.
+        required: false
+        schema:
+          type: string
+      - name: folder_hashed_id
+        in: query
+        description: Restrict the results to review bundles that include any media from the folder with this hashed ID.
+        required: false
+        schema:
+          type: string
+      - name: sort_by
+        in: query
+        description: Field to order by. The default is id.
+        required: false
+        schema:
+          type: string
+          enum:
+          - id
+          - name
+          - created
+          - updated
+      - name: sort_direction
+        in: query
+        description: Direction to order by. (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      responses:
+        '200':
+          description: Review Bundles retrieval successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  unevaluatedProperties: false
+                  properties:
+                    hashed_id:
+                      description: A unique alphanumeric identifier for this review bundle.
+                      type: string
+                    name:
+                      description: The bundle display name.
+                      type: string
+                      examples:
+                      - My Review Bundle Title
+                    url:
+                      description: The URL of the bundle.
+                      type: string
+                      examples:
+                      - https://[your-domain].wistia.com/reviews/bundles/1234567890
+                    allow_downloads:
+                      description: Whether the videos in the bundle can be downloaded.
+                      type: boolean
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+    post:
+      x-readme-hidden: true
+      x-wistia-mcp-ignore: true
+      summary: Create Review Bundle
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new review bundle, which adds data to the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only writes to Wistia's own systems and does not reach any external service.
+        destructive_hint: false
+        destructive_hint_justification: Creating a review bundle only adds a new record; existing data is not modified or removed.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      x-wistia-mcp-tool-name: create-review-bundle
+      x-wistia-mcp-description: 'Share multiple videos or audio files for review at the same time, producing a
+
+        single shareable review link that covers all of them. Use this whenever someone
+
+        wants to share, bulk-share, or create "share for review" links for more than one
+
+        media at once — for example "share these videos for review", "create review links
+
+        for all of these videos", "share multiple videos at the same time", "send these
+
+        clips for feedback/approval", or "bulk share for review". Do not require the user
+
+        to say "review bundle" — any request to share, or to create review links for,
+
+        several media together should use this tool. Provide a name and the hashed IDs of
+
+        the media to include (media_hashed_ids); the media can come from any folder, up to
+
+        25 at a time. Returns the public review URL.
+
+        '
+      description: 'Creates a review bundle from a set of existing media, producing a single link
+
+        that can be shared for review. The media to include are specified by their hashed
+
+        IDs and must already belong to the account. The media can come from any folder.
+
+        Review Bundles are limited to 25 media.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Review Bundles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              properties:
+                media_hashed_ids:
+                  description: The hashed ids of the media to include in the bundle. Limited to 25 media.
+                  type: array
+                  items:
+                    type: string
+                  examples:
+                  - abc123
+                  - abc124
+                name:
+                  description: The bundle display name.
+                  type: string
+                  examples:
+                  - My Review Bundle Title
+                allow_downloads:
+                  description: Whether the videos in the bundle can be downloaded.
+                  type: boolean
+              required:
+              - media_hashed_ids
+              - name
+      responses:
+        '201':
+          description: Review Bundle created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  hashed_id:
+                    description: A unique alphanumeric identifier for this review bundle.
+                    type: string
+                  name:
+                    description: The bundle display name.
+                    type: string
+                    examples:
+                    - My Review Bundle Title
+                  url:
+                    description: The URL of the bundle.
+                    type: string
+                    examples:
+                    - https://[your-domain].wistia.com/reviews/bundles/1234567890
+                  allow_downloads:
+                    description: Whether the videos in the bundle can be downloaded.
+                    type: boolean
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: A single error message describing what went wrong.
+                    type: string
+                  errors:
+                    description: Array of error messages describing what went wrong.
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                    - - Title is required
+                      - Event duration must be at least 15 minutes
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /review_bundles/{reviewBundleHashedId}:
+    delete:
+      x-readme-hidden: true
+      x-wistia-mcp-ignore: true
+      summary: Delete Review Bundle
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool deletes a review bundle from the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool permanently deletes the review bundle and cannot be undone.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-wistia-mcp-tool-name: delete-review-bundle
+      x-wistia-mcp-description: 'Permanently delete (remove, destroy) a review bundle, identified by its hashed
+
+        id. This removes the bundle and its shared review link; the underlying media
+
+        are not deleted. This cannot be undone. Use get-review-bundles to find the
+
+        hashed id.
+
+        '
+      description: 'Permanently deletes a review bundle, identified by its hashed id. This removes
+
+        the bundle and its shared review link; the media it contained are not deleted.
+
+        This action cannot be undone.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Review Bundles
+      parameters:
+      - name: reviewBundleHashedId
+        description: The hashed id of the review bundle.
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Review Bundle deleted successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  hashed_id:
+                    description: A unique alphanumeric identifier for this review bundle.
+                    type: string
+                  name:
+                    description: The bundle display name.
+                    type: string
+                    examples:
+                    - My Review Bundle Title
+                  url:
+                    description: The URL of the bundle.
+                    type: string
+                    examples:
+                    - https://[your-domain].wistia.com/reviews/bundles/1234567890
+                  allow_downloads:
+                    description: Whether the videos in the bundle can be downloaded.
+                    type: boolean
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

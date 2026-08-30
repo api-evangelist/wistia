@@ -1,0 +1,197 @@
+openapi: 3.2.0
+info:
+  title: Data Live Stream Event Registrations API
+  description: Wistia Data API
+  version: 1.0.0
+servers:
+- url: https://api.wistia.com/v1
+tags:
+- name: Live Stream Event Registrations
+  x-displayName: Live Stream Event Registrations
+paths:
+  /live_stream_events/{liveStreamEventId}/registrations:
+    post:
+      summary: Create Live Event Registration
+      description: 'Register a person for a live event by providing their email, first name, and last name.
+
+
+        This endpoint generates a unique visitor key and returns a personalized event URL for the registrant.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: liveStreamEventId
+        in: path
+        description: Hashed ID of the live stream event
+        required: true
+        schema:
+          description: Hashed ID of the live stream event (e.g., "abc123xyz")
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRegistration'
+      responses:
+        '201':
+          description: Registration created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Live Stream Event Registrations
+      security:
+      - BearerAuth: []
+components:
+  responses:
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '403':
+      description: Forbidden, token is valid but account does not have access to feature
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Live streaming is not available on your current plan
+    '422':
+      description: Unprocessable entity, the request parameters were invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+                example:
+                  trims:
+                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
+                  media:
+                  - must be part of a project
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+  schemas:
+    CreateRegistration:
+      type: object
+      required:
+      - email
+      - first_name
+      - last_name
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address of the registrant
+          example: john.doe@example.com
+        first_name:
+          type: string
+          description: First name of the registrant
+          example: John
+        last_name:
+          type: string
+          description: Last name of the registrant
+          example: Doe
+    RegistrationResponse:
+      type: object
+      required:
+      - visitor_key
+      - personalized_event_url
+      properties:
+        visitor_key:
+          type: string
+          description: Unique visitor key generated for the registrant
+          example: iv_1234567890
+        personalized_event_url:
+          type: string
+          format: uri
+          description: Personalized URL for the registrant to access the live event
+          example: https://wistia.com/webinars/registration?vk=iv_1234567890&uid=john.doe@example.com
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Projects
+  - Subfolders
+  - Project Sharings
+  - Media
+  - Account
+  - Allowed Domains
+  - Background Job Status
+  - Customizations
+  - Captions
+  - Trims
+  - Localizations
+  - Tags
+  - Search
+  - Channels
+  - Channel Episodes
+  - Expiring Access Tokens
+  - Live Stream Events
+  - Live Stream Event Registrations
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Projects
+  - Stats:Media
+  - Stats:Visitors
+  - Stats:Events

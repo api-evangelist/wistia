@@ -1,0 +1,696 @@
+openapi: 3.2.0
+info:
+  title: Data Channel Collaborators API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Channel Collaborators
+  x-wistia-mcp-toolsets: channels
+  x-displayName: Channel Collaborators
+paths:
+  /channels/{channelHashedId}/collaborators:
+    get:
+      summary: List Channel Collaborators
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads channel collaborators from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: channelCollaborators
+      x-speakeasy-name-override: list
+      description: 'Lists the collaborators (contacts and contact groups) that have been granted access to a channel.
+
+
+        Results are scoped to what the authenticated user is allowed to see: account owners and managers see all collaborators, channel admins see all collaborators on their channels, and everyone else sees only the roles that grant them access.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: get-channel-collaborators
+      x-wistia-mcp-description: 'List, get, show, or browse the channel collaborators — the contacts and contact groups who have been granted access to a channel. Use this when someone wants to see who has access to a channel, list collaborators, or find who a channel is shared with, with optional sorting and pagination. Results are limited to collaborators the authenticated user is permitted to see: only account owners, managers, and channel admins can see the full list. Use create-channel-collaborator to grant access or delete-channel-collaborator to revoke access.
+
+        '
+      parameters:
+      - name: channelHashedId
+        in: path
+        description: Channel Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the channel (e.g., "abc123")
+          type: string
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      - name: sort_by
+        in: query
+        description: 'Ordering. When using cursor pagination (see cursor param),
+
+          only `id` is supported.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - created
+          - updated
+          - id
+          default: id
+      - name: sort_direction
+        in: query
+        description: Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+          default: 1
+      responses:
+        '200':
+          description: Successfully retrieved list of channel collaborators
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  description: 'A channel collaborator is a contact or contact group that has been granted access to a channel.
+
+                    '
+                  properties:
+                    id:
+                      type: integer
+                      description: The unique identifier of the channel role.
+                      examples:
+                      - 14
+                    role:
+                      type: string
+                      description: The role of the collaborator on the channel.
+                      enum:
+                      - admin
+                      - viewer
+                      examples:
+                      - admin
+                    created_at:
+                      type: string
+                      format: date-time
+                      description: The timestamp when this collaborator was added.
+                      examples:
+                      - '2024-01-15T10:30:00Z'
+                    share:
+                      unevaluatedProperties: false
+                      type: object
+                      description: The contact or contact group being granted access.
+                      properties:
+                        id:
+                          type: integer
+                          examples:
+                          - 3
+                        name:
+                          type: string
+                          examples:
+                          - Jim
+                        type:
+                          type: string
+                          description: Either "Contact" or "ContactGroup"
+                          examples:
+                          - Contact
+                        email:
+                          type: string
+                          format: email
+                          description: Email address (only present for Contact type).
+                          examples:
+                          - jim@wistia.com
+                      required:
+                      - id
+                      - name
+                      - type
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+                  required:
+                  - id
+                  - role
+                  - created_at
+                  - share
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Channel Collaborators
+      security:
+      - BearerAuth: []
+    post:
+      summary: Create Channel Collaborator
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new channel collaborator in the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool only adds a new resource; existing data is not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      x-speakeasy-group: channelCollaborators
+      x-speakeasy-name-override: create
+      description: 'Invites a collaborator to a channel by specifying their email address and role. Creates a new contact if one doesn''t exist with that email.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: create-channel-collaborator
+      x-wistia-mcp-description: 'Create a channel collaborator — invite a contact to a channel with a specified role (admin or viewer). Use this when someone wants to share a channel, give access, or add a person to a channel by specifying their email address and role. Use get-channel-collaborators to list who has access to a channel or delete-channel-collaborator to revoke access.
+
+        '
+      parameters:
+      - name: channelHashedId
+        in: path
+        description: Hashed ID of the channel
+        required: true
+        schema:
+          description: Hashed ID of the channel (e.g., "abc123")
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              description: Request body for creating a channel collaborator.
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email address of the contact to invite. Creates a new contact if one doesn't exist.
+                  examples:
+                  - jim@wistia.com
+                role:
+                  type: string
+                  description: The role to grant the collaborator.
+                  enum:
+                  - admin
+                  - viewer
+                  examples:
+                  - admin
+              required:
+              - email
+              - role
+      responses:
+        '201':
+          description: Channel collaborator created successfully
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A channel collaborator is a contact or contact group that has been granted access to a channel.
+
+                  '
+                properties:
+                  id:
+                    type: integer
+                    description: The unique identifier of the channel role.
+                    examples:
+                    - 14
+                  role:
+                    type: string
+                    description: The role of the collaborator on the channel.
+                    enum:
+                    - admin
+                    - viewer
+                    examples:
+                    - admin
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: The timestamp when this collaborator was added.
+                    examples:
+                    - '2024-01-15T10:30:00Z'
+                  share:
+                    unevaluatedProperties: false
+                    type: object
+                    description: The contact or contact group being granted access.
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 3
+                      name:
+                        type: string
+                        examples:
+                        - Jim
+                      type:
+                        type: string
+                        description: Either "Contact" or "ContactGroup"
+                        examples:
+                        - Contact
+                      email:
+                        type: string
+                        format: email
+                        description: Email address (only present for Contact type).
+                        examples:
+                        - jim@wistia.com
+                    required:
+                    - id
+                    - name
+                    - type
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - role
+                - created_at
+                - share
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                examples:
+                - errors:
+                  - Email is already a collaborator on this channel
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Channel Collaborators
+      security:
+      - BearerAuth: []
+  /channels/{channelHashedId}/collaborators/{id}:
+    delete:
+      summary: Delete Channel Collaborator
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool deletes a channel collaborator from the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool removes a collaborator's access to the channel, which cannot be undone without re-inviting them.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-speakeasy-group: channelCollaborators
+      x-speakeasy-name-override: delete
+      description: 'Removes a collaborator''s access to a channel.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: delete-channel-collaborator
+      x-wistia-mcp-description: 'Delete a channel collaborator — revoke a contact''s access to a channel. Use this when someone wants to remove a person''s access to a channel, unshare a channel, or revoke permissions. Use get-channel-collaborators to list who has access to a channel or create-channel-collaborator to grant access.
+
+        '
+      parameters:
+      - name: channelHashedId
+        in: path
+        description: Channel Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the channel (e.g., "abc123")
+          type: string
+      - name: id
+        in: path
+        description: Collaborator ID
+        required: true
+        schema:
+          description: ID of the channel collaborator to delete
+          type: integer
+      responses:
+        '200':
+          description: Channel collaborator deleted successfully
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A channel collaborator is a contact or contact group that has been granted access to a channel.
+
+                  '
+                properties:
+                  id:
+                    type: integer
+                    description: The unique identifier of the channel role.
+                    examples:
+                    - 14
+                  role:
+                    type: string
+                    description: The role of the collaborator on the channel.
+                    enum:
+                    - admin
+                    - viewer
+                    examples:
+                    - admin
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: The timestamp when this collaborator was added.
+                    examples:
+                    - '2024-01-15T10:30:00Z'
+                  share:
+                    unevaluatedProperties: false
+                    type: object
+                    description: The contact or contact group being granted access.
+                    properties:
+                      id:
+                        type: integer
+                        examples:
+                        - 3
+                      name:
+                        type: string
+                        examples:
+                        - Jim
+                      type:
+                        type: string
+                        description: Either "Contact" or "ContactGroup"
+                        examples:
+                        - Contact
+                      email:
+                        type: string
+                        format: email
+                        description: Email address (only present for Contact type).
+                        examples:
+                        - jim@wistia.com
+                    required:
+                    - id
+                    - name
+                    - type
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - role
+                - created_at
+                - share
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Channel Collaborators
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

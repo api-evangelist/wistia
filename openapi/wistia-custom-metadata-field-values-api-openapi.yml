@@ -1,0 +1,863 @@
+openapi: 3.2.0
+info:
+  title: Custom Metadata Field Values API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Custom Metadata Field Values
+  x-wistia-mcp-toolsets: media
+  x-displayName: Custom Metadata Field Values
+paths:
+  /medias/{mediaHashedId}/custom_metadata_field_values:
+    get:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: List Custom Metadata Field Values
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads custom metadata field values from a media and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-wistia-mcp-tool-name: get-media-custom-metadata-field-values
+      x-wistia-mcp-description: 'List, get, show, or browse the custom metadata field values set on a media —
+
+        the account''s custom fields and their resolved values for one video. Use this
+
+        when someone wants to see the custom metadata attached to a specific media.
+
+        Each entry pairs a field key and type with its resolved value.
+
+        '
+      description: 'Use this endpoint to request the custom metadata field values set on a media, ordered by the field definition''s position.
+
+
+        Only values for active field definitions are returned. Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        Read all folder and media data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Values
+      parameters:
+      - name: mediaHashedId
+        in: path
+        description: The hashed ID of the media whose custom metadata field values are to be retrieved.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A list of custom metadata field values for the media
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  unevaluatedProperties: false
+                  properties:
+                    key:
+                      description: The field definition's immutable identifier. Use this (not the label) to address the field this value belongs to.
+                      type: string
+                      examples:
+                      - client
+                    field_type:
+                      description: The field definition's data type, which determines the shape of `value`.
+                      type: string
+                      enum:
+                      - text
+                      - number
+                      - date
+                      - boolean
+                      - single_select
+                      - short_text
+                      - url
+                      - email
+                      - money
+                      - time
+                      - datetime
+                      - multi_select
+                      - contact_ref
+                      - contact_multi_ref
+                      examples:
+                      - single_select
+                    value:
+                      description: 'The resolved, typed value for this field on this media. The type follows `field_type`:
+
+                        a string for text-like types (text, short_text, url, email, money, time, datetime),
+
+                        a number for `number`, an ISO 8601 date string for `date`, a boolean for `boolean`,
+
+                        the selected option''s key (a string) for `single_select`, an array of the
+
+                        selected options'' keys for `multi_select`, a contact reference object
+
+                        `{"type": "contact" | "contact_group", "id": "<hashed_id>"}` for `contact_ref`,
+
+                        and an array of contact reference objects for `contact_multi_ref`. References to
+
+                        deleted contacts or contact groups are omitted. Null when unset.
+
+                        '
+                      type:
+                      - string
+                      - number
+                      - boolean
+                      - array
+                      - object
+                      - 'null'
+                      unevaluatedProperties: false
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                          - contact
+                          - contact_group
+                        id:
+                          type: string
+                      items:
+                        unevaluatedProperties: false
+                        oneOf:
+                        - type: string
+                        - type: object
+                          unevaluatedProperties: false
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                              - contact
+                              - contact_group
+                            id:
+                              type: string
+                      examples:
+                      - high
+                    updated_at:
+                      description: The date that this value was last updated.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2026-07-17T21:47:00Z'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+  /medias/{mediaHashedId}/custom_metadata_field_values/{key}:
+    put:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: Set Custom Metadata Field Value
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool sets or replaces a custom metadata field value on a media, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool replaces a single field value on one media; the previous value is overwritten but the field and media are untouched.
+        idempotent_hint: true
+        idempotent_hint_justification: Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
+      x-wistia-mcp-tool-name: set-media-custom-metadata-field-value
+      x-wistia-mcp-description: 'Set, update, or replace a custom metadata field value on a media, addressed
+
+        by the field definition''s key. Send the new value in the single `value`
+
+        body field, typed to match the field''s field_type: a string for text-like
+
+        types (text, short_text, url, email, money, time, datetime), a number for
+
+        number, a "YYYY-MM-DD" string for date, a boolean for boolean, the
+
+        chosen option''s key for single_select, and an array of the chosen options''
+
+        keys for multi_select. Sending a null value (or an empty array for
+
+        multi_select) clears the field. To discover fields and their types use
+
+        get-custom-metadata-field-definitions.
+
+        '
+      description: 'Sets (or replaces) the value of a custom metadata field on a media, addressed by the field definition''s immutable key. The lookup is case-insensitive.
+
+
+        The request body carries a single polymorphic `value` field whose JSON type must match the definition''s `field_type`:
+
+
+        - text-like types (`text`, `short_text`, `url`, `email`, `money`, `time`, `datetime`) — a string; format-validated per type (e.g. money is `"USD 12.34"`, time is 24-hour `"14:30"`, datetime is UTC ISO 8601 `"2026-07-10T14:30:00Z"`)
+
+        - `number` — a JSON number (a numeric string is coerced)
+
+        - `date` — an ISO 8601 date string like `"2026-07-10"`
+
+        - `boolean` — a JSON boolean; `false` persists as false (it does not clear the field)
+
+        - `single_select` — the chosen option''s key (a string); unknown option keys return a 422
+
+        - `multi_select` — an array of the chosen options'' keys (strings); unknown option keys or a non-array value return a 422
+
+        - `contact_ref` — a contact reference object `{"type": "contact" | "contact_group", "id": "<hashed_id>"}`; unknown ids, ids from another account, and group references on fields that do not allow groups return a 422
+
+        - `contact_multi_ref` — an array of contact reference objects; the same 422 rules apply per reference, and a non-array value returns a 422
+
+
+        A null or absent `value` clears the field (equivalent to the DELETE endpoint), as does an empty array for `multi_select` and `contact_multi_ref`. Type mismatches and format violations return a 422 with a field-level message.
+
+
+        Only values for active field definitions can be written. Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Upload, read & update all media
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Values
+      parameters:
+      - name: mediaHashedId
+        in: path
+        description: The hashed ID of the media whose custom metadata field value is to be set.
+        required: true
+        schema:
+          type: string
+      - name: key
+        in: path
+        description: The field definition's immutable key.
+        required: true
+        schema:
+          type: string
+          examples:
+          - client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              unevaluatedProperties: false
+              properties:
+                value:
+                  description: 'The new value for this field, typed to match the definition''s `field_type`:
+
+                    a string for text-like types (text, short_text, url, email, money, time, datetime),
+
+                    a number for `number`, an ISO 8601 date string like "2026-07-10" for `date`,
+
+                    a boolean for `boolean`, the chosen option''s key (a string) for `single_select`,
+
+                    an array of the chosen options'' keys for `multi_select`, a contact reference
+
+                    object `{"type": "contact" | "contact_group", "id": "<hashed_id>"}` for
+
+                    `contact_ref`, and an array of contact reference objects for `contact_multi_ref`.
+
+                    Contact group references require the field to allow groups.
+
+                    Null (or omitting the property) clears the field; for `multi_select` and
+
+                    `contact_multi_ref`, an empty array also clears it.
+
+                    '
+                  type:
+                  - string
+                  - number
+                  - boolean
+                  - array
+                  - object
+                  - 'null'
+                  unevaluatedProperties: false
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                      - contact
+                      - contact_group
+                    id:
+                      type: string
+                  items:
+                    unevaluatedProperties: false
+                    oneOf:
+                    - type: string
+                    - type: object
+                      unevaluatedProperties: false
+                      properties:
+                        type:
+                          type: string
+                          enum:
+                          - contact
+                          - contact_group
+                        id:
+                          type: string
+                  examples:
+                  - high
+      responses:
+        '200':
+          description: Custom metadata field value set
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  key:
+                    description: The field definition's immutable identifier. Use this (not the label) to address the field this value belongs to.
+                    type: string
+                    examples:
+                    - client
+                  field_type:
+                    description: The field definition's data type, which determines the shape of `value`.
+                    type: string
+                    enum:
+                    - text
+                    - number
+                    - date
+                    - boolean
+                    - single_select
+                    - short_text
+                    - url
+                    - email
+                    - money
+                    - time
+                    - datetime
+                    - multi_select
+                    - contact_ref
+                    - contact_multi_ref
+                    examples:
+                    - single_select
+                  value:
+                    description: 'The resolved, typed value for this field on this media. The type follows `field_type`:
+
+                      a string for text-like types (text, short_text, url, email, money, time, datetime),
+
+                      a number for `number`, an ISO 8601 date string for `date`, a boolean for `boolean`,
+
+                      the selected option''s key (a string) for `single_select`, an array of the
+
+                      selected options'' keys for `multi_select`, a contact reference object
+
+                      `{"type": "contact" | "contact_group", "id": "<hashed_id>"}` for `contact_ref`,
+
+                      and an array of contact reference objects for `contact_multi_ref`. References to
+
+                      deleted contacts or contact groups are omitted. Null when unset.
+
+                      '
+                    type:
+                    - string
+                    - number
+                    - boolean
+                    - array
+                    - object
+                    - 'null'
+                    unevaluatedProperties: false
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - contact
+                        - contact_group
+                      id:
+                        type: string
+                    items:
+                      unevaluatedProperties: false
+                      oneOf:
+                      - type: string
+                      - type: object
+                        unevaluatedProperties: false
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                            - contact
+                            - contact_group
+                          id:
+                            type: string
+                    examples:
+                    - high
+                  updated_at:
+                    description: The date that this value was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-17T21:47:00Z'
+        '204':
+          description: Custom metadata field value cleared (a null or absent `value` was sent, or an empty array for a multi_select field)
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: A single error message describing what went wrong.
+                    type: string
+                  errors:
+                    description: Array of error messages describing what went wrong.
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                    - - Title is required
+                      - Event duration must be at least 15 minutes
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+    delete:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: Clear Custom Metadata Field Value
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool clears a custom metadata field value from a media, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool removes the stored value for the field on this media; the value cannot be recovered, though the field definition and media are untouched.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-wistia-mcp-tool-name: clear-media-custom-metadata-field-value
+      x-wistia-mcp-description: 'Clear, remove, or unset a custom metadata field value on a media, addressed
+
+        by the field definition''s key. The field definition itself is untouched —
+
+        only this media''s stored value is removed. Clearing an already-empty field
+
+        succeeds. Use set-media-custom-metadata-field-value to write a new value.
+
+        '
+      description: 'Clears the value of a custom metadata field on a media, addressed by the field definition''s immutable key. The lookup is case-insensitive. Clearing a field that has no stored value succeeds (the operation is idempotent).
+
+
+        Only values for active field definitions can be cleared. Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Upload, read & update all media
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Values
+      parameters:
+      - name: mediaHashedId
+        in: path
+        description: The hashed ID of the media whose custom metadata field value is to be cleared.
+        required: true
+        schema:
+          type: string
+      - name: key
+        in: path
+        description: The field definition's immutable key.
+        required: true
+        schema:
+          type: string
+          examples:
+          - client
+      responses:
+        '200':
+          description: Custom metadata field value cleared
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+    get:
+      x-readme-hidden: true
+      x-wistia-mcp-account-gate: can_use_custom_metadata?
+      summary: Show Custom Metadata Field Value
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads a single custom metadata field value from a media and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-wistia-mcp-tool-name: get-media-custom-metadata-field-value
+      x-wistia-mcp-description: 'Get, show, or look up a single custom metadata field value on a media by the
+
+        field''s key. Use this when someone references a specific custom field by key
+
+        and wants its resolved value for one video. The key lookup is case-insensitive.
+
+        '
+      description: 'Get the value of a single custom metadata field on a media, addressed by the field definition''s key. The lookup is case-insensitive.
+
+
+        Only values for active field definitions are returned. Requires the custom metadata feature to be available on your account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        Read all folder and media data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      tags:
+      - Custom Metadata Field Values
+      parameters:
+      - name: mediaHashedId
+        in: path
+        description: The hashed ID of the media whose custom metadata field value is to be retrieved.
+        required: true
+        schema:
+          type: string
+      - name: key
+        in: path
+        description: The field definition's immutable key.
+        required: true
+        schema:
+          type: string
+          examples:
+          - client
+      responses:
+        '200':
+          description: Custom metadata field value details
+          content:
+            application/json:
+              schema:
+                type: object
+                unevaluatedProperties: false
+                properties:
+                  key:
+                    description: The field definition's immutable identifier. Use this (not the label) to address the field this value belongs to.
+                    type: string
+                    examples:
+                    - client
+                  field_type:
+                    description: The field definition's data type, which determines the shape of `value`.
+                    type: string
+                    enum:
+                    - text
+                    - number
+                    - date
+                    - boolean
+                    - single_select
+                    - short_text
+                    - url
+                    - email
+                    - money
+                    - time
+                    - datetime
+                    - multi_select
+                    - contact_ref
+                    - contact_multi_ref
+                    examples:
+                    - single_select
+                  value:
+                    description: 'The resolved, typed value for this field on this media. The type follows `field_type`:
+
+                      a string for text-like types (text, short_text, url, email, money, time, datetime),
+
+                      a number for `number`, an ISO 8601 date string for `date`, a boolean for `boolean`,
+
+                      the selected option''s key (a string) for `single_select`, an array of the
+
+                      selected options'' keys for `multi_select`, a contact reference object
+
+                      `{"type": "contact" | "contact_group", "id": "<hashed_id>"}` for `contact_ref`,
+
+                      and an array of contact reference objects for `contact_multi_ref`. References to
+
+                      deleted contacts or contact groups are omitted. Null when unset.
+
+                      '
+                    type:
+                    - string
+                    - number
+                    - boolean
+                    - array
+                    - object
+                    - 'null'
+                    unevaluatedProperties: false
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - contact
+                        - contact_group
+                      id:
+                        type: string
+                    items:
+                      unevaluatedProperties: false
+                      oneOf:
+                      - type: string
+                      - type: object
+                        unevaluatedProperties: false
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                            - contact
+                            - contact_group
+                          id:
+                            type: string
+                    examples:
+                    - high
+                  updated_at:
+                    description: The date that this value was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2026-07-17T21:47:00Z'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

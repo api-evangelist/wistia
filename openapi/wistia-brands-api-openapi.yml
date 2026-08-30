@@ -1,0 +1,426 @@
+openapi: 3.2.0
+info:
+  title: Data Brands API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Brands
+  x-wistia-mcp-toolsets: customizations
+  x-displayName: Brands
+paths:
+  /brands:
+    get:
+      summary: List Brands
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads brands from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: brands
+      x-speakeasy-name-override: list
+      description: 'Lists the brands belonging to the account. A brand is a saved set of
+
+        branding options (colors, fonts, logos, and layout) that can be applied to
+
+        media, projects, channels, and webinars. The account-level default brand is
+
+        flagged with `is_default`.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        '
+      x-wistia-mcp-tool-name: get-brands
+      x-wistia-mcp-description: 'List the brands in the account — the saved sets of branding options (colors,
+
+        fonts, logos, border radius) used to style players and pages. The
+
+        account-level default brand is marked with is_default. Supports pagination
+
+        and sorting (by name, created, updated, or id). Use this when someone wants
+
+        to see which brands exist and how each is configured.
+
+        '
+      parameters:
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      - name: sort_by
+        in: query
+        description: 'Ordering. When using cursor pagination (see cursor param),
+
+          only `id`, `updated` and `created` are supported. All other sort_by options
+
+          require offset pagination.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - name
+          - created
+          - updated
+          - id
+      - name: sort_direction
+        in: query
+        description: Ordering Sort Direction (0 = desc, 1 = asc)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      responses:
+        '200':
+          description: A list of brands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  description: 'A brand is a saved set of branding options — colors, fonts, logos, and
+
+                    layout — that can be applied to media, projects, channels, and webinars.
+
+                    '
+                  properties:
+                    name:
+                      description: The brand's display name.
+                      type: string
+                      examples:
+                      - My Brand
+                    is_default:
+                      description: Whether this brand is the account-level default, applied to content that has no more specific brand.
+                      type: boolean
+                      examples:
+                      - true
+                    created:
+                      description: The date the brand was originally created.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2010-08-13T18:47:39+00:00'
+                    updated:
+                      description: The date the brand was last updated.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2010-08-19T21:47:00+00:00'
+                    primary_color:
+                      description: The primary brand color, used for primary buttons and the player playbar. Either a hex color string or a gradient represented as an array of [hexColor, percentage] tuples. Null when unset.
+                      unevaluatedProperties: false
+                      oneOf:
+                      - type: string
+                        examples:
+                        - '#2949E5'
+                      - type: array
+                        items:
+                          type: array
+                          items: {}
+                      - type: 'null'
+                    page_background_color:
+                      description: The brand color used for page backgrounds. Either a hex color string or a gradient represented as an array of [hexColor, percentage] tuples. Null when unset.
+                      unevaluatedProperties: false
+                      oneOf:
+                      - type: string
+                        examples:
+                        - '#111111'
+                      - type: array
+                        items:
+                          type: array
+                          items: {}
+                      - type: 'null'
+                    body_font_family:
+                      description: The brand font family for body text. Null when unset.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - Inter
+                    headline_font_family:
+                      description: The brand font family for headlines. Null when unset.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - GT Walsheim
+                    button_font_family:
+                      description: The brand font family for buttons. Null when unset.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - Inter
+                    border_radius:
+                      description: The border radius in pixels for rounded corners. Null when unset.
+                      type:
+                      - integer
+                      - 'null'
+                      examples:
+                      - 10
+                    contrast_icons:
+                      description: Controls whether the player icon color is always white or uses an accessible contrast color when necessary.
+                      type:
+                      - string
+                      - 'null'
+                      enum:
+                      - enabled
+                      - disabled
+                      - unset
+                      - null
+                    opaque_controls:
+                      description: Controls the opacity of the video player control bar and big play button.
+                      type:
+                      - string
+                      - 'null'
+                      enum:
+                      - enabled
+                      - disabled
+                      - unset
+                      - null
+                    page_logo:
+                      description: The brand logo used for pages. Null when unset.
+                      type:
+                      - object
+                      - 'null'
+                      unevaluatedProperties: false
+                      properties:
+                        url:
+                          description: The URL of the logo image.
+                          type: string
+                        dimensions:
+                          type:
+                          - object
+                          - 'null'
+                          unevaluatedProperties: false
+                          properties:
+                            width:
+                              type: integer
+                            height:
+                              type: integer
+                        size:
+                          description: The size multiplier of the logo.
+                          type:
+                          - number
+                          - 'null'
+                    player_logo:
+                      description: The brand logo used for the player. Null when unset.
+                      type:
+                      - object
+                      - 'null'
+                      unevaluatedProperties: false
+                      properties:
+                        url:
+                          description: The URL of the logo image.
+                          type: string
+                        dimensions:
+                          type:
+                          - object
+                          - 'null'
+                          unevaluatedProperties: false
+                          properties:
+                            width:
+                              type: integer
+                            height:
+                              type: integer
+                        size:
+                          description: The size multiplier of the logo.
+                          type:
+                          - number
+                          - 'null'
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Brands
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

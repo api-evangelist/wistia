@@ -1,0 +1,604 @@
+openapi: 3.2.0
+info:
+  title: Data Projects API
+  description: Wistia Data API
+  version: 1.0.0
+servers:
+- url: https://api.wistia.com/v1
+tags:
+- name: Projects
+  x-displayName: Projects
+paths:
+  /projects:
+    get:
+      summary: Project List
+      description: 'Use this endpoint to request a list of Projects in your Wistia account. This request supports paging and sorting.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        Read all folder and media data
+
+        ```
+
+        '
+      parameters:
+      - name: page
+        in: query
+        description: Page number to retrieve
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Number of projects per page
+        required: false
+        schema:
+          type: integer
+      - name: sort_by
+        in: query
+        description: Ordering
+        required: false
+        schema:
+          type: string
+          enum:
+          - name
+          - created
+          - updated
+          - mediaCount
+          - id
+      - name: sort_direction
+        in: query
+        description: Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      - name: hashed_ids[]
+        in: query
+        description: A collection of hashed ids belonging to projects to fetch
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: A list of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Projects
+      security:
+      - BearerAuth: []
+    post:
+      summary: Project Create
+      description: 'Create a new project. If the project is created successfully the Location HTTP header will point to the new project.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProject'
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Projects
+      security:
+      - BearerAuth: []
+  /projects/{id}:
+    get:
+      summary: Project Show
+      description: 'Retrieve a single project. Projects#show uses pagination by default - we’ll return up to the first 500 medias in a Project. If you have more than 500 medias in a Project, you’ll need to add a query param, page=2 to get the second page of medias (and the third, etc.). You can check how many pages you will need by looking at the media_count in your first request.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        Read all folder and media data
+
+        ```
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: Project Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the project (e.g., "4d23503f70")
+          type: string
+      responses:
+        '200':
+          description: A single project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectWithMedias'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Projects
+      security:
+      - BearerAuth: []
+    put:
+      summary: Project Update
+      description: 'Update a project
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: Project Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the project (e.g., "4d23503f70")
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProject'
+      responses:
+        '200':
+          description: A single project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Projects
+      security:
+      - BearerAuth: []
+    delete:
+      summary: Project Delete
+      description: 'Delete a project
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: Project Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the project (e.g., "4d23503f70")
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Projects
+      security:
+      - BearerAuth: []
+  /projects/{id}/copy:
+    post:
+      summary: Project Copy
+      description: 'This method does not copy the project’s sharing information (i.e. users that could see the old project will not automatically be able to see the new one).
+
+        For the request you can specify the owner of a new project by passing an optional parameter. The person you specify must be a Manager in the account.
+
+        For the response, the HTTP Location header will be set to the URL where the new project resource resides. The body of the response will contain an object representing the new copy of the project that was just created.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: Project Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the project (e.g., "4d23503f70")
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                adminEmail:
+                  description: The email address of the account Manager that will be the owner of the new project. Defaults to the Account Owner if invalid or omitted.
+                  type: string
+                  examples:
+                  - admin@example.com
+      responses:
+        '201':
+          description: Project copied successfully
+          headers:
+            Location:
+              description: The URL where the new project resource resides.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Projects
+      security:
+      - BearerAuth: []
+components:
+  responses:
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '403':
+      description: Forbidden, token is valid but account does not have access to feature
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Live streaming is not available on your current plan
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+  schemas:
+    ProjectWithMedias:
+      allOf:
+      - $ref: '#/components/schemas/Project'
+      - type: object
+        properties:
+          medias:
+            type: array
+            items:
+              $ref: '#/components/schemas/MediaProperties'
+        required:
+        - medias
+    Project:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the project within the system.
+          type: integer
+          examples:
+          - 22570
+        name:
+          description: The project’s display name.
+          type: string
+          examples:
+          - My Project Title
+        description:
+          description: The project’s description.
+          type:
+          - string
+          - 'null'
+          examples:
+          - About My Project
+        mediaCount:
+          description: The number of different medias that have been uploaded to the project.
+          type: integer
+          examples:
+          - 2
+        created:
+          description: The date that the project was originally created.
+          type: string
+          format: date-time
+          examples:
+          - '2010-08-13T18:47:39+00:00'
+        updated:
+          description: The date that the project was last updated.
+          type: string
+          format: date-time
+          examples:
+          - '2010-08-19T21:47:00+00:00'
+        hashedId:
+          description: A private hashed id, uniquely identifying the project within the system.
+          type: string
+          examples:
+          - 4d23503f70
+        public:
+          description: A boolean indicating whether the project is available for public (anonymous) viewing.
+          type: boolean
+          examples:
+          - false
+        publicId:
+          description: If the project is public, this field contains a string representing the ID used for referencing the project in public URLs.
+          type:
+          - string
+          - 'null'
+          examples:
+          - 4bD
+        anonymousCanUpload:
+          type: boolean
+          examples:
+          - false
+        anonymousCanDownload:
+          type: boolean
+          examples:
+          - false
+      required:
+      - id
+      - name
+      - mediaCount
+      - created
+      - updated
+      - hashedId
+      - public
+      - publicId
+    MediaProperties:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the media within the system.
+          type: integer
+        name:
+          description: The display name of the media.
+          type: string
+        type:
+          description: A string representing what type of media this is.
+          type: string
+          enum:
+          - Video
+          - Audio
+          - Image
+          - PdfDocument
+          - MicrosoftOfficeDocument
+          - Swf
+          - UnknownType
+        archived:
+          description: Whether or not the media is archived, either true or false.
+          type: boolean
+        created:
+          description: The date when the media was originally uploaded.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the media was last changed.
+          type: string
+          format: date-time
+        duration:
+          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+          type: number
+        embedCode:
+          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+            '
+          type: string
+          deprecated: true
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        description:
+          description: A description for the media which usually appears near the top of the sidebar on the media's page.
+          type: string
+        progress:
+          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+          type: number
+          maximum: 1
+          minimum: 0
+        status:
+          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+            '
+          type: string
+          enum:
+          - queued
+          - processing
+          - ready
+          - failed
+        section:
+          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+          type: string
+        thumbnail:
+          $ref: '#/components/schemas/Thumbnail'
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    CreateProject:
+      type: object
+      properties:
+        name:
+          description: The name of the project you want to create.
+          type: string
+          examples:
+          - My New Project
+        adminEmail:
+          description: The email address of the person you want to set as the owner of this project. Defaults to the Wistia Account Owner.
+          type: string
+          examples:
+          - admin@example.com
+        public:
+          oneOf:
+          - type: string
+            description: A flag indicating whether or not the project is enabled for public access. Set to “1” to enable and “0” to disable.
+            enum:
+            - '0'
+            - '1'
+          - type: boolean
+            description: A flag indicating whether or not the project is enabled for public access. Set to `true` to enable and `false` to disable.
+            examples:
+            - false
+    UpdateProject:
+      type: object
+      properties:
+        name:
+          description: The project’s new name.
+          type: string
+          examples:
+          - My New Project Name
+        description:
+          description: The project’s new description.
+          type: string
+          examples:
+          - My New Project Description
+        anonymousCanUpload:
+          description: Whether anonymous users can upload media to the project.
+          type: boolean
+        anonymousCanDownload:
+          description: Whether anonymous users can download media from the project.
+          type: boolean
+        public:
+          oneOf:
+          - type: string
+            description: A flag indicating whether or not the project is enabled for public access. Set to “1” to enable and “0” to disable.
+            enum:
+            - '0'
+            - '1'
+          - type: boolean
+            description: A flag indicating whether or not the project is enabled for public access. Set to `true` to enable and `false` to disable.
+            examples:
+            - false
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Projects
+  - Subfolders
+  - Project Sharings
+  - Media
+  - Account
+  - Allowed Domains
+  - Background Job Status
+  - Customizations
+  - Captions
+  - Trims
+  - Localizations
+  - Tags
+  - Search
+  - Channels
+  - Channel Episodes
+  - Expiring Access Tokens
+  - Live Stream Events
+  - Live Stream Event Registrations
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Projects
+  - Stats:Media
+  - Stats:Visitors
+  - Stats:Events

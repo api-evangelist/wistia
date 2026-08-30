@@ -1,0 +1,243 @@
+openapi: 3.2.0
+info:
+  title: Wistia Stats:Account API
+  version: '1.0'
+  description: 'Operations tagged Stats:Account across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Stats:Account
+  x-wistia-mcp-toolsets: stats
+  x-displayName: Stats:Account
+paths:
+  /stats/account:
+    get:
+      summary: Show Current Account Stats
+      description: 'Retrieve account-wide video stats. Get statistics like the number of video loads, plays, and hours watched for the entire account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      responses:
+        '200':
+          description: Successful operation. Account stats retrieved.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  load_count:
+                    description: The total number of times all of the videos from this account have been loaded.
+                    type: integer
+                  play_count:
+                    description: The total number of times all of the videos from this account have been played.
+                    type: integer
+                  hours_watched:
+                    description: The total amount of time spent watching all of the videos in this account.
+                    type: number
+                    format: float
+                required:
+                - load_count
+                - play_count
+                - hours_watched
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Account
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /stats/account/by_date:
+    get:
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
+      x-wistia-mcp-ignore-agent-chat: true
+      summary: Show Account Stats by Date
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads account stats by date from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      description: 'Retrieve account-wide stats organized by day, between a start and end date parameter (inclusive). If start and end date are not provided, defaults to yesterday and today.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: start_date
+        in: query
+        description: The start date for the stats, formatted YYYY-MM-DD
+        required: false
+        schema:
+          type: string
+          format: date
+        example: '2024-02-21'
+      - name: end_date
+        in: query
+        description: The end date for the stats, formatted YYYY-MM-DD
+        required: false
+        schema:
+          type: string
+          format: date
+        example: '2024-02-23'
+      responses:
+        '200':
+          description: A list of account stats by date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+                    load_count:
+                      type: integer
+                    play_count:
+                      type: integer
+                    hours_watched:
+                      type: number
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Account
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

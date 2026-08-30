@@ -1,0 +1,619 @@
+openapi: 3.2.0
+info:
+  title: Wistia Allowed Domains API
+  version: '1.0'
+  description: 'Operations tagged Allowed Domains across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Allowed Domains
+  x-wistia-mcp-toolsets: sharing
+  x-displayName: Allowed Domains
+paths:
+  /allowed_domains:
+    get:
+      summary: List Allowed Domains
+      description: 'Lists allowed domains belonging to the account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set than cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set than cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      - name: sort_by
+        in: query
+        description: 'Ordering. When using cursor pagination (see cursor param),
+
+          only `id` and `domain` are supported.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - id
+          - domain
+          default: id
+      - name: sort_direction
+        in: query
+        description: Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+          default: 1
+      responses:
+        '200':
+          description: List of allowed domains
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  description: 'An allowed domain represents a domain where a Wistia video can be embedded. Account
+
+                    restrictions need to be enabled for an allowed domain to have an effect. See
+
+                    our [Domain Restrictions](https://support.wistia.com/en/articles/9691672-domain-restrictions)
+
+                    guide for more details.
+
+                    '
+                  properties:
+                    domain:
+                      description: The allowed domain name.
+                      type: string
+                      examples:
+                      - example.com
+                    created_at:
+                      description: The date that the allowed domain was originally created.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2010-08-13T18:47:39+00:00'
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+                  required:
+                  - domain
+                  - created_at
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Allowed Domains
+      security:
+      - BearerAuth: []
+    post:
+      summary: Create Allowed Domain
+      description: 'Creates an allowed domain for the account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                domain:
+                  description: The domain name to add (www will be automatically stripped)
+                  type: string
+                  examples:
+                  - example.com
+              required:
+              - domain
+      responses:
+        '200':
+          description: Allowed domain created successfully (or already exists)
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'An allowed domain represents a domain where a Wistia video can be embedded. Account
+
+                  restrictions need to be enabled for an allowed domain to have an effect. See
+
+                  our [Domain Restrictions](https://support.wistia.com/en/articles/9691672-domain-restrictions)
+
+                  guide for more details.
+
+                  '
+                properties:
+                  domain:
+                    description: The allowed domain name.
+                    type: string
+                    examples:
+                    - example.com
+                  created_at:
+                    description: The date that the allowed domain was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-13T18:47:39+00:00'
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - domain
+                - created_at
+        '400':
+          description: Bad request - missing or invalid domain
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - The domain's format doesn't look correct. It should be formatted like "mydomain.com"
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Allowed Domains
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /allowed_domains/{domain}:
+    get:
+      summary: Show Allowed Domain
+      description: 'Returns the details of an allowed domain.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: domain
+        in: path
+        description: The domain name to retrieve
+        required: true
+        schema:
+          type: string
+          examples:
+          - example.com
+      responses:
+        '200':
+          description: Allowed domain details
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'An allowed domain represents a domain where a Wistia video can be embedded. Account
+
+                  restrictions need to be enabled for an allowed domain to have an effect. See
+
+                  our [Domain Restrictions](https://support.wistia.com/en/articles/9691672-domain-restrictions)
+
+                  guide for more details.
+
+                  '
+                properties:
+                  domain:
+                    description: The allowed domain name.
+                    type: string
+                    examples:
+                    - example.com
+                  created_at:
+                    description: The date that the allowed domain was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-13T18:47:39+00:00'
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - domain
+                - created_at
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Domain not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - domain was not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Allowed Domains
+      security:
+      - BearerAuth: []
+    delete:
+      summary: Delete Allowed Domain
+      description: 'Deletes an allowed domain from the account.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: domain
+        in: path
+        description: The domain name to delete
+        required: true
+        schema:
+          type: string
+          examples:
+          - example.com
+      responses:
+        '200':
+          description: Allowed domain deleted successfully
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'An allowed domain represents a domain where a Wistia video can be embedded. Account
+
+                  restrictions need to be enabled for an allowed domain to have an effect. See
+
+                  our [Domain Restrictions](https://support.wistia.com/en/articles/9691672-domain-restrictions)
+
+                  guide for more details.
+
+                  '
+                properties:
+                  domain:
+                    description: The allowed domain name.
+                    type: string
+                    examples:
+                    - example.com
+                  created_at:
+                    description: The date that the allowed domain was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-13T18:47:39+00:00'
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - domain
+                - created_at
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Domain not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - domain was not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Allowed Domains
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  schemas:
+    AllowedDomain:
+      type: object
+      properties:
+        domain:
+          description: The allowed domain name.
+          type: string
+          examples:
+          - example.com
+        created_at:
+          description: The date that the allowed domain was originally created.
+          type: string
+          format: date-time
+          examples:
+          - '2010-08-13T18:47:39+00:00'
+      required:
+      - domain
+      - created_at
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

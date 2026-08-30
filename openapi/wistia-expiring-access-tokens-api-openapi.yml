@@ -1,0 +1,250 @@
+openapi: 3.2.0
+info:
+  title: Wistia Expiring Access Tokens API
+  version: '1.0'
+  description: 'Operations tagged Expiring Access Tokens across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Expiring Access Tokens
+  x-wistia-mcp-toolsets: sharing
+  x-displayName: Expiring Access Tokens
+paths:
+  /expiring_token:
+    post:
+      summary: Create Expiring Access Token
+      description: '```
+
+        🚫 Alert
+
+        This API is still under development and can change at any time.
+
+        ```
+
+
+        This endpoint is for creating expiring access tokens which can be used for some iframe embeds.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                expiring_access_token:
+                  unevaluatedProperties: false
+                  type: object
+                  properties:
+                    expires_at:
+                      description: an ISO8601 string of when the token will expire, defaults to two days from creation
+                      type: string
+                      format: iso8601
+                    authorizations:
+                      description: a list of authorizations the token will have
+                      type: array
+                      items:
+                        unevaluatedProperties: false
+                        type: object
+                        properties:
+                          type:
+                            description: The type of object the permission is being performed on, only media is currently supported
+                            type: string
+                          id:
+                            description: The hashed if of the object the permissions are being performed on.
+                            type: string
+                          permissions:
+                            description: The types of permissions, currently only supports edit-transcripts
+                            type: array
+                            items:
+                              type: string
+                        required:
+                        - type
+                        - id
+                        - permissions
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  token:
+                    description: A token which can be used to authorize requests to Wistia. Currently only for doing transcript embeds.
+                    type: string
+                required:
+                - token
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: A single error message describing what went wrong.
+                    type: string
+                  errors:
+                    description: Array of error messages describing what went wrong.
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                    - - Title is required
+                      - Event duration must be at least 15 minutes
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '501':
+          description: Not implemented - expiring tokens cannot be created from other expiring tokens
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Expiring tokens can only be created from non-expiring access tokens.
+      tags:
+      - Expiring Access Tokens
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  responses:
+    '422':
+      description: Unprocessable entity, the request parameters were invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+                example:
+                  trims:
+                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
+                  media:
+                  - must be part of a project
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+  schemas:
+    ExpiringAccessTokenResponse:
+      type: object
+      properties:
+        token:
+          description: A token which can be used to authorize requests to Wistia. Currently only for doing transcript embeds.
+          type: string
+      required:
+      - token
+    ExpiringAccessTokenInput:
+      type: object
+      properties:
+        expires_at:
+          description: an ISO8601 string of when the token will expire, defaults to two days from creation
+          type: string
+          format: iso8601
+        authorizations:
+          description: a list of authorizations the token will have
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                description: The type of object the permission is being performed on, only media is currently supported
+                type: string
+              id:
+                description: The hashed if of the object the permissions are being performed on.
+                type: string
+              permissions:
+                description: The types of permissions, currently only supports edit-transcripts
+                type: array
+                items:
+                  type: string
+            required:
+            - type
+            - id
+            - permissions
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

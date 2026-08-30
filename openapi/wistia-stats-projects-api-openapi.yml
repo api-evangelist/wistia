@@ -1,0 +1,136 @@
+openapi: 3.2.0
+info:
+  title: Wistia Stats:Projects API
+  version: '1.0'
+  description: 'Operations tagged Stats:Projects across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.wistia.com/modern
+- url: https://api.wistia.com/v1
+tags:
+- name: Stats:Projects
+  x-wistia-mcp-toolsets: stats
+  x-displayName: Stats:Projects
+paths:
+  /stats/projects/{projectId}:
+    get:
+      summary: Show Project Stats
+      description: 'Retrieve stats for a project. This endpoint provides statistics for a specific project identified by its project-id.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: The Hashed ID or ID of the project for which you want to retrieve stats.
+        required: true
+        schema:
+          description: The hashed ID or numeric ID of the project (e.g., "4d23503f70" or "22570")
+          type: string
+      responses:
+        '200':
+          description: Success response with the stats of the project.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  load_count:
+                    description: The total number of times the videos in this project have been loaded.
+                    type: integer
+                  play_count:
+                    description: The total number of times the videos in this project have been played.
+                    type: integer
+                  hours_watched:
+                    description: The total time spent viewing the videos in this project.
+                    type: number
+                    format: float
+                  number_of_videos:
+                    description: The total number of videos in this project.
+                    type: integer
+                    deprecated: true
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Project not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Stats:Projects
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-refined-from:
+- wistia-data-api-2026-01-openapi.yml
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml

@@ -1,0 +1,1218 @@
+openapi: 3.2.0
+info:
+  title: Data Analytics:Webinar API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Analytics:Webinar
+  x-wistia-mcp-toolsets: analytics
+  x-displayName: Analytics:Webinar
+paths:
+  /analytics/webinars/{webinarId}:
+    get:
+      summary: Show Webinar Analytics
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads webinar analytics from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: get
+      description: 'Retrieve aggregate analytics for a webinar. This endpoint provides
+
+        Bottler-powered analytics including registrations, attendance, engagement,
+
+        chat activity, and poll results.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: webinarId
+        in: path
+        description: The hashed ID of the webinar.
+        required: true
+        schema:
+          description: The hashed ID of the webinar (e.g., "abc123xyz")
+          type: string
+      - name: include_post_event
+        in: query
+        description: Whether to include on-demand viewing data after the live event ended.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: post_event_start_date
+        in: query
+        description: Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: post_event_end_date
+        in: query
+        description: End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Only used when include_post_event is true.
+        required: false
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Success response with aggregate analytics for the webinar.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    registrations:
+                      description: The total number of registrations for the webinar.
+                      type:
+                      - integer
+                      - 'null'
+                    imported_registrations:
+                      description: The number of registrations imported from external sources.
+                      type:
+                      - integer
+                      - 'null'
+                    on_demand_registrations:
+                      description: The number of registrations for on-demand viewing.
+                      type:
+                      - integer
+                      - 'null'
+                    imported_on_demand_registrations:
+                      description: The number of on-demand registrations imported from external sources.
+                      type:
+                      - integer
+                      - 'null'
+                    total_watch_time:
+                      description: Total watch time across all attendees in seconds.
+                      type:
+                      - integer
+                      - 'null'
+                    average_watch_time:
+                      description: Average watch time per attendee in seconds.
+                      type:
+                      - integer
+                      - 'null'
+                    attendance:
+                      description: The total number of attendees who joined the live event.
+                      type:
+                      - integer
+                      - 'null'
+                    chatted_attendees:
+                      description: The number of attendees who sent at least one chat message.
+                      type:
+                      - integer
+                      - 'null'
+                    engagement_rate:
+                      description: The average engagement rate for attendees (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    chats:
+                      description: The total number of chat messages sent during the event.
+                      type:
+                      - integer
+                      - 'null'
+                    currently_watching:
+                      description: The number of viewers currently watching (0 for completed events).
+                      type:
+                      - integer
+                      - 'null'
+                    engaged_attendees:
+                      description: The number of attendees who were actively engaged.
+                      type:
+                      - integer
+                      - 'null'
+                    impressions:
+                      description: The total number of registration page impressions.
+                      type:
+                      - integer
+                      - 'null'
+                    on_demand_impressions:
+                      description: The number of on-demand page impressions.
+                      type:
+                      - integer
+                      - 'null'
+                    on_demand_plays:
+                      description: The number of on-demand video plays.
+                      type:
+                      - integer
+                      - 'null'
+                    on_demand_engagement_rate:
+                      description: The engagement rate for on-demand viewers (between 0 and 1).
+                      type:
+                      - number
+                      - 'null'
+                      format: float
+                    event_time:
+                      description: The duration of the live event in seconds.
+                      type:
+                      - integer
+                      - 'null'
+                    qa_questions:
+                      description: The total number of Q&A questions asked during the event.
+                      type:
+                      - integer
+                      - 'null'
+                    poll_questions:
+                      description: Poll questions and their response data.
+                      type:
+                      - array
+                      - 'null'
+                      items:
+                        type: object
+                        unevaluatedProperties: false
+                        properties:
+                          id:
+                            description: The poll question ID.
+                            type: integer
+                          poll_id:
+                            description: The poll ID this question belongs to.
+                            type: integer
+                          text:
+                            description: The question text.
+                            type: string
+                          response_count:
+                            description: The total number of responses.
+                            type: integer
+                          options:
+                            description: The available answer options and their response counts.
+                            type:
+                            - array
+                            - 'null'
+                            items:
+                              type: object
+                              unevaluatedProperties: false
+                              properties:
+                                id:
+                                  description: The option ID.
+                                  type: integer
+                                text:
+                                  description: The option text.
+                                  type: string
+                                count:
+                                  description: The number of times this option was selected.
+                                  type: integer
+                                percent:
+                                  description: The percentage of respondents who selected this option.
+                                  type: number
+                                  format: float
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Webinar not found or does not belong to account
+          content: {}
+        '409':
+          description: The event has not yet reached a terminal state. Analytics are only available after the event has ended.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message indicating the event has not ended.
+                    type: string
+                    examples:
+                    - Aggregate analytics are not available until the event has ended
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing why the request could not be processed.
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Webinar
+      security:
+      - BearerAuth: []
+  /analytics/webinars/{webinarId}/registration:
+    get:
+      summary: Show Webinar Registration Timeseries
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads webinar registration timeseries from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: getRegistration
+      description: 'Retrieve registration timeseries data for a webinar with configurable
+
+        granularity. Returns an array of timestamped registration metric buckets
+
+        including impressions, registrations, and completion rates.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: webinarId
+        in: path
+        description: The hashed ID of the webinar.
+        required: true
+        schema:
+          description: The hashed ID of the webinar (e.g., "abc123xyz")
+          type: string
+      - name: granularity
+        in: query
+        description: The time granularity for the timeseries data.
+        required: true
+        schema:
+          type: string
+          enum:
+          - daily
+          - weekly
+          - monthly
+      - name: include_post_event
+        in: query
+        description: Whether to include on-demand viewing data after the live event ended.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: post_event_start_date
+        in: query
+        description: Start date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Inclusive — the range starts at the beginning of this date. Only used when include_post_event is true.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: post_event_end_date
+        in: query
+        description: End date for the post-event analytics period in ISO 8601 format (YYYY-MM-DD). Exclusive — the range ends before the beginning of this date. Only used when include_post_event is true.
+        required: false
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: Success response with registration timeseries data.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  allOf:
+                  - type: object
+                    properties:
+                      timestamp:
+                        description: The start of the time bucket in ISO 8601 format.
+                        type: string
+                        format: date-time
+                  - type: object
+                    properties:
+                      registrations:
+                        description: The number of registrations in this time period.
+                        type:
+                        - integer
+                        - 'null'
+                      impressions:
+                        description: The number of registration page impressions in this time period.
+                        type:
+                        - integer
+                        - 'null'
+                      on_demand_registrations:
+                        description: The number of on-demand registrations in this time period.
+                        type:
+                        - integer
+                        - 'null'
+                      on_demand_impressions:
+                        description: The number of on-demand page impressions in this time period.
+                        type:
+                        - integer
+                        - 'null'
+                      completion_rate:
+                        description: The completion rate for attendees in this time period (between 0 and 1).
+                        type:
+                        - number
+                        - 'null'
+                        format: float
+                      on_demand_completion_rate:
+                        description: The completion rate for on-demand viewers in this time period (between 0 and 1).
+                        type:
+                        - number
+                        - 'null'
+                        format: float
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Webinar not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Webinar
+      security:
+      - BearerAuth: []
+  /analytics/webinars/{webinarId}/traffic:
+    get:
+      summary: Show Webinar Traffic Breakdown
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads webinar traffic breakdown from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: getTraffic
+      description: 'Retrieve traffic breakdown analytics for a webinar, grouped by a specified dimension
+
+        such as UTM campaign, UTM source, UTM medium, or referrer domain.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: webinarId
+        in: path
+        description: The hashed ID of the webinar.
+        required: true
+        schema:
+          description: The hashed ID of the webinar (e.g., "abc123xyz")
+          type: string
+      - name: group_by
+        in: query
+        description: The dimension to group traffic data by.
+        required: true
+        schema:
+          type: string
+          enum:
+          - utm_campaign
+          - utm_source
+          - utm_medium
+          - referrer_domain
+      - name: sort_by
+        in: query
+        description: The metric to sort results by.
+        required: false
+        schema:
+          type: string
+          enum:
+          - registrations
+          - attendees
+          - impressions
+          default: registrations
+      - name: sort_direction
+        in: query
+        description: The sort direction.
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      responses:
+        '200':
+          description: Success response with traffic breakdown data.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  description: Each item contains the group_by field and associated metrics.
+                  properties:
+                    utm_campaign:
+                      description: The UTM campaign value (present when group_by is utm_campaign).
+                      type:
+                      - string
+                      - 'null'
+                    utm_source:
+                      description: The UTM source value (present when group_by is utm_source).
+                      type:
+                      - string
+                      - 'null'
+                    utm_medium:
+                      description: The UTM medium value (present when group_by is utm_medium).
+                      type:
+                      - string
+                      - 'null'
+                    referrer_domain:
+                      description: The referrer domain (present when group_by is referrer_domain).
+                      type:
+                      - string
+                      - 'null'
+                    registrations:
+                      description: The number of registrations from this traffic source.
+                      type: integer
+                    attendees:
+                      description: The number of attendees from this traffic source.
+                      type: integer
+                    impressions:
+                      description: The number of registration page impressions from this traffic source.
+                      type: integer
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Webinar not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Webinar
+      security:
+      - BearerAuth: []
+  /analytics/webinars/{webinarId}/audience:
+    get:
+      summary: Show Webinar Audience
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads webinar audience from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: getAudience
+      description: 'Retrieve audience data for a webinar. Returns a paginated list of
+
+        registrants with their attendance status, engagement metrics,
+
+        attribution data, and per-attendee histograms.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: webinarId
+        in: path
+        description: The hashed ID of the webinar.
+        required: true
+        schema:
+          description: The hashed ID of the webinar (e.g., "abc123xyz")
+          type: string
+      - name: per_page
+        in: query
+        description: Number of results to return (max 100).
+        required: false
+        schema:
+          type: integer
+          default: 25
+          minimum: 1
+          maximum: 100
+      - name: cursor
+        in: query
+        description: Cursor for pagination. Use the value from the previous response's page_info.end_cursor.
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success response with webinar audience data.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        properties:
+                          first_name:
+                            description: The registrant's first name.
+                            type:
+                            - string
+                            - 'null'
+                          last_name:
+                            description: The registrant's last name.
+                            type:
+                            - string
+                            - 'null'
+                          email:
+                            description: The registrant's email address.
+                            type:
+                            - string
+                            - 'null'
+                          phone_number:
+                            description: The registrant's phone number.
+                            type:
+                            - string
+                            - 'null'
+                          company:
+                            description: The registrant's company name.
+                            type:
+                            - string
+                            - 'null'
+                          job_title:
+                            description: The registrant's job title.
+                            type:
+                            - string
+                            - 'null'
+                          country:
+                            description: The registrant's country.
+                            type:
+                            - string
+                            - 'null'
+                          registered_at:
+                            description: When the registrant registered in ISO 8601 format.
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                          attended_at:
+                            description: When the registrant joined the live event in ISO 8601 format.
+                            type:
+                            - string
+                            - 'null'
+                            format: date-time
+                          attendance_status:
+                            description: Whether the registrant attended the event.
+                            type:
+                            - string
+                            - 'null'
+                          restriction_status:
+                            description: The registrant's restriction status (e.g., approved, blocked).
+                            type:
+                            - string
+                            - 'null'
+                          origin_method:
+                            description: How the registrant was added (e.g., registration_form, import).
+                            type:
+                            - string
+                            - 'null'
+                          utm_campaign:
+                            description: The UTM campaign that referred this registrant.
+                            type:
+                            - string
+                            - 'null'
+                          utm_source:
+                            description: The UTM source that referred this registrant.
+                            type:
+                            - string
+                            - 'null'
+                          utm_medium:
+                            description: The UTM medium that referred this registrant.
+                            type:
+                            - string
+                            - 'null'
+                          referrer_domain:
+                            description: The referring domain for this registrant.
+                            type:
+                            - string
+                            - 'null'
+                          ip_country:
+                            description: The registrant's country based on IP geolocation.
+                            type:
+                            - string
+                            - 'null'
+                          ip_city:
+                            description: The registrant's city based on IP geolocation.
+                            type:
+                            - string
+                            - 'null'
+                          engagement_rate:
+                            description: The registrant's engagement rate during the event (between 0 and 1).
+                            type:
+                            - number
+                            - 'null'
+                            format: float
+                          focused_rate:
+                            description: The registrant's focused viewing rate during the event (between 0 and 1).
+                            type:
+                            - number
+                            - 'null'
+                            format: float
+                          played_time:
+                            description: Total time the registrant watched in seconds.
+                            type:
+                            - integer
+                            - 'null'
+                          focused_played_time:
+                            description: Total time the registrant watched with the tab focused in seconds.
+                            type:
+                            - integer
+                            - 'null'
+                          chat_count:
+                            description: The number of chat messages sent by this registrant.
+                            type:
+                            - integer
+                            - 'null'
+                          annotation_click_count:
+                            description: The number of annotation clicks by this registrant.
+                            type:
+                            - integer
+                            - 'null'
+                          poll_responses_count:
+                            description: The number of poll responses submitted by this registrant.
+                            type:
+                            - integer
+                            - 'null'
+                          attendee_histogram:
+                            description: Per-bucket attendance data for this registrant.
+                            type:
+                            - array
+                            - 'null'
+                            items:
+                              type:
+                              - integer
+                              - 'null'
+                          focused_attendee_histogram:
+                            description: Per-bucket focused attendance data for this registrant.
+                            type:
+                            - array
+                            - 'null'
+                            items:
+                              type:
+                              - integer
+                              - 'null'
+                          chats:
+                            description: Chat messages sent by this registrant with timestamps.
+                            type:
+                            - array
+                            items:
+                              type: object
+                              unevaluatedProperties: false
+                              properties:
+                                rounded_player_position:
+                                  description: The approximate position in the event when the chat was sent (in seconds).
+                                  type: integer
+                                chats:
+                                  description: The chat message content.
+                                  type: array
+                                  items:
+                                    type: string
+                  page_info:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      has_next_page:
+                        description: Whether there are more results after this page.
+                        type: boolean
+                      has_previous_page:
+                        description: Whether there are results before this page.
+                        type: boolean
+                      end_cursor:
+                        description: Cursor to use for fetching the next page.
+                        type:
+                        - string
+                        - 'null'
+                      start_cursor:
+                        description: Cursor to use for fetching the previous page.
+                        type:
+                        - string
+                        - 'null'
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Webinar not found or does not belong to account
+          content: {}
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Webinar
+      security:
+      - BearerAuth: []
+  /analytics/webinars/{webinarId}/histograms:
+    get:
+      summary: Show Webinar Histograms
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads webinar histograms from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: analyticsWebinar
+      x-speakeasy-name-override: getHistograms
+      description: 'Retrieve engagement histogram data for a webinar. Returns arrays of
+
+        per-time-bucket counts for attendees, chat activity, and visual focus,
+
+        useful for rendering engagement visualizations.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read detailed stats
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      parameters:
+      - name: webinarId
+        in: path
+        description: The hashed ID of the webinar.
+        required: true
+        schema:
+          description: The hashed ID of the webinar (e.g., "abc123xyz")
+          type: string
+      responses:
+        '200':
+          description: Success response with webinar histogram data.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  attendees_histogram:
+                    description: Per-time-bucket attendee counts. Each element represents the number of attendees in a 10-second bucket.
+                    type: array
+                    items:
+                      type: number
+                  chat_histogram:
+                    description: Per-time-bucket chat message counts. Each element represents the number of chat messages in a 10-second bucket.
+                    type: array
+                    items:
+                      type: number
+                  visual_focus_played_histogram:
+                    description: Per-time-bucket visual focus counts. Each element represents the number of attendees with the tab focused in a 10-second bucket.
+                    type: array
+                    items:
+                      type: number
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Webinar not found or does not belong to account
+          content: {}
+        '409':
+          description: The event has not yet reached a terminal state. Analytics are only available after the event has ended.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message indicating the event has not ended.
+                    type: string
+                    examples:
+                    - Aggregate analytics are not available until the event has ended
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+        '503':
+          description: Analytics service is temporarily unavailable
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Analytics service is temporarily unavailable
+      tags:
+      - Analytics:Webinar
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

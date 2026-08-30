@@ -1,0 +1,564 @@
+openapi: 3.2.0
+info:
+  title: Data Live Stream Events API
+  description: Wistia Data API
+  version: 1.0.0
+servers:
+- url: https://api.wistia.com/v1
+tags:
+- name: Live Stream Events
+  x-displayName: Live Stream Events
+paths:
+  /live_stream_events:
+    get:
+      summary: Live Stream Events List
+      description: 'Use this endpoint to request a list of Live Stream Events in your Wistia account. This request supports paging and sorting.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        Read all folder and media data
+
+        ```
+
+        '
+      parameters:
+      - name: page
+        in: query
+        description: Page number to retrieve
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Number of events per page (maximum 100)
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+      - name: sort_by
+        in: query
+        description: Field to sort by
+        required: false
+        schema:
+          type: string
+          enum:
+          - scheduled_for
+          - id
+      - name: sort_direction
+        in: query
+        description: Sort direction (1 for ascending, -1 for descending)
+        required: false
+        schema:
+          type: string
+          enum:
+          - '1'
+          - '-1'
+      - name: hashed_ids[]
+        in: query
+        description: Filter by specific event IDs
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: started
+        in: query
+        description: Filter by whether the event has started. Use "true" for events that have started, "false" for events that have not started yet
+        required: false
+        schema:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+      responses:
+        '200':
+          description: Successful response with a list of live stream events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LiveStreamEvent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Live streaming feature not available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Live streaming is not available on your current plan
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Live Stream Events
+      security:
+      - BearerAuth: []
+    post:
+      summary: Live Stream Event Create
+      description: 'Create a new live stream event. The event will be created synchronously and return the event details with audience and host links.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+
+        ## Rate Limiting
+
+        This endpoint is rate limited to 60 requests per minute per IP address.
+
+
+        ## Feature Access
+
+        This endpoint requires the live streaming feature to be enabled on your account plan.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLiveStreamEvent'
+      responses:
+        '201':
+          description: Live stream event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStreamEvent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Live streaming feature not available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Live streaming is not available on your current plan
+        '422':
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                    - - Title is required
+                      - Event duration must be at least 15 minutes
+        '429':
+          description: Rate limit exceeded
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                - Rate limit exceeded
+        '500':
+          description: Internal server error during event creation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                    - - An error occurred while creating the live stream event. Please try again.
+      tags:
+      - Live Stream Events
+      security:
+      - BearerAuth: []
+  /live_stream_events/{id}:
+    get:
+      summary: Live Stream Event Show
+      description: 'Retrieve information for a single live stream event.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        Read all folder and media data
+
+        ```
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: The hashed ID of the live stream event
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response with the live stream event details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStreamEvent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Live streaming feature not available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Live streaming is not available on your current plan
+        '404':
+          description: Live stream event not found
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Live Stream Events
+      security:
+      - BearerAuth: []
+    put:
+      summary: Live Stream Event Update
+      description: 'Update an existing live stream event.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: The hashed ID of the live stream event
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLiveStreamEvent'
+      responses:
+        '200':
+          description: Live stream event updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStreamEvent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Live streaming feature not available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Live streaming is not available on your current plan
+        '404':
+          description: Live stream event not found
+        '422':
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    examples:
+                    - - Title is required
+                      - Event duration must be at least 15 minutes
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Live Stream Events
+      security:
+      - BearerAuth: []
+    delete:
+      summary: Live Stream Event Delete
+      description: 'Delete an existing live stream event.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: The hashed ID of the live stream event
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Live stream event deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStreamEvent'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          description: Live streaming feature not available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Live streaming is not available on your current plan
+        '404':
+          description: Live stream event not found
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Live Stream Events
+      security:
+      - BearerAuth: []
+components:
+  responses:
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+  schemas:
+    UpdateLiveStreamEvent:
+      type: object
+      properties:
+        live_stream_event:
+          type: object
+          properties:
+            title:
+              description: The title of the live stream event
+              type: string
+              examples:
+              - Updated Event Title
+            description:
+              description: The description of the live stream event
+              type: string
+              examples:
+              - Updated event description
+            scheduled_for:
+              description: The scheduled start time in W3C format with timezone
+              type: string
+              format: date-time
+              examples:
+              - '2024-03-20T15:30:00-05:00'
+            event_duration:
+              description: Duration of the event in minutes (minimum 15)
+              type: integer
+              examples:
+              - 90
+              minimum: 15
+    CreateLiveStreamEvent:
+      type: object
+      properties:
+        title:
+          description: The title of the live stream event
+          type: string
+          examples:
+          - 'Wellness Session: Coping with Outie Memories'
+        description:
+          description: The description of the live stream event
+          type: string
+          examples:
+          - A comprehensive session on managing work-life balance
+        scheduled_for:
+          description: The scheduled start time in W3C format with timezone
+          type: string
+          format: date-time
+          examples:
+          - '2024-03-20T15:30:00-05:00'
+        event_duration:
+          description: Duration of the event in minutes (minimum 15)
+          type: integer
+          examples:
+          - 60
+          minimum: 15
+      required:
+      - title
+      - scheduled_for
+      - event_duration
+    LiveStreamEvent:
+      type: object
+      properties:
+        id:
+          description: The hashed ID of the live stream event
+          type: string
+          examples:
+          - abc123def456
+        title:
+          description: The title of the live stream event
+          type: string
+          examples:
+          - 'Wellness Session: Coping with Outie Memories'
+        description:
+          description: The description of the live stream event
+          type:
+          - string
+          - 'null'
+          examples:
+          - A comprehensive session on managing work-life balance
+        scheduled_for:
+          description: The scheduled start time in W3C format with timezone
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-03-20T15:30:00-05:00'
+        event_duration:
+          description: Duration of the event in minutes
+          type:
+          - integer
+          - 'null'
+          examples:
+          - 60
+        lifecycle_status:
+          description: Current lifecycle status of the event
+          type: string
+          examples:
+          - scheduled
+        registration_status:
+          description: Registration status of the event
+          type: string
+          examples:
+          - published
+        created_at:
+          description: When the event was created (UTC)
+          type: string
+          format: date-time
+          examples:
+          - '2024-03-15T10:30:00Z'
+        updated_at:
+          description: When the event was last updated (UTC)
+          type: string
+          format: date-time
+          examples:
+          - '2024-03-15T10:30:00Z'
+        audience_link:
+          description: Link for the audience to join the event
+          type: string
+          examples:
+          - https://lumon-industries.wistia.com/live/events/abc123def456
+        host_link:
+          description: Link for the host to manage the event
+          type: string
+          examples:
+          - https://lumon-industries.wistia.com/live/events/abc123def456/onair
+        panelist_link:
+          description: Link for panelists to join the event
+          type: string
+          examples:
+          - https://lumon-industries.wistia.com/live/events/abc123def456/onair/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      required:
+      - id
+      - title
+      - lifecycle_status
+      - registration_status
+      - created_at
+      - updated_at
+      - audience_link
+      - host_link
+      - panelist_link
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Projects
+  - Subfolders
+  - Project Sharings
+  - Media
+  - Account
+  - Allowed Domains
+  - Background Job Status
+  - Customizations
+  - Captions
+  - Trims
+  - Localizations
+  - Tags
+  - Search
+  - Channels
+  - Channel Episodes
+  - Expiring Access Tokens
+  - Live Stream Events
+  - Live Stream Event Registrations
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Projects
+  - Stats:Media
+  - Stats:Visitors
+  - Stats:Events

@@ -1,0 +1,831 @@
+openapi: 3.2.0
+info:
+  title: Data Remix API
+  description: Wistia Data API
+  version: edge-version
+servers:
+- url: https://api.wistia.com/modern
+tags:
+- name: Remix
+  x-displayName: Remix
+paths:
+  /remixes:
+    post:
+      x-readme-hidden: true
+      summary: Create Remix
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool starts an AI-driven remix job, which creates new edit data on the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool calls an external AI service to generate the remix edit tree.
+        destructive_hint: false
+        destructive_hint_justification: Only a new remix is created; existing media are not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      description: 'Start a new video remix job. The remix is processed asynchronously — poll
+
+        the show endpoint to check status and get preview URLs when ready.
+
+
+        Remix uses AI to analyze video transcripts and create edited versions
+
+        (highlight reels, trailers, cut-downs, etc.) based on your instructions.
+
+
+        The remix is automatically exported (rendered) upon completion. When the
+
+        status reaches "completed", the output media is available in the
+
+        destination folder. If no `folder_id` is provided, the remix is exported
+
+        to the source media''s folder.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      x-wistia-mcp-tool-name: create-remix
+      x-wistia-mcp-description: 'Start, create, or generate a new AI video remix — an automated edit that
+
+        transforms source videos using natural-language instructions (e.g. "create a
+
+        60-second highlight reel", "cut the intro", "add captions"). Provide source
+
+        media hashed IDs and a prompt. Use this when someone wants to auto-edit, make,
+
+        or produce an edited video with AI. Runs asynchronously and auto-exports on
+
+        completion; poll get-remix for status, continue-remix to refine it. Each job
+
+        consumes a remix credit — check get-remix-account-status for remaining quota.
+
+        '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                media_hashed_ids:
+                  description: Array of source media hashed IDs to remix from.
+                  type: array
+                  items:
+                    type: string
+                  examples:
+                  - - abc123
+                    - def456
+                instructions:
+                  description: Natural language instructions describing the desired remix (e.g., "create a 60-second highlight reel").
+                  type: string
+                  examples:
+                  - Create a 60-second highlight reel focusing on the product demo section
+                folder_id:
+                  description: Hashed ID of the destination folder for the exported media. Defaults to the source media's folder if not specified.
+                  type: string
+              required:
+              - media_hashed_ids
+              - instructions
+      responses:
+        '201':
+          description: Remix job successfully created.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  remix_id:
+                    description: Hashed ID of the created remix. Use this to poll for status.
+                    type: string
+                  conversation_id:
+                    description: Hashed ID of the remix conversation (groups multiple remix iterations).
+                    type: string
+                  status:
+                    description: Current status of the remix job.
+                    type: string
+                    enum:
+                    - pending
+                    - deferred
+                  source_medias:
+                    description: The source media used for this remix.
+                    type: array
+                    items:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        hashed_id:
+                          type: string
+                        name:
+                          type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '422':
+          description: Unprocessable entity (e.g., credit limit reached, media not found).
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                  credits_renew_at:
+                    description: When remix credits renew (ISO 8601), if the error is a credit limit.
+                    type: string
+                    format: date-time
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Remix
+      security:
+      - BearerAuth: []
+  /remixes/{remixHashedId}:
+    get:
+      x-readme-hidden: true
+      summary: Get Remix
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads remix state and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      description: 'Get the current status of a remix job. When the status reaches
+
+        "edit_tree_generated", preview URLs are included in the response.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      x-wistia-mcp-tool-name: get-remix
+      x-wistia-mcp-description: 'Get, show, check, or poll the status of an AI video remix job. Poll this after
+
+        create-remix or continue-remix to track progress of the asynchronous edit. When
+
+        status reaches "edit_tree_generated", the remix is ready and preview URLs (video
+
+        embed, thumbnail) are included. Use this when someone wants to know if a remix is
+
+        done, see its preview, or check progress. Then use export-remix to save the
+
+        result.
+
+        '
+      parameters:
+      - name: remixHashedId
+        in: path
+        description: The hashed ID of the remix.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Remix status and details.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  remix_id:
+                    description: Hashed ID of the remix.
+                    type: string
+                  conversation_id:
+                    description: Hashed ID of the parent conversation.
+                    type: string
+                  created_at:
+                    description: The ISO 8601 timestamp when the remix was created.
+                    type: string
+                    format: date-time
+                  status:
+                    description: Current processing status.
+                    type: string
+                    enum:
+                    - pending
+                    - generating
+                    - generating_scenes
+                    - editable_scenes_generated
+                    - edit_tree_generated
+                    - exporting
+                    - completed
+                    - error
+                  error_message:
+                    description: Error details if status is "error".
+                    type: string
+                  preview:
+                    unevaluatedProperties: false
+                    description: Preview URLs, available when status is "edit_tree_generated" or later.
+                    type: object
+                    properties:
+                      embed_url:
+                        description: Iframe embed URL for video playback.
+                        type: string
+                        format: uri
+                      thumbnail_url:
+                        description: Thumbnail image URL.
+                        type:
+                        - string
+                        - 'null'
+                        format: uri
+                      instant_hls_ready:
+                        description: Whether the instant HLS preview is ready.
+                        type: boolean
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Remix
+      security:
+      - BearerAuth: []
+  /remixes/{remixHashedId}/continue:
+    post:
+      x-readme-hidden: true
+      summary: Continue Remix
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool refines an existing remix, which updates remix data on the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool calls an external AI service to refine the remix edit tree.
+        destructive_hint: false
+        destructive_hint_justification: Continuing only appends new instructions to the remix; the prior edit tree is preserved as a revision.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call applies a further round of edits to the remix, so repeating the request changes the result again.
+      description: 'Submit a follow-up edit to an existing remix. Creates a new remix version
+
+        in the same conversation. The previous remix is preserved and can be
+
+        referenced later.
+
+
+        The new remix version is automatically exported (rendered) upon completion.
+
+        If `folder_id` is provided, the output is exported to that folder. Otherwise,
+
+        it defaults to the same folder as the previous remix version''s output.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      x-wistia-mcp-tool-name: continue-remix
+      x-wistia-mcp-description: 'Continue, refine, or revise an existing AI video remix with new natural-language
+
+        instructions (e.g. "cut the intro", "add background music", "make it shorter").
+
+        Creates a new edited version in the same remix conversation; the prior version is
+
+        preserved as a revision. Use this when someone wants to further edit, adjust, or
+
+        iterate on a remix. Runs asynchronously and auto-exports on completion; poll
+
+        get-remix for status. See create-remix to start a new remix and
+
+        get-remix-account-status for remaining credits.
+
+        '
+      parameters:
+      - name: remixHashedId
+        in: path
+        description: The hashed ID of the current remix version to edit from.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                instructions:
+                  description: Natural language instructions for the edit (e.g., "cut the first 10 seconds").
+                  type: string
+                  examples:
+                  - Cut the intro and add background music
+                folder_id:
+                  description: Hashed ID of the destination folder for the exported media. Defaults to the same folder as the previous remix version's output.
+                  type: string
+              required:
+              - instructions
+      responses:
+        '201':
+          description: New remix version created.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  remix_id:
+                    description: Hashed ID of the new remix version.
+                    type: string
+                  conversation_id:
+                    description: Hashed ID of the conversation.
+                    type: string
+                  status:
+                    description: Status of the new remix version.
+                    type: string
+                    enum:
+                    - pending
+                  previous_remix_id:
+                    description: Hashed ID of the remix version this edit is based on.
+                    type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '422':
+          description: Unprocessable entity (e.g., conversation not found).
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Remix
+      security:
+      - BearerAuth: []
+  /remixes/{remixHashedId}/export:
+    post:
+      x-readme-hidden: true
+      summary: Export Remix
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool exports a remix to a new media, which adds data to the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: Exporting creates a new media; the source remix and source media are not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call starts another export job.
+      description: 'Export a completed remix to a folder in your account. Triggers the full
+
+        render pipeline. The remix must have reached "edit_tree_generated" status.
+
+
+        If no folder_id is provided, the remix is exported to the source media''s folder.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      x-wistia-mcp-tool-name: export-remix
+      x-wistia-mcp-description: 'Export, save, or render a finished AI video remix as a new media file in a
+
+        folder in your Wistia account, triggering the full render pipeline. Optionally
+
+        specify a destination folder and custom name. Use this when someone wants to
+
+        save, render, or publish the result of a remix. The remix must have reached
+
+        "edit_tree_generated" status (poll get-remix) before it can be exported. See
+
+        create-remix to start a remix and continue-remix to refine one.
+
+        '
+      parameters:
+      - name: remixHashedId
+        in: path
+        description: The hashed ID of the remix to export.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                folder_id:
+                  description: Hashed ID of the destination folder. Defaults to the source media's folder.
+                  type: string
+                name:
+                  description: Custom name for the exported media.
+                  type: string
+      responses:
+        '202':
+          description: Export successfully queued.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  remix_id:
+                    description: Hashed ID of the exported remix.
+                    type: string
+                  media_hashed_id:
+                    description: Hashed ID of the output media being rendered.
+                    type: string
+                  media_name:
+                    description: Name of the output media.
+                    type: string
+                  folder_hashed_id:
+                    description: Hashed ID of the destination folder.
+                    type: string
+                  status:
+                    description: Export status.
+                    type: string
+                    enum:
+                    - exporting
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '422':
+          description: Unprocessable entity (e.g., remix not ready for export).
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Remix
+      security:
+      - BearerAuth: []
+  /remix_account_status:
+    get:
+      x-readme-hidden: true
+      summary: Get Remix Account Status
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads remix credit balance and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      description: 'Check the current account''s remix credit usage and limits.
+
+
+        <!--- HIDE-MCP -->
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```
+
+        <!--- /HIDE-MCP -->
+
+        '
+      x-wistia-mcp-tool-name: get-remix-account-status
+      x-wistia-mcp-description: 'Check remaining AI video remix credits, quota, and balance for the account
+
+        this month. Returns the monthly limit, current usage, remaining credits, and
+
+        whether the account can start a new remix. Use this when someone asks how many
+
+        remixes are left, their remix quota/allowance, or before calling create-remix
+
+        or continue-remix to confirm credits are available.
+
+        '
+      responses:
+        '200':
+          description: Remix account status.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  monthly_limit:
+                    description: Maximum number of remix credits per month.
+                    type: integer
+                  monthly_usage:
+                    description: Number of remix credits used this month.
+                    type: integer
+                  remaining:
+                    description: Number of remix credits remaining this month.
+                    type: integer
+                  can_create_remix:
+                    description: Whether the account can create a new remix.
+                    type: boolean
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Remix
+      security:
+      - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

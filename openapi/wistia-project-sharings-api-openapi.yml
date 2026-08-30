@@ -1,0 +1,501 @@
+openapi: 3.2.0
+info:
+  title: Data Project Sharings API
+  description: Wistia Data API
+  version: 1.0.0
+servers:
+- url: https://api.wistia.com/v1
+tags:
+- name: Project Sharings
+  x-displayName: Project Sharings
+paths:
+  /projects/{projectId}/sharings:
+    get:
+      summary: Project Sharing List
+      description: 'A sharing is an object that links either a contact or a contact group to a project, including information about the contacts'' permissions to that project.
+
+        Retrieve a list of all sharings for a given project. Supports paging and sorting.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: Project Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the project (e.g., "4d23503f70")
+          type: string
+      - name: page
+        in: query
+        description: Page number to retrieve
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: Number of projects per page
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successfully retrieved list of sharings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectSharingSchema'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Project Sharings
+      security:
+      - BearerAuth: []
+    post:
+      summary: Project Sharing Create
+      description: 'Create a new sharing object for a project by specifying the email of the person to share with and other optional parameters.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: Hashed ID of the project to be shared
+        required: true
+        schema:
+          description: Hashed ID of the project (e.g., "4d23503f70")
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectSharing'
+      responses:
+        '201':
+          description: Project shared successfully
+          headers:
+            Location:
+              description: The API endpoint for the new sharing object.
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProjectSharingResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Error message detailing the reason for the bad request.
+                examples:
+                - - email@example.com is already shared on this project.
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Project Sharings
+      security:
+      - BearerAuth: []
+  /projects/{projectId}/sharings/{sharingId}:
+    get:
+      summary: Project Sharing Show
+      description: 'Retrieve the details of a specific sharing object for a given project.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        Read all data
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: Hashed ID for the project for which you'd like to see sharings.
+        required: true
+        schema:
+          description: Hashed ID of the project (e.g., "4d23503f70")
+          type: string
+      - name: sharingId
+        in: path
+        description: The ID of the specific sharing object that you want to see.
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successfully retrieved sharing details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectSharingSchema'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Project Sharings
+      security:
+      - BearerAuth: []
+    put:
+      summary: Project Sharing Update
+      description: 'Update a sharing on a project.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: ID of the project
+        required: true
+        schema:
+          type: string
+      - name: sharingId
+        in: path
+        description: ID of the sharing to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSharingRequest'
+      responses:
+        '200':
+          description: Sharing updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectSharingSchema'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Project Sharings
+      security:
+      - BearerAuth: []
+    delete:
+      summary: Project Sharing Delete
+      description: 'Delete a sharing on a project.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```
+
+        '
+      parameters:
+      - name: projectId
+        in: path
+        description: Hashed ID of the project
+        required: true
+        schema:
+          description: Hashed ID of the project (e.g., "4d23503f70")
+          type: string
+      - name: sharingId
+        in: path
+        description: ID of the sharing to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Sharing deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectSharingSchema'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+      tags:
+      - Project Sharings
+      security:
+      - BearerAuth: []
+components:
+  schemas:
+    CreateProjectSharingResponse:
+      type: object
+      description: The response includes a link for the user to access the project.
+      properties:
+        project:
+          type: string
+          format: uri
+          examples:
+          - http://myaccount.wistia.com/folders/13
+        sharing:
+          $ref: '#/components/schemas/ProjectSharingSchema'
+    UpdateSharingRequest:
+      type: object
+      properties:
+        sharing:
+          type: object
+          properties:
+            canShare:
+              description: Allow the user or group to share the project with others.
+              type: boolean
+            canDownload:
+              description: Allow the user or group to download media from the project.
+              type: boolean
+            canUpload:
+              description: Allow the user or group to upload media to the project.
+              type: boolean
+            isAdmin:
+              description: Give this user admin rights to the project.
+              type: boolean
+    CreateProjectSharing:
+      type: object
+      properties:
+        sharing:
+          type: object
+          properties:
+            with:
+              description: The email address of the person with whom you want to share the project.
+              type: string
+              format: email
+            requirePassword:
+              oneOf:
+              - type: string
+                description: Default is "1". Set to "0" to allow access without a password.
+                enum:
+                - '0'
+                - '1'
+              - type: boolean
+                description: A flag indicating whether or not a password is required.
+                examples:
+                - false
+            canShare:
+              oneOf:
+              - type: string
+                description: Default is "0". Set to "1" to allow the user to share the project with others.
+                enum:
+                - '0'
+                - '1'
+              - type: boolean
+                description: Whether the user is allowed to share the project with others.
+                examples:
+                - false
+            canDownload:
+              oneOf:
+              - type: string
+                description: Default is "0". Set to "1" to allow the user to download files from the project.
+                enum:
+                - '0'
+                - '1'
+              - type: boolean
+                description: Whether the user is allowed to download files from the project.
+                examples:
+                - false
+            canUpload:
+              oneOf:
+              - type: string
+                description: Default is "0". Set to "1" to allow the user to upload files to the project.
+                enum:
+                - '0'
+                - '1'
+              - type: boolean
+                description: Whether the user is allowed to upload files to the project.
+                examples:
+                - false
+            sendEmailNotification:
+              description: Deprecated! Email notifications are always sent now.
+              type: string
+              enum:
+              - '0'
+              - '1'
+              deprecated: true
+          required:
+          - with
+      required:
+      - sharing
+    ProjectSharingSchema:
+      type: object
+      properties:
+        id:
+          type: integer
+          examples:
+          - 14
+        isAdmin:
+          type: boolean
+          examples:
+          - true
+        canShare:
+          type: boolean
+          examples:
+          - true
+        canDownload:
+          type: boolean
+          examples:
+          - true
+        canUpload:
+          type: boolean
+          examples:
+          - true
+        share:
+          type: object
+          properties:
+            id:
+              type: integer
+              examples:
+              - 3
+            name:
+              type: string
+              examples:
+              - Jim
+            type:
+              type: string
+              examples:
+              - Contact
+            email:
+              type: string
+              format: email
+              examples:
+              - jim@wistia.com
+          required:
+          - id
+          - name
+          - type
+          - email
+        project:
+          type: object
+          properties:
+            id:
+              type: integer
+              examples:
+              - 13
+            name:
+              type: string
+              examples:
+              - My Project
+          required:
+          - id
+          - name
+      required:
+      - id
+      - isAdmin
+      - canShare
+      - canDownload
+      - canUpload
+      - share
+      - project
+  responses:
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+x-tagGroups:
+- name: Data API
+  tags:
+  - Projects
+  - Subfolders
+  - Project Sharings
+  - Media
+  - Account
+  - Allowed Domains
+  - Background Job Status
+  - Customizations
+  - Captions
+  - Trims
+  - Localizations
+  - Tags
+  - Search
+  - Channels
+  - Channel Episodes
+  - Expiring Access Tokens
+  - Live Stream Events
+  - Live Stream Event Registrations
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Projects
+  - Stats:Media
+  - Stats:Visitors
+  - Stats:Events
