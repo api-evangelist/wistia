@@ -141,6 +141,8 @@ apis:
   humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
   baseURL: https://api.wistia.com/v1
   tags:
+  - Allowed Domains
+  tags_raw:
   - AllowedDomains
   properties:
   - type: OpenAPI
@@ -835,6 +837,8 @@ apis:
   humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
   baseURL: https://api.wistia.com/v1
   tags:
+  - Project
+  tags_raw:
   - Projects
   properties:
   - type: OpenAPI
@@ -1195,6 +1199,8 @@ apis:
   humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
   baseURL: https://api.wistia.com/v1
   tags:
+  - Sub-Folders
+  tags_raw:
   - Subfolders
   properties:
   - type: OpenAPI
