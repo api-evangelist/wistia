@@ -135,18 +135,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/wistia-account-api-openapi.yml
-- aid: wistia:wistia-alloweddomains-api
-  name: Wistia AllowedDomains API
-  description: The AllowedDomains API from Wistia — 2 operation(s) for alloweddomains.
-  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
-  baseURL: https://api.wistia.com/v1
-  tags:
-  - Allowed Domains
-  tags_raw:
-  - AllowedDomains
-  properties:
-  - type: OpenAPI
-    url: openapi/wistia-alloweddomains-api-openapi.yml
 - aid: wistia:wistia-captions-api
   name: Wistia Captions API
   description: The Captions API from Wistia — 3 operation(s) for captions.
@@ -1193,38 +1181,6 @@ apis:
     url: data-model/wistia-data-model.yml
   - type: RateLimits
     url: rate-limits/wistia-rate-limits.yml
-- aid: wistia:wistia-subfolders-api
-  name: Wistia Subfolders API
-  description: The Subfolders API from Wistia — 5 operation(s) for subfolders.
-  humanURL: https://docs.wistia.com/reference/getting-started-with-the-data-api
-  baseURL: https://api.wistia.com/v1
-  tags:
-  - Sub-Folders
-  tags_raw:
-  - Subfolders
-  properties:
-  - type: OpenAPI
-    url: openapi/wistia-subfolders-api-openapi.yml
-  - type: Documentation
-    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
-  - type: GettingStarted
-    url: https://docs.wistia.com/docs/making-api-requests
-  - type: Authentication
-    url: https://docs.wistia.com/docs/authenticating-with-oauth2
-  - type: APIReference
-    url: https://docs.wistia.com/reference
-  - type: Documentation
-    url: https://docs.wistia.com/docs/migration-from-v1-guide
-  - type: Authentication
-    url: authentication/wistia-authentication.yml
-  - type: OAuthScopes
-    url: scopes/wistia-scopes.yml
-  - type: ErrorCatalog
-    url: errors/wistia-problem-types.yml
-  - type: DataModel
-    url: data-model/wistia-data-model.yml
-  - type: RateLimits
-    url: rate-limits/wistia-rate-limits.yml
 - aid: wistia:wistia-taggings-api
   name: Wistia Taggings API
   description: The Taggings API from Wistia — 1 operation(s) for taggings.
@@ -1325,6 +1281,36 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/wistia-webinar-registrations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  - type: GettingStarted
+    url: https://docs.wistia.com/docs/making-api-requests
+  - type: Authentication
+    url: https://docs.wistia.com/docs/authenticating-with-oauth2
+  - type: APIReference
+    url: https://docs.wistia.com/reference
+  - type: Documentation
+    url: https://docs.wistia.com/docs/migration-from-v1-guide
+  - type: Authentication
+    url: authentication/wistia-authentication.yml
+  - type: OAuthScopes
+    url: scopes/wistia-scopes.yml
+  - type: ErrorCatalog
+    url: errors/wistia-problem-types.yml
+  - type: DataModel
+    url: data-model/wistia-data-model.yml
+  - type: RateLimits
+    url: rate-limits/wistia-rate-limits.yml
+- aid: wistia:wistia-sub-folders-api
+  name: Wistia Sub Folders API
+  description: The Sub Folders API from Wistia — 5 operation(s) for sub folders.
+  humanURL: https://docs.wistia.com/docs/mcp-server-guide
+  baseURL: https://api.wistia.com/mcp/api
+  tags:
+  - Sub Folders
+  properties:
+  - type: OpenAPI
+    url: openapi/wistia-sub-folders-api-openapi.yml
   - type: Documentation
     url: https://docs.wistia.com/reference/getting-started-with-the-data-api
   - type: GettingStarted
