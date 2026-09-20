@@ -1,0 +1,45 @@
+slug: wistia
+provider: Wistia
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 3
+edges:
+- tag: Webinar Registrations
+  spec_file: wistia-webinar-registrations-api-openapi.yml
+  capability_id: BC-400.40
+  capability_id_l1: BC-400
+  capability_name: Demand Generation Management
+  confidence: 0.72
+  evidence: POST /webinars/{webinarId}/registrations "Create Webinar Registration"; GET .../registrations
+    "List Webinar Registrations"
+  reason: Capture and listing of webinar registrants on a platform aimed at 'B2B marketing teams focused
+    on lead generation' — webinar registration is a lead-capture/demand-generation motion.
+- tag: Media
+  spec_file: wistia-media-api-openapi.yml
+  capability_id: BC-400.70
+  capability_id_l1: BC-400
+  capability_name: Content Marketing Management
+  confidence: 0.7
+  evidence: GET /medias  List Media; POST /medias/{mediaHashedId}/translate  Translate Media; PUT /medias/archive  Archive
+    Media
+  reason: Core lifecycle management of marketing video assets (upload, update, copy, archive, stats) on
+    a video marketing platform — content production and distribution under Content Marketing Management.
+- tag: Medias
+  spec_file: wistia-medias-api-openapi.yml
+  capability_id: BC-400.70
+  capability_id_l1: BC-400
+  capability_name: Content Marketing Management
+  confidence: 0.7
+  evidence: POST /medias  createMedia  Upload or import media; PUT /medias/archive  archiveMedia  Archive
+    media
+  reason: 'Same surface as the Media tag: manages the video content library (upload, update, move, archive)
+    for a B2B video marketing platform, i.e. content marketing asset management.'
