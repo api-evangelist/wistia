@@ -31,19 +31,13 @@ paths:
         chat activity, and poll results.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: webinarId
         in: path
@@ -305,6 +299,8 @@ paths:
       - Analytics:Webinar
       security:
       - BearerAuth: []
+      operationId: getAnalyticsWebinarsByWebinarId
+      x-operation-id-source: derived
   /analytics/webinars/{webinarId}/registration:
     get:
       summary: Show Webinar Registration Timeseries
@@ -326,19 +322,13 @@ paths:
         including impressions, registrations, and completion rates.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: webinarId
         in: path
@@ -509,6 +499,8 @@ paths:
       - Analytics:Webinar
       security:
       - BearerAuth: []
+      operationId: getAnalyticsWebinarsByWebinarIdRegistration
+      x-operation-id-source: derived
   /analytics/webinars/{webinarId}/traffic:
     get:
       summary: Show Webinar Traffic Breakdown
@@ -528,19 +520,13 @@ paths:
         such as UTM campaign, UTM source, UTM medium, or referrer domain.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: webinarId
         in: path
@@ -703,6 +689,8 @@ paths:
       - Analytics:Webinar
       security:
       - BearerAuth: []
+      operationId: getAnalyticsWebinarsByWebinarIdTraffic
+      x-operation-id-source: derived
   /analytics/webinars/{webinarId}/audience:
     get:
       summary: Show Webinar Audience
@@ -724,19 +712,13 @@ paths:
         attribution data, and per-attendee histograms.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: webinarId
         in: path
@@ -1022,6 +1004,8 @@ paths:
       - Analytics:Webinar
       security:
       - BearerAuth: []
+      operationId: getAnalyticsWebinarsByWebinarIdAudience
+      x-operation-id-source: derived
   /analytics/webinars/{webinarId}/histograms:
     get:
       summary: Show Webinar Histograms
@@ -1043,19 +1027,13 @@ paths:
         useful for rendering engagement visualizations.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: webinarId
         in: path
@@ -1164,6 +1142,8 @@ paths:
       - Analytics:Webinar
       security:
       - BearerAuth: []
+      operationId: getAnalyticsWebinarsByWebinarIdHistograms
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

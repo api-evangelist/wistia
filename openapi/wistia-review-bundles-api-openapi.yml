@@ -45,19 +45,13 @@ paths:
         a given media or any media from a folder.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read all folder and media data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Review Bundles
       parameters:
@@ -275,6 +269,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: getReviewBundles
+      x-operation-id-source: derived
     post:
       x-readme-hidden: true
       x-wistia-mcp-ignore: true
@@ -319,19 +315,13 @@ paths:
         Review Bundles are limited to 25 media.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Review Bundles
       requestBody:
@@ -455,6 +445,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: postReviewBundles
+      x-operation-id-source: derived
   /review_bundles/{reviewBundleHashedId}:
     delete:
       x-readme-hidden: true
@@ -486,19 +478,13 @@ paths:
         This action cannot be undone.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Review Bundles
       parameters:
@@ -596,6 +582,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: deleteReviewBundlesByReviewBundleHashedId
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

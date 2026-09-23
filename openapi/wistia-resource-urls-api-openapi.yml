@@ -42,9 +42,7 @@ paths:
 
         Read all data
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: resolve-resource-urls
       x-wistia-mcp-description: 'Resolve a Wistia resource''s hashed ID and type to its canonical app URL(s) —
 
@@ -171,6 +169,8 @@ paths:
       - Resource URLs
       security:
       - BearerAuth: []
+      operationId: getResourceUrls
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

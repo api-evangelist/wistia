@@ -23,9 +23,7 @@ paths:
 
         views) for media created via the app. Re-registering an existing
 
-        token updates its registration in place.
-
-        '
+        token updates its registration in place.'
       tags:
       - Push Devices
       requestBody:
@@ -168,6 +166,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: postDevices
+      x-operation-id-source: derived
   /devices/{deviceToken}:
     delete:
       x-readme-hidden: true
@@ -177,9 +177,7 @@ paths:
       x-speakeasy-name-override: delete
       description: 'Unregisters a push notification device token for the current contact, so no
 
-        further activity notifications are delivered to that device.
-
-        '
+        further activity notifications are delivered to that device.'
       tags:
       - Push Devices
       parameters:
@@ -297,6 +295,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: deleteDevicesByDeviceToken
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

@@ -24,9 +24,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: liveStreamEventId
         in: path
@@ -62,71 +60,9 @@ paths:
       - Live Stream Event Registrations
       security:
       - BearerAuth: []
+      operationId: postLiveStreamEventsByLiveStreamEventIdRegistrations
+      x-operation-id-source: derived
 components:
-  responses:
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
-    '403':
-      description: Forbidden, token is valid but account does not have access to feature
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Live streaming is not available on your current plan
-    '422':
-      description: Unprocessable entity, the request parameters were invalid.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              errors:
-                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    type: string
-                example:
-                  trims:
-                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
-                  media:
-                  - must be part of a project
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
   schemas:
     CreateRegistration:
       type: object
@@ -163,6 +99,70 @@ components:
           format: uri
           description: Personalized URL for the registrant to access the live event
           example: https://wistia.com/webinars/registration?vk=iv_1234567890&uid=john.doe@example.com
+  responses:
+    '403':
+      description: Forbidden, token is valid but account does not have access to feature
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Live streaming is not available on your current plan
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '422':
+      description: Unprocessable entity, the request parameters were invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+                example:
+                  trims:
+                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
+                  media:
+                  - must be part of a project
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
   securitySchemes:
     BearerAuth:
       type: http

@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Stats:Media API
   version: '1.0'
-  description: 'Operations tagged Stats:Media across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Stats:Media across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -13,11 +13,23 @@ tags:
 paths:
   /stats/medias/{mediaId}:
     get:
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
+      x-wistia-mcp-ignore-agent-chat: true
       summary: Show Media Stats
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media stats from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: statsMedia
+      x-speakeasy-name-override: get
       description: 'Retrieve stats for a video. This endpoint provides statistics for a specific video identified by its media-id.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -25,11 +37,7 @@ paths:
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -74,16 +82,6 @@ paths:
                       unevaluatedProperties: false
                       type: object
                       properties:
-                        text:
-                          description: For action types that include display text (e.g., post-roll CTA), the text shown to the viewer.
-                          type:
-                          - string
-                          - 'null'
-                        url:
-                          description: For action types that link out (e.g., post-roll CTA), the URL the viewer was directed to.
-                          type:
-                          - string
-                          - 'null'
                         type:
                           description: Type of action (e.g., "Call to Action").
                           type: string
@@ -97,6 +95,16 @@ paths:
                           description: The rate of actions performed over impressions.
                           type: number
                           format: float
+                        url:
+                          description: For action types that link out (e.g., post-roll CTA), the URL the viewer was directed to.
+                          type:
+                          - string
+                          - 'null'
+                        text:
+                          description: For action types that include display text (e.g., post-roll CTA), the text shown to the viewer.
+                          type:
+                          - string
+                          - 'null'
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -117,6 +125,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Media not found or does not belong to account
           content: {}
@@ -136,15 +156,29 @@ paths:
       - Stats:Media
       security:
       - BearerAuth: []
+      operationId: getStatsMediasByMediaId
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /stats/medias/{mediaId}/by_date:
     get:
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
+      x-wistia-mcp-ignore-agent-chat: true
       summary: Show Media Stats by Date
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media stats by date from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: statsMedia
+      x-speakeasy-name-override: getByDate
       description: 'Retrieve stats for a media organized by day, between a start and end date paramater (inclusive). If start and end date are not provided, defaults to yesterday and today.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -152,11 +186,7 @@ paths:
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -220,6 +250,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Media not found or does not belong to account
           content: {}
@@ -239,15 +281,28 @@ paths:
       - Stats:Media
       security:
       - BearerAuth: []
+      operationId: getStatsMediasByMediaIdByDate
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /stats/medias/{mediaId}/engagement:
     get:
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
       summary: Show Media Engagement
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media engagement from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: statsMedia
+      x-speakeasy-name-override: getEngagement
       description: 'Retrieve engagement data for a video. This endpoint provides engagement data for a specific video identified by its media-id.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -255,11 +310,7 @@ paths:
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -311,6 +362,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Media not found or does not belong to account
           content: {}
@@ -330,21 +393,12 @@ paths:
       - Stats:Media
       security:
       - BearerAuth: []
+      operationId: getStatsMediasByMediaIdEngagement
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
 components:
   responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
     '401':
       description: Unauthorized, invalid or missing token
       content:
@@ -356,11 +410,68 @@ components:
                 type: string
                 examples:
                 - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

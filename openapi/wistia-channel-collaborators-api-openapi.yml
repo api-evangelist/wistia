@@ -36,9 +36,7 @@ paths:
 
         Read all data
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: get-channel-collaborators
       x-wistia-mcp-description: 'List, get, show, or browse the channel collaborators — the contacts and contact groups who have been granted access to a channel. Use this when someone wants to see who has access to a channel, list collaborators, or find who a channel is shared with, with optional sorting and pagination. Results are limited to collaborators the authenticated user is permitted to see: only account owners, managers, and channel admins can see the full list. Use create-channel-collaborator to grant access or delete-channel-collaborator to revoke access.
 
@@ -285,6 +283,8 @@ paths:
       - Channel Collaborators
       security:
       - BearerAuth: []
+      operationId: getChannelsByChannelHashedIdCollaborators
+      x-operation-id-source: derived
     post:
       summary: Create Channel Collaborator
       x-wistia-mcp-annotations:
@@ -307,9 +307,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: create-channel-collaborator
       x-wistia-mcp-description: 'Create a channel collaborator — invite a contact to a channel with a specified role (admin or viewer). Use this when someone wants to share a channel, give access, or add a person to a channel by specifying their email address and role. Use get-channel-collaborators to list who has access to a channel or delete-channel-collaborator to revoke access.
 
@@ -480,6 +478,8 @@ paths:
       - Channel Collaborators
       security:
       - BearerAuth: []
+      operationId: postChannelsByChannelHashedIdCollaborators
+      x-operation-id-source: derived
   /channels/{channelHashedId}/collaborators/{id}:
     delete:
       summary: Delete Channel Collaborator
@@ -503,9 +503,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: delete-channel-collaborator
       x-wistia-mcp-description: 'Delete a channel collaborator — revoke a contact''s access to a channel. Use this when someone wants to remove a person''s access to a channel, unshare a channel, or revoke permissions. Use get-channel-collaborators to list who has access to a channel or create-channel-collaborator to grant access.
 
@@ -642,6 +640,8 @@ paths:
       - Channel Collaborators
       security:
       - BearerAuth: []
+      operationId: deleteChannelsByChannelHashedIdCollaboratorsById
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

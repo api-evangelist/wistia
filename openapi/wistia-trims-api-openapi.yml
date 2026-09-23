@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Trims API
   version: '1.0'
-  description: 'Operations tagged Trims across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Trims across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -14,10 +14,25 @@ paths:
   /medias/{mediaHashedId}/trims:
     post:
       summary: Create Media from Trims
-      description: 'Creates a new media that trims off parts of an existing media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new media from trimmed segments, which adds data to the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: Only a new media is created; source media are not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      x-speakeasy-group: trims
+      x-speakeasy-name-override: create
+      description: 'Creates a new media that trims off parts of an existing media.
 
 
-        <!--- HIDE-MCP -->
+        By default, the `trims` parameter specifies time ranges to **remove** from the media. When `keep_trims` is set to `true`, the `trims` parameter instead specifies time ranges to **keep** in the media.
+
+
+        **NOTE:** currently this endpoint only supports trimming video files.
+
 
         ## Requires api token with one of the following permissions
 
@@ -25,9 +40,21 @@ paths:
 
         Read, update & delete anything
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: create-media-from-trims
+      x-wistia-mcp-description: 'Create a new media by trimming, cutting, or clipping parts off an existing
 
-        <!--- /HIDE-MCP -->
+        video — produces a separate, shortened copy without modifying the source.
+
+        By default the trims time ranges specify parts to remove; set keep_trims to
+
+        true to instead specify the ranges to keep. Processing is asynchronous and
+
+        returns a background_job_status object. Use this when someone wants to cut,
+
+        clip, shorten, or trim a video into a new media. Currently only video files
+
+        are supported.
 
         '
       parameters:
@@ -45,15 +72,15 @@ paths:
               unevaluatedProperties: false
               type: object
               properties:
+                trims:
+                  description: An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. When keep_trims is false (default), the ranges specify parts of the media to remove. When keep_trims is true, the ranges specify parts of the media to keep.
+                  type: array
+                  items:
+                    type: string
                 keep_trims:
                   description: When set to true, the trims parameter is treated as ranges to keep rather than ranges to remove. Defaults to false.
                   type: boolean
                   default: false
-                trims:
-                  description: An array of strings matching the format of HH:MM:SS.mmm-HH:MM:SS.mmm where HH is hours, MM is minutes, SS is seconds and mmm is milliseconds. The ranges should contain the earliest point of the trim first and the later point of the trim second.
-                  type: array
-                  items:
-                    type: string
               required:
               - trims
       responses:
@@ -67,27 +94,32 @@ paths:
                 properties:
                   background_job_status:
                     unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
+                    allOf:
+                    - type: object
+                      description: 'A background job keeps track of the progress of an asynchronous task, e.g
 
-                      bulk archiving media, translating media, etc.
+                        bulk archiving media, translating media, etc.
 
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
+                        '
+                      properties:
+                        id:
+                          description: The ID of the background job that's been queued for the request.
+                          type: integer
+                        hashed_id:
+                          description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                          type: string
+                        status:
+                          description: The status of the background job that's been queued for the request.
+                          type: string
+                          enum:
+                          - queued
+                          - started
+                          - finished
+                          - failed
+                      required:
+                      - id
+                      - hashed_id
+                      - status
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -108,6 +140,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '422':
           description: Unprocessable entity, the request parameters were invalid.
           content:
@@ -145,6 +189,8 @@ paths:
       - Trims
       security:
       - BearerAuth: []
+      operationId: postMediasByMediaHashedIdTrims
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
 components:
@@ -168,17 +214,6 @@ components:
                   - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
                   media:
                   - must be part of a project
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
     '401':
       description: Unauthorized, invalid or missing token
       content:
@@ -190,6 +225,17 @@ components:
                 type: string
                 examples:
                 - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
   schemas:
     BackgroundJobStatus:
       type: object
@@ -214,6 +260,52 @@ components:
       type: http
       scheme: bearer
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

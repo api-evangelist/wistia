@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Stats:Visitors API
   version: '1.0'
-  description: 'Operations tagged Stats:Visitors across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Stats:Visitors across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -13,11 +13,22 @@ tags:
 paths:
   /stats/visitors:
     get:
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
       summary: List Visitors
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads visitors from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: statsVisitors
+      x-speakeasy-name-override: list
       description: 'This endpoint provides a list of visitors that have watched videos in your account.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -25,11 +36,7 @@ paths:
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: page
         in: query
@@ -140,6 +147,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '500':
           description: Internal server error
           content:
@@ -156,15 +175,28 @@ paths:
       - Stats:Visitors
       security:
       - BearerAuth: []
+      operationId: getStatsVisitors
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /stats/visitors/{visitorKey}:
     get:
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
       summary: Show Visitor
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads visitor from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: statsVisitors
+      x-speakeasy-name-override: get
       description: 'This endpoint provides detailed information about a specific visitor.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -172,11 +204,7 @@ paths:
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: visitorKey
         in: path
@@ -267,6 +295,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Visitor not found
           content: {}
@@ -286,6 +326,8 @@ paths:
       - Stats:Visitors
       security:
       - BearerAuth: []
+      operationId: getStatsVisitorsByVisitorKey
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
 components:
@@ -345,17 +387,6 @@ components:
             mobile:
               type: boolean
   responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
     '401':
       description: Unauthorized, invalid or missing token
       content:
@@ -367,11 +398,68 @@ components:
                 type: string
                 examples:
                 - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

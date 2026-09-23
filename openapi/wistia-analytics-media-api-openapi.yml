@@ -34,19 +34,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -218,6 +212,8 @@ paths:
       - Analytics:Media
       security:
       - BearerAuth: []
+      operationId: getAnalyticsMediasByMediaId
+      x-operation-id-source: derived
   /analytics/medias/{mediaId}/timeseries:
     get:
       summary: Show Media Analytics Timeseries
@@ -240,19 +236,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -442,6 +432,8 @@ paths:
       - Analytics:Media
       security:
       - BearerAuth: []
+      operationId: getAnalyticsMediasByMediaIdTimeseries
+      x-operation-id-source: derived
   /analytics/medias/{mediaId}/embed_locations:
     get:
       summary: Show Media Embed Locations
@@ -464,19 +456,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -679,6 +665,8 @@ paths:
       - Analytics:Media
       security:
       - BearerAuth: []
+      operationId: getAnalyticsMediasByMediaIdEmbedLocations
+      x-operation-id-source: derived
   /analytics/medias/{mediaId}/embed_locations_timeseries:
     get:
       summary: Show Media Embed Locations Timeseries
@@ -705,19 +693,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -939,6 +921,8 @@ paths:
       - Analytics:Media
       security:
       - BearerAuth: []
+      operationId: getAnalyticsMediasByMediaIdEmbedLocationsTimeseries
+      x-operation-id-source: derived
   /analytics/medias/{mediaId}/traffic:
     get:
       summary: Show Media Traffic Breakdown
@@ -961,19 +945,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -1166,6 +1144,8 @@ paths:
       - Analytics:Media
       security:
       - BearerAuth: []
+      operationId: getAnalyticsMediasByMediaIdTraffic
+      x-operation-id-source: derived
   /analytics/medias/{mediaId}/conversions:
     get:
       summary: Show Media Form Conversions
@@ -1188,19 +1168,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -1373,6 +1347,8 @@ paths:
       - Analytics:Media
       security:
       - BearerAuth: []
+      operationId: getAnalyticsMediasByMediaIdConversions
+      x-operation-id-source: derived
   /analytics/medias/{mediaId}/languages:
     get:
       summary: Show Media Languages
@@ -1395,19 +1371,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaId
         in: path
@@ -1544,6 +1514,8 @@ paths:
       - Analytics:Media
       security:
       - BearerAuth: []
+      operationId: getAnalyticsMediasByMediaIdLanguages
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

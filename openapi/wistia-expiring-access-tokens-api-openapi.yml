@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Expiring Access Tokens API
   version: '1.0'
-  description: 'Operations tagged Expiring Access Tokens across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Expiring Access Tokens across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -13,7 +13,11 @@ tags:
 paths:
   /expiring_token:
     post:
+      x-wistia-mcp-ignore: true
       summary: Create Expiring Access Token
+      x-speakeasy-group: expiringAccessTokens
+      x-speakeasy-name-override: create
+      x-cli-topic-override: expiring-tokens
       description: '```
 
         🚫 Alert
@@ -26,19 +30,13 @@ paths:
         This endpoint is for creating expiring access tokens which can be used for some iframe embeds.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       requestBody:
         required: false
         content:
@@ -158,51 +156,11 @@ paths:
       - Expiring Access Tokens
       security:
       - BearerAuth: []
+      operationId: postExpiringToken
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
 components:
-  responses:
-    '422':
-      description: Unprocessable entity, the request parameters were invalid.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              errors:
-                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    type: string
-                example:
-                  trims:
-                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
-                  media:
-                  - must be part of a project
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
   schemas:
     ExpiringAccessTokenResponse:
       type: object
@@ -240,11 +198,99 @@ components:
             - type
             - id
             - permissions
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '422':
+      description: Unprocessable entity, the request parameters were invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+                example:
+                  trims:
+                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
+                  media:
+                  - must be part of a project
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

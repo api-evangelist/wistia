@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Media API
   version: '1.0'
-  description: 'Operations tagged Media across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Media across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -13,12 +13,21 @@ paths:
   /medias:
     get:
       summary: List Media
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads medias from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: list
       description: 'Lists the media belonging to the account. This endpoint can also be used to
 
         do a batch fetch based off of the hashed id.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -26,9 +35,31 @@ paths:
 
         Read all folder and media data
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: get-medias
+      x-wistia-mcp-description: 'List, browse, or fetch media records (videos and audio files) in the account.
 
-        <!--- /HIDE-MCP -->
+        Use this when someone wants a page of media, all media in a known folder, exact-name
+
+        or exact-ID lookup, or structured filtering by folder, media type, tags, archived status,
+
+        sorting, or pagination. Do not use this as the first step for keyword, topic, title,
+
+        description, or transcript search; use the `search` tool for those content-finding
+
+        requests, then use get-medias only if you need exact media records by hashed_id.
+
+        For "all" or "how many" requests with structured filters, use `per_page: 100` and
+
+        continue with `page` or `cursor` pagination while more results may exist. The default
+
+        page size is 10, so never treat an unpaginated first response as a complete total.
+
+        Returns a list of media records. In MCP responses, `per_page` is only the requested
+
+        limit; use `returned_count` or the actual `content` length as the number of records
+
+        returned in that response.
 
         '
       parameters:
@@ -50,7 +81,7 @@ paths:
           type: integer
       - name: cursor
         in: query
-        description: 'If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 
           first set of records are fetched up to the `per_page`. Cursor
 
@@ -65,7 +96,7 @@ paths:
 
           NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
 
-          last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 
           cursor value to a `sort_by` name.
 
@@ -86,7 +117,7 @@ paths:
               - 0
               - 1
             before:
-              description: 'If `cursor[before]` is set than cursor pagination is enabled and all records
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
 
                 before the cursor up to the `per_page` are returned. This feature is useful for
 
@@ -97,7 +128,7 @@ paths:
                 '
               type: string
             after:
-              description: 'If `cursor[after]` is set than cursor pagination is enabled and all records
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
 
                 after the cursor up to the `per_page` are returned.
 
@@ -210,11 +241,6 @@ paths:
 
                       '
                     properties:
-                      protected:
-                        description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
-                        type:
-                        - boolean
-                        - 'null'
                       id:
                         description: A unique numeric identifier for the media within the system.
                         type: integer
@@ -292,6 +318,11 @@ paths:
                             type: integer
                           height:
                             type: integer
+                      protected:
+                        description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                        type:
+                        - boolean
+                        - 'null'
                   - type: object
                     properties:
                       folder:
@@ -426,8 +457,8 @@ paths:
                         description: Tags associated with this media.
                         type: array
                         items:
-                          unevaluatedProperties: false
                           type: object
+                          unevaluatedProperties: false
                           properties:
                             name:
                               description: The display name of the tag.
@@ -493,15 +524,18 @@ paths:
       - Media
       security:
       - BearerAuth: []
+      operationId: getMedias
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /medias/{mediaHashedId}:
     get:
+      x-wistia-mcp-ignore: true
       summary: Show Media
+      x-speakeasy-group: media
+      x-speakeasy-name-override: get
       description: 'Fetches a single media by its hashed id.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -509,11 +543,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: mediaHashedId
         in: path
@@ -549,11 +579,6 @@ paths:
 
                     '
                   properties:
-                    protected:
-                      description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
-                      type:
-                      - boolean
-                      - 'null'
                     id:
                       description: A unique numeric identifier for the media within the system.
                       type: integer
@@ -631,6 +656,11 @@ paths:
                           type: integer
                         height:
                           type: integer
+                    protected:
+                      description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                      type:
+                      - boolean
+                      - 'null'
                 - type: object
                   properties:
                     folder:
@@ -765,8 +795,8 @@ paths:
                       description: Tags associated with this media.
                       type: array
                       items:
-                        unevaluatedProperties: false
                         type: object
+                        unevaluatedProperties: false
                         properties:
                           name:
                             description: The display name of the tag.
@@ -819,12 +849,23 @@ paths:
       - Media
       security:
       - BearerAuth: []
+      operationId: getMediasByMediaHashedId
+      x-operation-id-source: derived
     put:
       summary: Update Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool modifies an existing media in the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Updating replaces existing values and the previous data cannot be recovered.
+        idempotent_hint: true
+        idempotent_hint_justification: Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: update
       description: 'Updates the attributes on a media.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -832,9 +873,19 @@ paths:
 
         Read, update & delete anything
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: update-media
+      x-wistia-mcp-description: 'Update, edit, change, or rename the attributes of a media (a video or audio file) by
 
-        <!--- /HIDE-MCP -->
+        hashed_id. Use this when someone wants to change a video or audio file''s name,
+
+        description, complete tag list, or thumbnail/still image. Supplying tags replaces all
+
+        existing tags. Do not use this to add tags to a media while keeping its current tags;
+
+        use bulk-tag-media instead. This edits metadata only — to replace the underlying file use swap-media,
+
+        and to relocate it use move-media.
 
         '
       parameters:
@@ -865,7 +916,7 @@ paths:
                   description: A new description for this media. Accepts plain text or markdown.
                   type: string
                 tags:
-                  description: An array of tag names to apply to the media. Note that this will replace any existing tags!
+                  description: An array of tag names to apply to the media. This replaces any existing tags. To add tags without replacing existing tags, use bulk-tag-media.
                   type: array
                   items:
                     type: string
@@ -887,11 +938,6 @@ paths:
 
                     '
                   properties:
-                    protected:
-                      description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
-                      type:
-                      - boolean
-                      - 'null'
                     id:
                       description: A unique numeric identifier for the media within the system.
                       type: integer
@@ -969,14 +1015,19 @@ paths:
                           type: integer
                         height:
                           type: integer
+                    protected:
+                      description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                      type:
+                      - boolean
+                      - 'null'
                 - type: object
                   properties:
                     tags:
                       description: Tags associated with this media.
                       type: array
                       items:
-                        unevaluatedProperties: false
                         type: object
+                        unevaluatedProperties: false
                         properties:
                           name:
                             description: The display name of the tag.
@@ -1019,6 +1070,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Resource not found
           content:
@@ -1047,12 +1110,23 @@ paths:
       - Media
       security:
       - BearerAuth: []
+      operationId: putMediasByMediaHashedId
+      x-operation-id-source: derived
     delete:
       summary: Delete Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool deletes a media from the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool permanently deletes the media and cannot be undone.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: delete
       description: 'Deletes a media.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -1060,9 +1134,15 @@ paths:
 
         Read, update & delete anything
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: delete-media
+      x-wistia-mcp-description: 'Permanently delete a media (a video or audio file) from the account by its hashed_id.
 
-        <!--- /HIDE-MCP -->
+        Use this when someone wants to delete, remove, trash, or destroy a video or audio file
+
+        for good. This cannot be undone — to remove media reversibly use archive-media (and
+
+        restore-media to bring it back), or move-media to relocate it instead.
 
         '
       parameters:
@@ -1079,98 +1159,100 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                description: 'A media generally represents a video or an audio which can be embedded into your website.
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  description: 'A media generally represents a video or an audio which can be embedded into your website.
 
 
-                  CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+                    CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
 
-                  For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
+                    For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
 
-                  '
-                properties:
-                  protected:
-                    description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                    '
+                  properties:
+                    id:
+                      description: A unique numeric identifier for the media within the system.
+                      type: integer
+                    name:
+                      description: The display name of the media.
+                      type: string
                     type:
-                    - boolean
-                    - 'null'
-                  id:
-                    description: A unique numeric identifier for the media within the system.
-                    type: integer
-                  name:
-                    description: The display name of the media.
-                    type: string
-                  type:
-                    description: A string representing what type of media this is.
-                    type: string
-                    enum:
-                    - Video
-                    - Audio
-                    - Image
-                    - PdfDocument
-                    - MicrosoftOfficeDocument
-                    - Swf
-                    - UnknownType
-                  archived:
-                    description: Whether or not the media is archived, either true or false.
-                    type: boolean
-                  created:
-                    description: The date when the media was originally uploaded.
-                    type: string
-                    format: date-time
-                  updated:
-                    description: The date when the media was last changed.
-                    type: string
-                    format: date-time
-                  duration:
-                    unevaluatedProperties: false
-                    description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-                    oneOf:
-                    - type: number
-                    - type: 'null'
-                  embedCode:
-                    description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+                      description: A string representing what type of media this is.
+                      type: string
+                      enum:
+                      - Video
+                      - Audio
+                      - Image
+                      - PdfDocument
+                      - MicrosoftOfficeDocument
+                      - Swf
+                      - UnknownType
+                    archived:
+                      description: Whether or not the media is archived, either true or false.
+                      type: boolean
+                    created:
+                      description: The date when the media was originally uploaded.
+                      type: string
+                      format: date-time
+                    updated:
+                      description: The date when the media was last changed.
+                      type: string
+                      format: date-time
+                    duration:
+                      unevaluatedProperties: false
+                      description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+                      oneOf:
+                      - type: number
+                      - type: 'null'
+                    embedCode:
+                      description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
 
-                      '
-                    type: string
-                    deprecated: true
-                  hashed_id:
-                    description: A unique alphanumeric identifier for this media.
-                    type: string
-                  description:
-                    description: A description for the media which usually appears near the top of the sidebar on the media's page.
-                    type: string
-                  progress:
-                    description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-                    type: number
-                    maximum: 1
-                    minimum: 0
-                  status:
-                    description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+                        '
+                      type: string
+                      deprecated: true
+                    hashed_id:
+                      description: A unique alphanumeric identifier for this media.
+                      type: string
+                    description:
+                      description: A description for the media which usually appears near the top of the sidebar on the media's page.
+                      type: string
+                    progress:
+                      description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+                      type: number
+                      maximum: 1
+                      minimum: 0
+                    status:
+                      description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
 
-                      '
-                    type: string
-                    enum:
-                    - queued
-                    - processing
-                    - ready
-                    - failed
-                  section:
-                    unevaluatedProperties: false
-                    description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-                    oneOf:
-                    - type: string
-                    - type: 'null'
-                  thumbnail:
-                    unevaluatedProperties: false
-                    type: object
-                    properties:
-                      url:
-                        type: string
-                      width:
-                        type: integer
-                      height:
-                        type: integer
+                        '
+                      type: string
+                      enum:
+                      - queued
+                      - processing
+                      - ready
+                      - failed
+                    section:
+                      unevaluatedProperties: false
+                      description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+                      oneOf:
+                      - type: string
+                      - type: 'null'
+                    thumbnail:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                        width:
+                          type: integer
+                        height:
+                          type: integer
+                    protected:
+                      description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                      type:
+                      - boolean
+                      - 'null'
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -1191,6 +1273,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Resource not found
           content:
@@ -1219,15 +1313,26 @@ paths:
       - Media
       security:
       - BearerAuth: []
+      operationId: deleteMediasByMediaHashedId
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /medias/{mediaHashedId}/copy:
     post:
       summary: Copy Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new media copy, which modifies the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: Copying only adds new media; existing media are not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call creates an additional copy of the media.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: copy
       description: 'This endpoint copies a media and its assets to a destination folder (defaults to source media).
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -1235,9 +1340,19 @@ paths:
 
         Read, update & delete anything
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: copy-media
+      x-wistia-mcp-description: 'Copy, duplicate, or clone a single media (a video or audio file) and its assets by
 
-        <!--- /HIDE-MCP -->
+        hashed_id, optionally into a destination folder and optionally assigning a new owner.
+
+        Use this when someone wants to duplicate one video or audio file. Defaults the
+
+        destination to the source media''s current folder and the owner to the source media''s
+
+        owner when omitted. To copy many medias at once use bulk-copy-media; to relocate without
+
+        duplicating use move-media.
 
         '
       parameters:
@@ -1286,11 +1401,6 @@ paths:
 
                     '
                   properties:
-                    protected:
-                      description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
-                      type:
-                      - boolean
-                      - 'null'
                     id:
                       description: A unique numeric identifier for the media within the system.
                       type: integer
@@ -1368,6 +1478,11 @@ paths:
                           type: integer
                         height:
                           type: integer
+                    protected:
+                      description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                      type:
+                      - boolean
+                      - 'null'
                 - type: object
                   properties:
                     folder:
@@ -1424,6 +1539,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Resource not found
           content:
@@ -1462,15 +1589,26 @@ paths:
       - Media
       security:
       - BearerAuth: []
+      operationId: postMediasByMediaHashedIdCopy
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /medias/{mediaHashedId}/swap:
     put:
       summary: Swap Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool replaces the underlying file of a media, which modifies the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: The original media file is replaced and cannot be recovered.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call queues another background job that re-runs the replacement.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: swap
       description: 'Swap one media with another media. This operation queues a background job to replace the original media with the replacement media while preserving the original media''s hashed ID and URLs.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -1478,9 +1616,19 @@ paths:
 
         Read, update & delete anything
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: swap-media
+      x-wistia-mcp-description: 'Swap or replace the underlying file of one media (a video or audio file) with another,
 
-        <!--- /HIDE-MCP -->
+        by hashed_id. Use this when someone wants to replace a video or audio file''s content while
+
+        keeping its existing embed code, URLs, and hashed_id intact (replacement must be the same
+
+        media type). Runs asynchronously, returning a background_job_status to poll. Unlike
+
+        copy-media this does not create a new media, and unlike update-media it changes the actual
+
+        file rather than just metadata.
 
         '
       parameters:
@@ -1510,128 +1658,139 @@ paths:
             application/json:
               schema:
                 unevaluatedProperties: false
-                type: object
-                properties:
-                  message:
-                    type: string
-                    examples:
-                    - Media swap has been queued for processing.
-                  media:
-                    type: object
-                    description: 'A media generally represents a video or an audio which can be embedded into your website.
+                allOf:
+                - type: object
+                  properties:
+                    message:
+                      description: A confirmation message that the background job has been queued.
+                      type: string
+                    background_job_status:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        description: 'A background job keeps track of the progress of an asynchronous task, e.g
 
-
-                      CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
-
-                      For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
-
-                      '
-                    properties:
-                      protected:
-                        description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
-                        type:
-                        - boolean
-                        - 'null'
-                      id:
-                        description: A unique numeric identifier for the media within the system.
-                        type: integer
-                      name:
-                        description: The display name of the media.
-                        type: string
-                      type:
-                        description: A string representing what type of media this is.
-                        type: string
-                        enum:
-                        - Video
-                        - Audio
-                        - Image
-                        - PdfDocument
-                        - MicrosoftOfficeDocument
-                        - Swf
-                        - UnknownType
-                      archived:
-                        description: Whether or not the media is archived, either true or false.
-                        type: boolean
-                      created:
-                        description: The date when the media was originally uploaded.
-                        type: string
-                        format: date-time
-                      updated:
-                        description: The date when the media was last changed.
-                        type: string
-                        format: date-time
-                      duration:
-                        unevaluatedProperties: false
-                        description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-                        oneOf:
-                        - type: number
-                        - type: 'null'
-                      embedCode:
-                        description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+                          bulk archiving media, translating media, etc.
 
                           '
-                        type: string
-                        deprecated: true
-                      hashed_id:
-                        description: A unique alphanumeric identifier for this media.
-                        type: string
-                      description:
-                        description: A description for the media which usually appears near the top of the sidebar on the media's page.
-                        type: string
-                      progress:
-                        description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-                        type: number
-                        maximum: 1
-                        minimum: 0
-                      status:
-                        description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-
-                          '
-                        type: string
-                        enum:
-                        - queued
-                        - processing
-                        - ready
-                        - failed
-                      section:
-                        unevaluatedProperties: false
-                        description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-                        oneOf:
-                        - type: string
-                        - type: 'null'
-                      thumbnail:
-                        unevaluatedProperties: false
-                        type: object
                         properties:
-                          url:
+                          id:
+                            description: The ID of the background job that's been queued for the request.
+                            type: integer
+                          hashed_id:
+                            description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
                             type: string
-                          width:
-                            type: integer
-                          height:
-                            type: integer
-                  background_job_status:
+                          status:
+                            description: The status of the background job that's been queued for the request.
+                            type: string
+                            enum:
+                            - queued
+                            - started
+                            - finished
+                            - failed
+                        required:
+                        - id
+                        - hashed_id
+                        - status
+                  required:
+                  - message
+                  - background_job_status
+                properties:
+                  media:
                     unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
+                    allOf:
+                    - type: object
+                      description: 'A media generally represents a video or an audio which can be embedded into your website.
 
-                      bulk archiving media, translating media, etc.
 
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
+                        CDN-backed medias are accessible using this url structure: https://fast.wistia.com/embed/medias/{hashed_id}.m3u8.
+
+                        For more information, see https://docs.wistia.com/docs/asset-urls#getting-hls-assets.
+
+                        '
+                      properties:
+                        id:
+                          description: A unique numeric identifier for the media within the system.
+                          type: integer
+                        name:
+                          description: The display name of the media.
+                          type: string
+                        type:
+                          description: A string representing what type of media this is.
+                          type: string
+                          enum:
+                          - Video
+                          - Audio
+                          - Image
+                          - PdfDocument
+                          - MicrosoftOfficeDocument
+                          - Swf
+                          - UnknownType
+                        archived:
+                          description: Whether or not the media is archived, either true or false.
+                          type: boolean
+                        created:
+                          description: The date when the media was originally uploaded.
+                          type: string
+                          format: date-time
+                        updated:
+                          description: The date when the media was last changed.
+                          type: string
+                          format: date-time
+                        duration:
+                          unevaluatedProperties: false
+                          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+                          oneOf:
+                          - type: number
+                          - type: 'null'
+                        embedCode:
+                          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+                            '
+                          type: string
+                          deprecated: true
+                        hashed_id:
+                          description: A unique alphanumeric identifier for this media.
+                          type: string
+                        description:
+                          description: A description for the media which usually appears near the top of the sidebar on the media's page.
+                          type: string
+                        progress:
+                          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+                          type: number
+                          maximum: 1
+                          minimum: 0
+                        status:
+                          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+                            '
+                          type: string
+                          enum:
+                          - queued
+                          - processing
+                          - ready
+                          - failed
+                        section:
+                          unevaluatedProperties: false
+                          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+                          oneOf:
+                          - type: string
+                          - type: 'null'
+                        thumbnail:
+                          unevaluatedProperties: false
+                          type: object
+                          properties:
+                            url:
+                              type: string
+                            width:
+                              type: integer
+                            height:
+                              type: integer
+                        protected:
+                          description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                          type:
+                          - boolean
+                          - 'null'
         '400':
           description: Bad request, e.g. missing replacement_media_id or media type mismatch.
           content:
@@ -1664,6 +1823,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Resource not found
           content:
@@ -1692,15 +1863,26 @@ paths:
       - Media
       security:
       - BearerAuth: []
+      operationId: putMediasByMediaHashedIdSwap
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /medias/{mediaHashedId}/stats:
     get:
       summary: Show Media Aggregated Stats
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads media aggregated stats from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: getStats
       description: 'Aggregated tracking statistics for a video embedded on your site.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -1708,9 +1890,15 @@ paths:
 
         Read all folder and media data
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: show-media-aggregated-stats
+      x-wistia-mcp-description: 'Get aggregated viewing stats, analytics, and metrics for a single media (a video or audio
 
-        <!--- /HIDE-MCP -->
+        file) embedded on your site, by its hashed_id. Use this when someone wants the plays,
+
+        views, visitors, page loads, play rate, or average percent watched / engagement for one
+
+        video. Returns aggregated totals, not per-visitor or time-series data.
 
         '
       parameters:
@@ -1797,6 +1985,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Resource not found
           content:
@@ -1825,18 +2025,26 @@ paths:
       - Media
       security:
       - BearerAuth: []
+      operationId: getMediasByMediaHashedIdStats
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /medias/{mediaHashedId}/translate:
     post:
       summary: Translate Media
       x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates translated transcripts for a media, which modifies the account.
         open_world_hint: true
+        open_world_hint_justification: This tool calls AWS Translate to produce the translated transcript content.
         destructive_hint: false
+        destructive_hint_justification: Translating only adds new translated transcripts; existing transcripts are not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call starts another translation job.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: translate
       description: 'Translates the transcript for a media.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -1844,9 +2052,19 @@ paths:
 
         Read, update & delete anything
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: translate-media
+      x-wistia-mcp-description: 'Translate the transcript or captions of a media (a video or audio file) into another
 
-        <!--- /HIDE-MCP -->
+        language by hashed_id. Use this when someone wants to translate, localize, or generate
+
+        foreign-language captions/subtitles for a video''s transcript. Specify a target_language
+
+        (and optional source_language) as a 3-character IETF language code. Runs asynchronously,
+
+        returning a background_job_status to poll; adds a new translated transcript without
+
+        modifying existing ones.
 
         '
       parameters:
@@ -1878,35 +2096,43 @@ paths:
             application/json:
               schema:
                 unevaluatedProperties: false
-                type: object
-                properties:
-                  message:
-                    type: string
-                    examples:
-                    - Translation request has been successfully queued for processing.
-                  background_job_status:
-                    unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
+                allOf:
+                - type: object
+                  properties:
+                    message:
+                      description: A confirmation message that the background job has been queued.
+                      type: string
+                    background_job_status:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        description: 'A background job keeps track of the progress of an asynchronous task, e.g
 
-                      bulk archiving media, translating media, etc.
+                          bulk archiving media, translating media, etc.
 
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
+                          '
+                        properties:
+                          id:
+                            description: The ID of the background job that's been queued for the request.
+                            type: integer
+                          hashed_id:
+                            description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                            type: string
+                          status:
+                            description: The status of the background job that's been queued for the request.
+                            type: string
+                            enum:
+                            - queued
+                            - started
+                            - finished
+                            - failed
+                        required:
+                        - id
+                        - hashed_id
+                        - status
+                  required:
+                  - message
+                  - background_job_status
         '400':
           description: Bad request
           content:
@@ -1945,6 +2171,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Resource not found
           content:
@@ -1984,621 +2222,8 @@ paths:
       - Media
       security:
       - BearerAuth: []
-    servers:
-    - url: https://api.wistia.com/modern
-  /medias/archive:
-    put:
-      summary: Archive Media
-      description: 'This method accepts a list of up to 100 medias to archive per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Note that webinar medias and Soapbox videos imported to Wistia before September 1, 2023 cannot be archived.
-
-
-        <!--- HIDE-MCP -->
-
-        ## Requires api token with one of the following permissions
-
-        ```
-
-        Read, update & delete anything
-
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              unevaluatedProperties: false
-              type: object
-              properties:
-                hashed_ids:
-                  description: An array of the media hashed IDs to be archived.
-                  type: array
-                  items:
-                    type: string
-              required:
-              - hashed_ids
-      responses:
-        '200':
-          description: Successful archival of media.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  message:
-                    description: A confirmation message that the background job has been queued.
-                    type: string
-                  background_job_status:
-                    unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
-
-                      bulk archiving media, translating media, etc.
-
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  code:
-                    description: A machine-readable identifier for the specific authorization failure.
-                    type: string
-                    enum:
-                    - unauthorized_credentials
-                    - account_inactive
-                    - unauthorized_scope
-                    - unauthorized_params
-                  error:
-                    type: string
-                    examples:
-                    - Invalid credentials.
-        '403':
-          description: Forbidden, e.g. account does not have access to archiving.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-        '422':
-          description: Unprocessable entity, e.g. too many media requested.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Internal server error
-      tags:
-      - Media
-      security:
-      - BearerAuth: []
-    servers:
-    - url: https://api.wistia.com/modern
-  /medias/move:
-    put:
-      summary: Move Media
-      description: 'Move one or many media to a different folder and optionally to a specific subfolder.
-
-        Max 100 media per request, and max 10 requests in 5 minutes.
-
-        Note: this is a different rate limit than applies to the rest of the api!
-
-
-        If a subfolder_id is provided, media will be moved to that subfolder. The subfolder
-
-        must belong to the specified folder.
-
-
-        Returns a Background Job as the move is async.
-
-
-        <!--- HIDE-MCP -->
-
-        ## Requires api token with one of the following permissions
-
-        ```
-
-        Read, update & delete anything
-
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              unevaluatedProperties: false
-              type: object
-              properties:
-                hashed_ids:
-                  description: An array of the media hashed IDs to be moved.
-                  type: array
-                  items:
-                    type: string
-                folder_id:
-                  description: The hashed ID of the folder where you want the media moved.
-                  type: string
-                subfolder_id:
-                  description: Optional. The hashed ID of the subfolder where you want the media moved. If not provided, media will be moved to the folder's default subfolder. The subfolder must belong to the specified folder.
-                  type: string
-              required:
-              - hashed_ids
-              - folder_id
-      responses:
-        '200':
-          description: Successfully queued move of all the media.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  message:
-                    type: string
-                  background_job_status:
-                    unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
-
-                      bulk archiving media, translating media, etc.
-
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
-        '207':
-          description: Successfully queued move of at least one media. Other provided hashed_ids failed.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  message:
-                    type: string
-                  background_job_status:
-                    unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
-
-                      bulk archiving media, translating media, etc.
-
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
-                  partial_errors:
-                    type: array
-                    items:
-                      unevaluatedProperties: false
-                      type: object
-                      properties:
-                        media_id:
-                          type: string
-                        error:
-                          type: string
-        '400':
-          description: Invalid request.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-              example:
-                error: You can only request to move 100 or less media at one time.
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  code:
-                    description: A machine-readable identifier for the specific authorization failure.
-                    type: string
-                    enum:
-                    - unauthorized_credentials
-                    - account_inactive
-                    - unauthorized_scope
-                    - unauthorized_params
-                  error:
-                    type: string
-                    examples:
-                    - Invalid credentials.
-        '404':
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Folder with ID 'fakeid' not found.
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Internal server error
-      tags:
-      - Media
-      security:
-      - BearerAuth: []
-    servers:
-    - url: https://api.wistia.com/modern
-  /medias/restore:
-    put:
-      summary: Restore Media
-      description: 'Restores archived medias to your account. This method accepts a list of up to 100 medias to restore per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Your account must have access to the Archiving feature to use this method.
-
-
-        <!--- HIDE-MCP -->
-
-        ## Requires api token with one of the following permissions
-
-        ```
-
-        Read, update & delete anything
-
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              unevaluatedProperties: false
-              type: object
-              properties:
-                hashed_ids:
-                  description: An array of the media hashed IDs to be restored.
-                  type: array
-                  items:
-                    type: string
-                folder_id:
-                  description: The hashed ID of the folder to restore the medias to.
-                  type: string
-              required:
-              - hashed_ids
-              - folder_id
-      responses:
-        '200':
-          description: Successful restoration of media.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  message:
-                    description: A confirmation message that the background job has been queued.
-                    type: string
-                  container:
-                    unevaluatedProperties: false
-                    type: object
-                    properties:
-                      type:
-                        description: The type of container the medias will be restored to.
-                        type: string
-                      name:
-                        description: The display name of the container the medias will be restored to.
-                        type: string
-                      hashedId:
-                        description: The hashed ID of the container the medias will be restored to.
-                        type: string
-                  background_job_status:
-                    unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
-
-                      bulk archiving media, translating media, etc.
-
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  code:
-                    description: A machine-readable identifier for the specific authorization failure.
-                    type: string
-                    enum:
-                    - unauthorized_credentials
-                    - account_inactive
-                    - unauthorized_scope
-                    - unauthorized_params
-                  error:
-                    type: string
-                    examples:
-                    - Invalid credentials.
-        '403':
-          description: Forbidden, e.g. account does not have access to archiving.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-        '404':
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Folder with ID 'fakeid' not found.
-        '422':
-          description: Missing arguments for restoration of media.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    description: An error message that the necessary parameters were not provided.
-                    type: string
-                    examples:
-                    - Incorrect number of parameters provided. Provide one folder_id.
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Internal server error
-      tags:
-      - Media
-      security:
-      - BearerAuth: []
-    servers:
-    - url: https://api.wistia.com/modern
-  /medias/copy:
-    put:
-      summary: Bulk Copy Media
-      description: 'This method accepts a list of medias to copy to a destination folder. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.
-
-
-        Each media will be duplicated and the copy will be placed in the specified destination folder. The original media files will not be affected.
-
-
-        <!--- HIDE-MCP -->
-
-        ## Requires api token with one of the following permissions
-
-        ```
-
-        Read, update & delete anything
-
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              unevaluatedProperties: false
-              type: object
-              properties:
-                hashed_ids:
-                  description: An array of the media hashed IDs to be copied.
-                  type: array
-                  items:
-                    type: string
-                folder_id:
-                  description: The hashed ID of the destination folder where the copies will be placed.
-                  type: string
-              required:
-              - hashed_ids
-              - folder_id
-      responses:
-        '200':
-          description: Successful copy request of media.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  message:
-                    description: A confirmation message that the background job has been queued.
-                    type: string
-                  destination:
-                    unevaluatedProperties: false
-                    type: object
-                    properties:
-                      type:
-                        description: The type of the destination container.
-                        type: string
-                      name:
-                        description: The name of the destination folder.
-                        type: string
-                      hashedId:
-                        description: The hashed ID of the destination folder.
-                        type: string
-                  background_job_status:
-                    unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
-
-                      bulk archiving media, translating media, etc.
-
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  code:
-                    description: A machine-readable identifier for the specific authorization failure.
-                    type: string
-                    enum:
-                    - unauthorized_credentials
-                    - account_inactive
-                    - unauthorized_scope
-                    - unauthorized_params
-                  error:
-                    type: string
-                    examples:
-                    - Invalid credentials.
-        '422':
-          description: Unprocessable entity, e.g. missing required parameters.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Internal server error
-      tags:
-      - Media
-      security:
-      - BearerAuth: []
+      operationId: postMediasByMediaHashedIdTranslate
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /medias/import_url:
@@ -2652,19 +2277,13 @@ paths:
         Note: imports from certain domains (e.g. vimeo.com, wistia.com) are not permitted.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       requestBody:
         content:
           application/json:
@@ -2816,10 +2435,795 @@ paths:
       - Media
       security:
       - BearerAuth: []
+      operationId: postMediasImportUrl
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.wistia.com/modern
+  /medias/archive:
+    put:
+      summary: Archive Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: Archiving media changes the media so it is no longer usable, so this tool modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only modifies records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Archiving removes media from normal use and is only reversible by manually restoring.
+        idempotent_hint: true
+        idempotent_hint_justification: Archiving media that is already archived is a no-op, so repeating the request has no additional effect.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: archive
+      description: 'This method accepts a list of up to 100 medias to archive per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Note that webinar medias and Soapbox videos imported to Wistia before September 1, 2023 cannot be archived.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: archive-media
+      x-wistia-mcp-description: 'Archive one or more medias (videos or audio files) by hashed_id. Use this when
+
+        someone wants to archive, soft-delete, deactivate, or temporarily remove videos or
+
+        audio without losing them. Archiving is reversible — use restore-media to bring
+
+        archived media back, unlike delete-media which is permanent. Accepts up to 100 medias
+
+        per request and processes asynchronously, returning a background_job_status to poll
+
+        rather than a Media object. Webinar medias and Soapbox videos imported before
+
+        September 1, 2023 cannot be archived.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                hashed_ids:
+                  description: An array of the media hashed IDs to be archived.
+                  type: array
+                  items:
+                    type: string
+              required:
+              - hashed_ids
+      responses:
+        '200':
+          description: Successful archival of media.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    message:
+                      description: A confirmation message that the background job has been queued.
+                      type: string
+                    background_job_status:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                          bulk archiving media, translating media, etc.
+
+                          '
+                        properties:
+                          id:
+                            description: The ID of the background job that's been queued for the request.
+                            type: integer
+                          hashed_id:
+                            description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                            type: string
+                          status:
+                            description: The status of the background job that's been queued for the request.
+                            type: string
+                            enum:
+                            - queued
+                            - started
+                            - finished
+                            - failed
+                        required:
+                        - id
+                        - hashed_id
+                        - status
+                  required:
+                  - message
+                  - background_job_status
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, e.g. account does not have access to archiving.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+        '422':
+          description: Unprocessable entity, e.g. too many media requested.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Media
+      security:
+      - BearerAuth: []
+      operationId: putMediasArchive
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.wistia.com/modern
+  /medias/move:
+    put:
+      x-wistia-mcp-ignore-agent-chat: true
+      summary: Move Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool changes the folder a media belongs to, which modifies the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Moving changes the media's folder and the prior location is not preserved.
+        idempotent_hint: true
+        idempotent_hint_justification: Moving media to the same destination folder is a no-op on repeat, so the request has no additional effect.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: move
+      description: 'Moves up to 100 media to a folder and optional subfolder. The subfolder must
+
+        belong to the specified folder.
+
+
+        This endpoint allows 10 requests per 5 minutes, separate from the general
+
+        API rate limit. Returns a Background Job because the move is asynchronous.
+
+
+        For more than 100 media, multiple destinations, or mixed actions, use the
+
+        Create Bulk Actions endpoint with `move` actions.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: move-media
+      x-wistia-mcp-description: 'Move one or more media to a folder and optional subfolder by hashed IDs.
+
+        Requests support up to 100 media and have a separate rate limit of 10
+
+        requests per 5 minutes. The operation is asynchronous and returns a
+
+        background_job_status to poll. Use create-bulk-actions for larger moves,
+
+        multiple destinations, or mixed actions. To duplicate media instead, use
+
+        copy-media or bulk-copy-media.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                hashed_ids:
+                  description: An array of the media hashed IDs to be moved.
+                  type: array
+                  items:
+                    type: string
+                folder_id:
+                  description: The hashed ID of the folder where you want the media moved.
+                  type: string
+                subfolder_id:
+                  description: Optional. The hashed ID of the subfolder where you want the media moved. If not provided, media will be moved to the folder's default subfolder. The subfolder must belong to the specified folder.
+                  type: string
+              required:
+              - hashed_ids
+              - folder_id
+      responses:
+        '200':
+          description: Successfully queued move of all the media.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    message:
+                      description: A confirmation message that the background job has been queued.
+                      type: string
+                    background_job_status:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                          bulk archiving media, translating media, etc.
+
+                          '
+                        properties:
+                          id:
+                            description: The ID of the background job that's been queued for the request.
+                            type: integer
+                          hashed_id:
+                            description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                            type: string
+                          status:
+                            description: The status of the background job that's been queued for the request.
+                            type: string
+                            enum:
+                            - queued
+                            - started
+                            - finished
+                            - failed
+                        required:
+                        - id
+                        - hashed_id
+                        - status
+                  required:
+                  - message
+                  - background_job_status
+        '207':
+          description: Successfully queued move of at least one media. Other provided hashed_ids failed.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    message:
+                      description: A confirmation message that the background job has been queued.
+                      type: string
+                    background_job_status:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                          bulk archiving media, translating media, etc.
+
+                          '
+                        properties:
+                          id:
+                            description: The ID of the background job that's been queued for the request.
+                            type: integer
+                          hashed_id:
+                            description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                            type: string
+                          status:
+                            description: The status of the background job that's been queued for the request.
+                            type: string
+                            enum:
+                            - queued
+                            - started
+                            - finished
+                            - failed
+                        required:
+                        - id
+                        - hashed_id
+                        - status
+                  required:
+                  - message
+                  - background_job_status
+                properties:
+                  partial_errors:
+                    type: array
+                    items:
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        media_id:
+                          type: string
+                        error:
+                          type: string
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: You can only request to move 100 or less media at one time.
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Media
+      security:
+      - BearerAuth: []
+      operationId: putMediasMove
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.wistia.com/modern
+  /medias/restore:
+    put:
+      summary: Restore Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: Restoring changes the state of an archived media back to active, so it modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only modifies records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Restoring changes the media's state from archived back to active. The archived state is lost and is only recoverable by archiving again.
+        idempotent_hint: true
+        idempotent_hint_justification: Restoring media that is already active is a no-op, so repeating the request has no additional effect.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: restore
+      description: 'Restores archived medias to your account. This method accepts a list of up to 100 medias to restore per request. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object. Your account must have access to the Archiving feature to use this method.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: restore-media
+      x-wistia-mcp-description: 'Restore, unarchive, or reactivate previously archived medias (videos or audio files) by
+
+        hashed_id, placing them back into a folder. Use this when someone wants to bring archived
+
+        videos or audio files back into the account — the reverse of archive-media. Accepts up to
+
+        100 medias per request and processes asynchronously, returning a background_job_status to
+
+        poll rather than a Media object. The account must have access to the Archiving feature.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                hashed_ids:
+                  description: An array of the media hashed IDs to be restored.
+                  type: array
+                  items:
+                    type: string
+                folder_id:
+                  description: The hashed ID of the folder to restore the medias to.
+                  type: string
+              required:
+              - hashed_ids
+              - folder_id
+      responses:
+        '200':
+          description: Successful restoration of media.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    message:
+                      description: A confirmation message that the background job has been queued.
+                      type: string
+                    background_job_status:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                          bulk archiving media, translating media, etc.
+
+                          '
+                        properties:
+                          id:
+                            description: The ID of the background job that's been queued for the request.
+                            type: integer
+                          hashed_id:
+                            description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                            type: string
+                          status:
+                            description: The status of the background job that's been queued for the request.
+                            type: string
+                            enum:
+                            - queued
+                            - started
+                            - finished
+                            - failed
+                        required:
+                        - id
+                        - hashed_id
+                        - status
+                  required:
+                  - message
+                  - background_job_status
+                properties:
+                  container:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      type:
+                        description: The type of container the medias will be restored to.
+                        type: string
+                      name:
+                        description: The display name of the container the medias will be restored to.
+                        type: string
+                      hashedId:
+                        description: The hashed ID of the container the medias will be restored to.
+                        type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, e.g. account does not have access to archiving.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '422':
+          description: Missing arguments for restoration of media.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: An error message that the necessary parameters were not provided.
+                    type: string
+                    examples:
+                    - Incorrect number of parameters provided. Provide one folder_id.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Media
+      security:
+      - BearerAuth: []
+      operationId: putMediasRestore
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.wistia.com/modern
+  /medias/copy:
+    put:
+      summary: Bulk Copy Media
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates new copies of media and therefore changes the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: Copying only adds new media; existing media are not modified or removed.
+        idempotent_hint: false
+        idempotent_hint_justification: Each run creates an additional copy of every listed media, so repeating the request multiplies the copies.
+      x-speakeasy-group: media
+      x-speakeasy-name-override: bulkCopy
+      description: 'This method accepts a list of medias to copy to a destination folder. It processes requests asynchronously and will return a background_job_status object rather than the typical Media response object.
+
+
+        Each media will be duplicated and the copy will be placed in the specified destination folder. The original media files will not be affected.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: bulk-copy-media
+      x-wistia-mcp-description: 'Copy, duplicate, or clone multiple medias (videos or audio files) at once into a
+
+        destination folder by their hashed_ids. Use this when someone wants to batch-copy or
+
+        bulk-duplicate several videos or audio files to another folder. Each media is duplicated
+
+        and the copy placed in the specified destination folder; originals are unaffected.
+
+        Processes asynchronously, returning a background_job_status to poll rather than a Media
+
+        object. For copying a single media use copy-media; to relocate without duplicating use
+
+        move-media.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                hashed_ids:
+                  description: An array of the media hashed IDs to be copied.
+                  type: array
+                  items:
+                    type: string
+                folder_id:
+                  description: The hashed ID of the destination folder where the copies will be placed.
+                  type: string
+              required:
+              - hashed_ids
+              - folder_id
+      responses:
+        '200':
+          description: Successful copy request of media.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  properties:
+                    message:
+                      description: A confirmation message that the background job has been queued.
+                      type: string
+                    background_job_status:
+                      unevaluatedProperties: false
+                      allOf:
+                      - type: object
+                        description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                          bulk archiving media, translating media, etc.
+
+                          '
+                        properties:
+                          id:
+                            description: The ID of the background job that's been queued for the request.
+                            type: integer
+                          hashed_id:
+                            description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                            type: string
+                          status:
+                            description: The status of the background job that's been queued for the request.
+                            type: string
+                            enum:
+                            - queued
+                            - started
+                            - finished
+                            - failed
+                        required:
+                        - id
+                        - hashed_id
+                        - status
+                  required:
+                  - message
+                  - background_job_status
+                properties:
+                  destination:
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      type:
+                        description: The type of the destination container.
+                        type: string
+                      name:
+                        description: The name of the destination folder.
+                        type: string
+                      hashedId:
+                        description: The hashed ID of the destination folder.
+                        type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '422':
+          description: Unprocessable entity, e.g. missing required parameters.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Media
+      security:
+      - BearerAuth: []
+      operationId: putMediasCopy
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
 components:
   schemas:
+    MediaShow:
+      allOf:
+      - $ref: '#/components/schemas/MediaProperties'
+      - $ref: '#/components/schemas/IncludesProject'
+      - $ref: '#/components/schemas/IncludesAssets'
+      - $ref: '#/components/schemas/IncludesSubfolder'
+      - $ref: '#/components/schemas/IncludesTags'
     IncludesTags:
       type: object
       properties:
@@ -2832,6 +3236,17 @@ components:
               name:
                 description: The display name of the tag.
                 type: string
+    IncludesSubfolder:
+      type: object
+      properties:
+        subfolder:
+          description: The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
+          allOf:
+          - $ref: '#/components/schemas/Subfolder'
+    MediaCopy:
+      allOf:
+      - $ref: '#/components/schemas/MediaProperties'
+      - $ref: '#/components/schemas/IncludesProject'
     Asset:
       type: object
       properties:
@@ -2855,6 +3270,24 @@ components:
 
             '
           type: string
+    MediaUpdate:
+      allOf:
+      - $ref: '#/components/schemas/MediaProperties'
+      - $ref: '#/components/schemas/IncludesTags'
+    IncludesProject:
+      type: object
+      properties:
+        project:
+          $ref: '#/components/schemas/Project-2'
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
     MediaIndex:
       allOf:
       - $ref: '#/components/schemas/MediaProperties'
@@ -2869,57 +3302,24 @@ components:
             type:
             - string
             - 'null'
-    Subfolder:
+    BackgroundJobStatus:
       type: object
-      description: A subfolder within a project that contains media files.
+      description: Status of the background job.
       properties:
-        hashed_id:
-          description: A unique alphanumeric identifier for this subfolder.
+        id:
+          description: The ID of the background job that's been queued for the request.
+          type: integer
+        status:
+          description: The status of the background job that's been queued for the request.
           type: string
-          examples:
-          - abc123def4
-        name:
-          description: The display name of the subfolder.
-          type:
-          - string
-          - 'null'
-          examples:
-          - Marketing Videos
-        description:
-          description: A description for the subfolder.
-          type:
-          - string
-          - 'null'
-          examples:
-          - Collection of all marketing and promotional videos
-        position:
-          description: The position of this subfolder within its project, used for ordering.
-          type:
-          - integer
-          - 'null'
-          examples:
-          - 1
-        created:
-          description: The date when the subfolder was created.
-          type:
-          - string
-          - 'null'
-          format: date-time
-          examples:
-          - '2024-01-15T10:30:00+00:00'
-        updated:
-          description: The date when the subfolder was last modified.
-          type:
-          - string
-          - 'null'
-          format: date-time
-          examples:
-          - '2024-01-20T14:45:00+00:00'
+          enum:
+          - queued
+          - started
+          - finished
+          - failed
       required:
-      - hashed_id
-      - position
-      - created
-      - updated
+      - id
+      - status
     MediaProperties:
       type: object
       properties:
@@ -2986,11 +3386,57 @@ components:
           type: string
         thumbnail:
           $ref: '#/components/schemas/Thumbnail'
-    IncludesProject:
+    Subfolder:
       type: object
+      description: A subfolder within a project that contains media files.
       properties:
-        project:
-          $ref: '#/components/schemas/Project-2'
+        hashed_id:
+          description: A unique alphanumeric identifier for this subfolder.
+          type: string
+          examples:
+          - abc123def4
+        name:
+          description: The display name of the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Marketing Videos
+        description:
+          description: A description for the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Collection of all marketing and promotional videos
+        position:
+          description: The position of this subfolder within its project, used for ordering.
+          type:
+          - integer
+          - 'null'
+          examples:
+          - 1
+        created:
+          description: The date when the subfolder was created.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-01-15T10:30:00+00:00'
+        updated:
+          description: The date when the subfolder was last modified.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-01-20T14:45:00+00:00'
+      required:
+      - hashed_id
+      - position
+      - created
+      - updated
     Project-2:
       type: object
       properties:
@@ -3009,33 +3455,6 @@ components:
           type: string
           examples:
           - 4d23503f70
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
-    BackgroundJobStatus:
-      type: object
-      description: Status of the background job.
-      properties:
-        id:
-          description: The ID of the background job that's been queued for the request.
-          type: integer
-        status:
-          description: The status of the background job that's been queued for the request.
-          type: string
-          enum:
-          - queued
-          - started
-          - finished
-          - failed
-      required:
-      - id
-      - status
     IncludesAssets:
       type: object
       properties:
@@ -3044,40 +3463,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Asset'
-    MediaUpdate:
-      allOf:
-      - $ref: '#/components/schemas/MediaProperties'
-      - $ref: '#/components/schemas/IncludesTags'
-    IncludesSubfolder:
-      type: object
-      properties:
-        subfolder:
-          description: The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
-          allOf:
-          - $ref: '#/components/schemas/Subfolder'
-    MediaShow:
-      allOf:
-      - $ref: '#/components/schemas/MediaProperties'
-      - $ref: '#/components/schemas/IncludesProject'
-      - $ref: '#/components/schemas/IncludesAssets'
-      - $ref: '#/components/schemas/IncludesSubfolder'
-      - $ref: '#/components/schemas/IncludesTags'
-    MediaCopy:
-      allOf:
-      - $ref: '#/components/schemas/MediaProperties'
-      - $ref: '#/components/schemas/IncludesProject'
   responses:
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
     '500':
       description: Internal server error
       content:
@@ -3100,6 +3486,17 @@ components:
                 type: string
                 examples:
                 - Invalid credentials.
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
     '400':
       description: Bad request
       content:
@@ -3117,6 +3514,52 @@ components:
       type: http
       scheme: bearer
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

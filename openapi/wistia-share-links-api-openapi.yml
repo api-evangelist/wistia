@@ -42,9 +42,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: resolve-share-link
       x-wistia-mcp-description: 'Resolve or look up a share link by the identifier in its URL — the part
 
@@ -185,6 +183,8 @@ paths:
       - Share Links
       security:
       - BearerAuth: []
+      operationId: getShareLinksByIdentifier
+      x-operation-id-source: derived
   /medias/{mediaId}/share_link:
     get:
       summary: Show share link
@@ -212,9 +212,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: show-media-share-link
       x-wistia-mcp-description: 'Show, get, or fetch the share link for a single media — the shareable public
 
@@ -355,6 +353,8 @@ paths:
       - Share Links
       security:
       - BearerAuth: []
+      operationId: getMediasByMediaIdShareLink
+      x-operation-id-source: derived
     put:
       summary: Update share link
       x-wistia-mcp-annotations:
@@ -379,9 +379,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: update-media-share-link
       x-wistia-mcp-description: 'Update, edit, or change the visibility of a media''s share link — the
 
@@ -559,6 +557,8 @@ paths:
       - Share Links
       security:
       - BearerAuth: []
+      operationId: putMediasByMediaIdShareLink
+      x-operation-id-source: derived
     delete:
       summary: Delete share link
       x-wistia-mcp-annotations:
@@ -585,9 +585,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: delete-media-share-link
       x-wistia-mcp-description: 'Delete, remove, or revoke the share link for a media — the shareable public
 
@@ -670,6 +668,8 @@ paths:
       - Share Links
       security:
       - BearerAuth: []
+      operationId: deleteMediasByMediaIdShareLink
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

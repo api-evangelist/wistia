@@ -84,19 +84,13 @@ paths:
         -- uploads and URL imports have their own endpoints.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       x-wistia-mcp-tool-name: create-bulk-actions
       x-wistia-mcp-description: 'Submits a batch of up to 1000 create, update, delete, and move actions (for
 
@@ -452,6 +446,8 @@ paths:
       - Bulk Actions
       security:
       - BearerAuth: []
+      operationId: postBulk
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

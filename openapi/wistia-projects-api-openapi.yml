@@ -25,9 +25,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: page
         in: query
@@ -87,6 +85,8 @@ paths:
       - Projects
       security:
       - BearerAuth: []
+      operationId: getProjects
+      x-operation-id-source: derived
     post:
       summary: Project Create
       description: 'Create a new project. If the project is created successfully the Location HTTP header will point to the new project.
@@ -98,9 +98,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       requestBody:
         content:
           application/json:
@@ -123,6 +121,8 @@ paths:
       - Projects
       security:
       - BearerAuth: []
+      operationId: postProjects
+      x-operation-id-source: derived
   /projects/{id}:
     get:
       summary: Project Show
@@ -139,9 +139,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: id
         in: path
@@ -167,6 +165,8 @@ paths:
       - Projects
       security:
       - BearerAuth: []
+      operationId: getProjectsById
+      x-operation-id-source: derived
     put:
       summary: Project Update
       description: 'Update a project
@@ -178,9 +178,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: id
         in: path
@@ -213,6 +211,8 @@ paths:
       - Projects
       security:
       - BearerAuth: []
+      operationId: putProjectsById
+      x-operation-id-source: derived
     delete:
       summary: Project Delete
       description: 'Delete a project
@@ -224,9 +224,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: id
         in: path
@@ -252,6 +250,8 @@ paths:
       - Projects
       security:
       - BearerAuth: []
+      operationId: deleteProjectsById
+      x-operation-id-source: derived
   /projects/{id}/copy:
     post:
       summary: Project Copy
@@ -268,9 +268,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: id
         in: path
@@ -312,19 +310,10 @@ paths:
       - Projects
       security:
       - BearerAuth: []
+      operationId: postProjectsByIdCopy
+      x-operation-id-source: derived
 components:
   responses:
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
     '403':
       description: Forbidden, token is valid but account does not have access to feature
       content:
@@ -336,17 +325,6 @@ components:
                 type: string
                 examples:
                 - Live streaming is not available on your current plan
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
     '500':
       description: Internal server error
       content:
@@ -358,18 +336,158 @@ components:
                 type: string
                 examples:
                 - Internal server error
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   schemas:
-    ProjectWithMedias:
-      allOf:
-      - $ref: '#/components/schemas/Project'
-      - type: object
-        properties:
-          medias:
-            type: array
-            items:
-              $ref: '#/components/schemas/MediaProperties'
-        required:
-        - medias
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    MediaProperties:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the media within the system.
+          type: integer
+        name:
+          description: The display name of the media.
+          type: string
+        type:
+          description: A string representing what type of media this is.
+          type: string
+          enum:
+          - Video
+          - Audio
+          - Image
+          - PdfDocument
+          - MicrosoftOfficeDocument
+          - Swf
+          - UnknownType
+        archived:
+          description: Whether or not the media is archived, either true or false.
+          type: boolean
+        created:
+          description: The date when the media was originally uploaded.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the media was last changed.
+          type: string
+          format: date-time
+        duration:
+          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+          type: number
+        embedCode:
+          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+            '
+          type: string
+          deprecated: true
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        description:
+          description: A description for the media which usually appears near the top of the sidebar on the media's page.
+          type: string
+        progress:
+          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+          type: number
+          maximum: 1
+          minimum: 0
+        status:
+          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+            '
+          type: string
+          enum:
+          - queued
+          - processing
+          - ready
+          - failed
+        section:
+          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+          type: string
+        thumbnail:
+          $ref: '#/components/schemas/Thumbnail'
+    UpdateProject:
+      type: object
+      properties:
+        name:
+          description: The project’s new name.
+          type: string
+          examples:
+          - My New Project Name
+        description:
+          description: The project’s new description.
+          type: string
+          examples:
+          - My New Project Description
+        anonymousCanUpload:
+          description: Whether anonymous users can upload media to the project.
+          type: boolean
+        anonymousCanDownload:
+          description: Whether anonymous users can download media from the project.
+          type: boolean
+        public:
+          oneOf:
+          - type: string
+            description: A flag indicating whether or not the project is enabled for public access. Set to “1” to enable and “0” to disable.
+            enum:
+            - '0'
+            - '1'
+          - type: boolean
+            description: A flag indicating whether or not the project is enabled for public access. Set to `true` to enable and `false` to disable.
+            examples:
+            - false
+    CreateProject:
+      type: object
+      properties:
+        name:
+          description: The name of the project you want to create.
+          type: string
+          examples:
+          - My New Project
+        adminEmail:
+          description: The email address of the person you want to set as the owner of this project. Defaults to the Wistia Account Owner.
+          type: string
+          examples:
+          - admin@example.com
+        public:
+          oneOf:
+          - type: string
+            description: A flag indicating whether or not the project is enabled for public access. Set to “1” to enable and “0” to disable.
+            enum:
+            - '0'
+            - '1'
+          - type: boolean
+            description: A flag indicating whether or not the project is enabled for public access. Set to `true` to enable and `false` to disable.
+            examples:
+            - false
     Project:
       type: object
       properties:
@@ -441,135 +559,17 @@ components:
       - hashedId
       - public
       - publicId
-    MediaProperties:
-      type: object
-      properties:
-        id:
-          description: A unique numeric identifier for the media within the system.
-          type: integer
-        name:
-          description: The display name of the media.
-          type: string
-        type:
-          description: A string representing what type of media this is.
-          type: string
-          enum:
-          - Video
-          - Audio
-          - Image
-          - PdfDocument
-          - MicrosoftOfficeDocument
-          - Swf
-          - UnknownType
-        archived:
-          description: Whether or not the media is archived, either true or false.
-          type: boolean
-        created:
-          description: The date when the media was originally uploaded.
-          type: string
-          format: date-time
-        updated:
-          description: The date when the media was last changed.
-          type: string
-          format: date-time
-        duration:
-          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-          type: number
-        embedCode:
-          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-
-            '
-          type: string
-          deprecated: true
-        hashed_id:
-          description: A unique alphanumeric identifier for this media.
-          type: string
-        description:
-          description: A description for the media which usually appears near the top of the sidebar on the media's page.
-          type: string
-        progress:
-          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-          type: number
-          maximum: 1
-          minimum: 0
-        status:
-          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-
-            '
-          type: string
-          enum:
-          - queued
-          - processing
-          - ready
-          - failed
-        section:
-          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-          type: string
-        thumbnail:
-          $ref: '#/components/schemas/Thumbnail'
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
-    CreateProject:
-      type: object
-      properties:
-        name:
-          description: The name of the project you want to create.
-          type: string
-          examples:
-          - My New Project
-        adminEmail:
-          description: The email address of the person you want to set as the owner of this project. Defaults to the Wistia Account Owner.
-          type: string
-          examples:
-          - admin@example.com
-        public:
-          oneOf:
-          - type: string
-            description: A flag indicating whether or not the project is enabled for public access. Set to “1” to enable and “0” to disable.
-            enum:
-            - '0'
-            - '1'
-          - type: boolean
-            description: A flag indicating whether or not the project is enabled for public access. Set to `true` to enable and `false` to disable.
-            examples:
-            - false
-    UpdateProject:
-      type: object
-      properties:
-        name:
-          description: The project’s new name.
-          type: string
-          examples:
-          - My New Project Name
-        description:
-          description: The project’s new description.
-          type: string
-          examples:
-          - My New Project Description
-        anonymousCanUpload:
-          description: Whether anonymous users can upload media to the project.
-          type: boolean
-        anonymousCanDownload:
-          description: Whether anonymous users can download media from the project.
-          type: boolean
-        public:
-          oneOf:
-          - type: string
-            description: A flag indicating whether or not the project is enabled for public access. Set to “1” to enable and “0” to disable.
-            enum:
-            - '0'
-            - '1'
-          - type: boolean
-            description: A flag indicating whether or not the project is enabled for public access. Set to `true` to enable and `false` to disable.
-            examples:
-            - false
+    ProjectWithMedias:
+      allOf:
+      - $ref: '#/components/schemas/Project'
+      - type: object
+        properties:
+          medias:
+            type: array
+            items:
+              $ref: '#/components/schemas/MediaProperties'
+        required:
+        - medias
   securitySchemes:
     BearerAuth:
       type: http

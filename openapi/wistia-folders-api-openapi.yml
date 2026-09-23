@@ -1,91 +1,1408 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Wistia Data Account Folders API
-  description: 'REST API providing programmatic access to medias, projects, channels, webinars,
-
-    captions, customizations, tags, folders, accounts, and allowed domains in a
-
-    Wistia account. Returns JSON over HTTPS.
-
-    '
+  title: Wistia Folders API
   version: '1.0'
-  contact:
-    name: Wistia
-    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  description: 'Operations tagged Folders across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
+- url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
   description: Wistia Data API production server
-security:
-- bearerAuth: []
-- basicAuth: []
 tags:
 - name: Folders
+  x-displayName: Folders
 paths:
   /folders:
     get:
-      tags:
-      - Folders
-      summary: List folders
-      operationId: listFolders
+      summary: List Folders
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads folders from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: list
+      description: 'Lists folders (previously called projects) belonging to the account.
+
+        My Library folders are not included.
+
+
+        For tokens scoped to a specific user (`all:delegate_to_contact_permissions`),
+
+        results are limited to folders that user can see in their content library:
+
+        folders shared with them directly, through a contact group, or with the
+
+        whole account (owners and managers see every folder). Public (unlocked)
+
+        folders the user has no sharing on remain viewable by link but are not
+
+        listed.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```'
+      x-wistia-mcp-tool-name: get-folders
+      x-wistia-mcp-description: 'List, get, show, browse, or find folders (previously called "projects") belonging to the account — containers that organize videos and audio files (media). Use this when someone wants to list, get, show, browse, or find folders or projects, optionally filtering by hashed IDs and sorting/paginating the results. Use create-folder to add a new folder, update-folder to rename one, delete-folder to remove one, copy-folder to duplicate one, or get-subfolders to list folders nested inside a folder.
+
+        '
+      parameters:
+      - name: page
+        in: query
+        description: 'The page number to retrieve. This cannot be combined with `cursor`,
+
+          pagination.
+
+          '
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        description: The number of medias per page. Use this for both offset pagination and cursor pagination.
+        required: false
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
+
+          first set of records are fetched up to the `per_page`. Cursor
+
+          pagination will also be turned on if `cursor[before]` or `cursor[after]`
+
+          are set. Records returned will have a `cursor` property set which can be used to fetch more records in the same `sort_by` ordering.
+
+          The cursor value of the last record can be used to fetch records after the current result set and
+
+          the cursor of the first record can be used to fetch records before the result set.
+
+
+          NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
+
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
+
+          cursor value to a `sort_by` name.
+
+          '
+        required: false
+        schema:
+          unevaluatedProperties: false
+          type: object
+          properties:
+            enabled:
+              description: 'If `cursor[enabled]` is set to 1, the first result set will be fetched with cursor pagination enabled. This
+
+                values is ignored if `cursor[before]` or `cursor[after]` are set.
+
+                '
+              type: integer
+              enum:
+              - 0
+              - 1
+            before:
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
+
+                before the cursor up to the `per_page` are returned. This feature is useful for
+
+                fetching "new records", for example, in a "pull to refersh" feature when showing records in a descending
+
+                order.
+
+                '
+              type: string
+            after:
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
+
+                after the cursor up to the `per_page` are returned.
+
+                '
+              type: string
+        style: deepObject
+      - name: sort_by
+        in: query
+        description: 'Ordering. When using cursor pagination (see cursor param),
+
+          only `id`, `updated` and `created` are supported. All other sort_by options
+
+          require offset pagination.
+
+          '
+        required: false
+        schema:
+          type: string
+          enum:
+          - name
+          - created
+          - updated
+          - mediaCount
+          - id
+      - name: sort_direction
+        in: query
+        description: Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
+        required: false
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      - name: hashed_ids[]
+        in: query
+        description: A collection of hashed ids belonging to folders to fetch
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
       responses:
         '200':
-          description: OK
-    post:
+          description: A list of folders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  unevaluatedProperties: false
+                  type: object
+                  description: 'A folder (previously called a project) is a container in which to organize media into. It can be
+
+                    used to set permissions that apply to all the media in the folder as well as
+
+                    organizing media into subfolders (previously called media groups).
+
+                    '
+                  properties:
+                    id:
+                      description: A unique numeric identifier for the folder within the system.
+                      type: integer
+                      examples:
+                      - 22570
+                    name:
+                      description: The folder’s display name.
+                      type: string
+                      examples:
+                      - My Folder Title
+                    description:
+                      description: The folder’s description.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - About My Folder
+                    media_count:
+                      description: The number of different medias that have been uploaded to the folder.
+                      type: integer
+                      examples:
+                      - 2
+                    medias:
+                      description: A link to where you can fetch the medias for this folder.
+                      unevaluatedProperties: false
+                      type: object
+                      properties:
+                        url:
+                          description: A URL for fetching all child records of the parent record.
+                          type: string
+                    created:
+                      description: The date that the folder was originally created.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2010-08-13T18:47:39+00:00'
+                    updated:
+                      description: The date that the folder was last updated.
+                      type: string
+                      format: date-time
+                      examples:
+                      - '2010-08-19T21:47:00+00:00'
+                    hashed_id:
+                      description: A private hashed id, uniquely identifying the folder within the system.
+                      type: string
+                      examples:
+                      - 4d23503f70
+                    public:
+                      description: A boolean indicating whether the folder is available for public (anonymous) viewing.
+                      type: boolean
+                      examples:
+                      - false
+                    public_id:
+                      description: If the folder is public, this field contains a string representing the ID used for referencing the folder in public URLs.
+                      type:
+                      - string
+                      - 'null'
+                      examples:
+                      - 4bD
+                    anonymous_can_upload:
+                      type: boolean
+                      examples:
+                      - false
+                    anonymous_can_download:
+                      type: boolean
+                      examples:
+                      - false
+                    kind:
+                      description: 'Indicates the folder''s access scope, relative to the requesting user. One of:
+
+                        - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+
+                        - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact''s library that the requester has been granted access to.
+
+                        - `account`: a folder shared with the whole account (everyone in the company can see it).
+
+                        '
+                      type: string
+                      enum:
+                      - library
+                      - shared
+                      - account
+                      examples:
+                      - shared
+                    personal_library:
+                      description: 'Whether this folder is someone''s personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+
+                        '
+                      type: boolean
+                      examples:
+                      - false
+                    cursor:
+                      description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                      type:
+                      - string
+                      - 'null'
+                  required:
+                  - id
+                  - name
+                  - media_count
+                  - created
+                  - updated
+                  - hashed_id
+                  - public
+                  - public_id
+                  - kind
+                  - personal_library
+                  - medias
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    description: Error message detailing the reason for the bad request.
+                    type: string
+                    examples:
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
       tags:
       - Folders
-      summary: Create folder
-      operationId: createFolder
+      security:
+      - BearerAuth: []
+      operationId: getFolders
+      x-operation-id-source: derived
+    post:
+      summary: Create Folder
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new folder in the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool only adds a new resource; existing data is not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: create
+      description: 'Creates a new folder (previously called project). If the folder is created successfully the Location HTTP header will point to the new folder.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: create-folder
+      x-wistia-mcp-description: 'Create, add, or set up a new folder (previously called a "project") — a container that organizes your videos and audio files (media). Use this when someone wants to make, add, or create a new folder or project to group media. On success the Location HTTP header points to the new folder. Use update-folder to rename it, get-folders to list folders, delete-folder to remove one, copy-folder to duplicate one, or create-subfolder to nest a folder inside it.
+
+        '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                name:
+                  description: The name of the folder you want to create.
+                  type: string
+                  examples:
+                  - My New Folder
+                adminEmail:
+                  description: The email address of the person you want to set as the owner of this folder. Defaults to the Wistia Account Owner.
+                  type: string
+                  examples:
+                  - admin@example.com
+                public:
+                  description: A flag indicating whether or not the folder is enabled for public access.
+                  type: boolean
+                  examples:
+                  - false
+                personalLibrary:
+                  description: When true, creates the folder inside the requesting user's personal "My Library" (owned by them) instead of a shared account folder.
+                  type: boolean
+                  examples:
+                  - false
       responses:
         '201':
-          description: Created
+          description: Folder created
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A folder (previously called a project) is a container in which to organize media into. It can be
+
+                  used to set permissions that apply to all the media in the folder as well as
+
+                  organizing media into subfolders (previously called media groups).
+
+                  '
+                properties:
+                  id:
+                    description: A unique numeric identifier for the folder within the system.
+                    type: integer
+                    examples:
+                    - 22570
+                  name:
+                    description: The folder’s display name.
+                    type: string
+                    examples:
+                    - My Folder Title
+                  description:
+                    description: The folder’s description.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - About My Folder
+                  media_count:
+                    description: The number of different medias that have been uploaded to the folder.
+                    type: integer
+                    examples:
+                    - 2
+                  medias:
+                    description: A link to where you can fetch the medias for this folder.
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      url:
+                        description: A URL for fetching all child records of the parent record.
+                        type: string
+                  created:
+                    description: The date that the folder was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-13T18:47:39+00:00'
+                  updated:
+                    description: The date that the folder was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-19T21:47:00+00:00'
+                  hashed_id:
+                    description: A private hashed id, uniquely identifying the folder within the system.
+                    type: string
+                    examples:
+                    - 4d23503f70
+                  public:
+                    description: A boolean indicating whether the folder is available for public (anonymous) viewing.
+                    type: boolean
+                    examples:
+                    - false
+                  public_id:
+                    description: If the folder is public, this field contains a string representing the ID used for referencing the folder in public URLs.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - 4bD
+                  anonymous_can_upload:
+                    type: boolean
+                    examples:
+                    - false
+                  anonymous_can_download:
+                    type: boolean
+                    examples:
+                    - false
+                  kind:
+                    description: 'Indicates the folder''s access scope, relative to the requesting user. One of:
+
+                      - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+
+                      - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact''s library that the requester has been granted access to.
+
+                      - `account`: a folder shared with the whole account (everyone in the company can see it).
+
+                      '
+                    type: string
+                    enum:
+                    - library
+                    - shared
+                    - account
+                    examples:
+                    - shared
+                  personal_library:
+                    description: 'Whether this folder is someone''s personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+
+                      '
+                    type: boolean
+                    examples:
+                    - false
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - name
+                - media_count
+                - created
+                - updated
+                - hashed_id
+                - public
+                - public_id
+                - kind
+                - personal_library
+                - medias
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folders
+      security:
+      - BearerAuth: []
+      operationId: postFolders
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.wistia.com/modern
   /folders/{id}:
-    parameters:
-    - in: path
-      name: id
-      required: true
-      schema:
-        type: string
     get:
-      tags:
-      - Folders
-      summary: Retrieve folder
-      operationId: getFolder
+      x-wistia-mcp-ignore: true
+      summary: Show Folder
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: get
+      description: 'Retrieves a single folder (previously called project).
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read all folder and media data
+
+        ```'
+      parameters:
+      - name: id
+        in: path
+        description: Folder Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the folder (e.g., "4d23503f70")
+          type: string
       responses:
         '200':
-          description: OK
+          description: A single folder
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A folder (previously called a project) is a container in which to organize media into. It can be
+
+                  used to set permissions that apply to all the media in the folder as well as
+
+                  organizing media into subfolders (previously called media groups).
+
+                  '
+                properties:
+                  id:
+                    description: A unique numeric identifier for the folder within the system.
+                    type: integer
+                    examples:
+                    - 22570
+                  name:
+                    description: The folder’s display name.
+                    type: string
+                    examples:
+                    - My Folder Title
+                  description:
+                    description: The folder’s description.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - About My Folder
+                  media_count:
+                    description: The number of different medias that have been uploaded to the folder.
+                    type: integer
+                    examples:
+                    - 2
+                  medias:
+                    description: A link to where you can fetch the medias for this folder.
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      url:
+                        description: A URL for fetching all child records of the parent record.
+                        type: string
+                  created:
+                    description: The date that the folder was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-13T18:47:39+00:00'
+                  updated:
+                    description: The date that the folder was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-19T21:47:00+00:00'
+                  hashed_id:
+                    description: A private hashed id, uniquely identifying the folder within the system.
+                    type: string
+                    examples:
+                    - 4d23503f70
+                  public:
+                    description: A boolean indicating whether the folder is available for public (anonymous) viewing.
+                    type: boolean
+                    examples:
+                    - false
+                  public_id:
+                    description: If the folder is public, this field contains a string representing the ID used for referencing the folder in public URLs.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - 4bD
+                  anonymous_can_upload:
+                    type: boolean
+                    examples:
+                    - false
+                  anonymous_can_download:
+                    type: boolean
+                    examples:
+                    - false
+                  kind:
+                    description: 'Indicates the folder''s access scope, relative to the requesting user. One of:
+
+                      - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+
+                      - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact''s library that the requester has been granted access to.
+
+                      - `account`: a folder shared with the whole account (everyone in the company can see it).
+
+                      '
+                    type: string
+                    enum:
+                    - library
+                    - shared
+                    - account
+                    examples:
+                    - shared
+                  personal_library:
+                    description: 'Whether this folder is someone''s personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+
+                      '
+                    type: boolean
+                    examples:
+                    - false
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - name
+                - media_count
+                - created
+                - updated
+                - hashed_id
+                - public
+                - public_id
+                - kind
+                - personal_library
+                - medias
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folders
+      security:
+      - BearerAuth: []
+      operationId: getFoldersById
+      x-operation-id-source: derived
     put:
-      tags:
-      - Folders
-      summary: Update folder
-      operationId: updateFolder
+      summary: Update Folder
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool modifies an existing folder in the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Updating replaces existing values and the previous data cannot be recovered.
+        idempotent_hint: true
+        idempotent_hint_justification: Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: update
+      description: 'Updates a folder (previously called project)
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: update-folder
+      x-wistia-mcp-description: 'Update, edit, change, or rename an existing folder (previously called a "project") — a container that organizes videos and audio files (media). Use this when someone wants to update, edit, change, or rename a folder or project. Use create-folder to make a new folder, get-folders to list folders, delete-folder to remove one, copy-folder to duplicate one, or update-subfolder to edit a nested subfolder.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: Folder Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the folder (e.g., "4d23503f70")
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                name:
+                  description: The folder’s new name.
+                  type: string
+                  examples:
+                  - My New Folder Name
+                description:
+                  description: The folder’s new description.
+                  type: string
+                  examples:
+                  - My New Folder Description
+                anonymousCanUpload:
+                  description: Whether anonymous users can upload media to the folder.
+                  type: boolean
+                anonymousCanDownload:
+                  description: Whether anonymous users can download media from the folder.
+                  type: boolean
+                public:
+                  description: A flag indicating whether or not the folder is enabled for public access.
+                  type: boolean
+                  examples:
+                  - false
       responses:
         '200':
-          description: OK
-    delete:
+          description: A single folder
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A folder (previously called a project) is a container in which to organize media into. It can be
+
+                  used to set permissions that apply to all the media in the folder as well as
+
+                  organizing media into subfolders (previously called media groups).
+
+                  '
+                properties:
+                  id:
+                    description: A unique numeric identifier for the folder within the system.
+                    type: integer
+                    examples:
+                    - 22570
+                  name:
+                    description: The folder’s display name.
+                    type: string
+                    examples:
+                    - My Folder Title
+                  description:
+                    description: The folder’s description.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - About My Folder
+                  media_count:
+                    description: The number of different medias that have been uploaded to the folder.
+                    type: integer
+                    examples:
+                    - 2
+                  medias:
+                    description: A link to where you can fetch the medias for this folder.
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      url:
+                        description: A URL for fetching all child records of the parent record.
+                        type: string
+                  created:
+                    description: The date that the folder was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-13T18:47:39+00:00'
+                  updated:
+                    description: The date that the folder was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-19T21:47:00+00:00'
+                  hashed_id:
+                    description: A private hashed id, uniquely identifying the folder within the system.
+                    type: string
+                    examples:
+                    - 4d23503f70
+                  public:
+                    description: A boolean indicating whether the folder is available for public (anonymous) viewing.
+                    type: boolean
+                    examples:
+                    - false
+                  public_id:
+                    description: If the folder is public, this field contains a string representing the ID used for referencing the folder in public URLs.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - 4bD
+                  anonymous_can_upload:
+                    type: boolean
+                    examples:
+                    - false
+                  anonymous_can_download:
+                    type: boolean
+                    examples:
+                    - false
+                  kind:
+                    description: 'Indicates the folder''s access scope, relative to the requesting user. One of:
+
+                      - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+
+                      - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact''s library that the requester has been granted access to.
+
+                      - `account`: a folder shared with the whole account (everyone in the company can see it).
+
+                      '
+                    type: string
+                    enum:
+                    - library
+                    - shared
+                    - account
+                    examples:
+                    - shared
+                  personal_library:
+                    description: 'Whether this folder is someone''s personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+
+                      '
+                    type: boolean
+                    examples:
+                    - false
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - name
+                - media_count
+                - created
+                - updated
+                - hashed_id
+                - public
+                - public_id
+                - kind
+                - personal_library
+                - medias
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
       tags:
       - Folders
-      summary: Delete folder
-      operationId: deleteFolder
+      security:
+      - BearerAuth: []
+      operationId: putFoldersById
+      x-operation-id-source: derived
+    delete:
+      summary: Delete Folder
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool deletes a folder from the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool permanently deletes the folder and cannot be undone.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: delete
+      description: 'Deletes a folder (previously called project)
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: delete-folder
+      x-wistia-mcp-description: 'Delete or remove a folder (previously called a "project") — a container that organizes videos and audio files (media). Use this when someone wants to delete, remove, or get rid of a folder or project. Use get-folders to list folders first, create-folder to make a new one, update-folder to rename instead, or bulk-delete-subfolders to remove nested subfolders.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: Folder Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the folder (e.g., "4d23503f70")
+          type: string
       responses:
-        '204':
-          description: No Content
-  /folders/{id}/copy:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'A folder (previously called a project) is a container in which to organize media into. It can be
+
+                  used to set permissions that apply to all the media in the folder as well as
+
+                  organizing media into subfolders (previously called media groups).
+
+                  '
+                properties:
+                  id:
+                    description: A unique numeric identifier for the folder within the system.
+                    type: integer
+                    examples:
+                    - 22570
+                  name:
+                    description: The folder’s display name.
+                    type: string
+                    examples:
+                    - My Folder Title
+                  description:
+                    description: The folder’s description.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - About My Folder
+                  media_count:
+                    description: The number of different medias that have been uploaded to the folder.
+                    type: integer
+                    examples:
+                    - 2
+                  medias:
+                    description: A link to where you can fetch the medias for this folder.
+                    unevaluatedProperties: false
+                    type: object
+                    properties:
+                      url:
+                        description: A URL for fetching all child records of the parent record.
+                        type: string
+                  created:
+                    description: The date that the folder was originally created.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-13T18:47:39+00:00'
+                  updated:
+                    description: The date that the folder was last updated.
+                    type: string
+                    format: date-time
+                    examples:
+                    - '2010-08-19T21:47:00+00:00'
+                  hashed_id:
+                    description: A private hashed id, uniquely identifying the folder within the system.
+                    type: string
+                    examples:
+                    - 4d23503f70
+                  public:
+                    description: A boolean indicating whether the folder is available for public (anonymous) viewing.
+                    type: boolean
+                    examples:
+                    - false
+                  public_id:
+                    description: If the folder is public, this field contains a string representing the ID used for referencing the folder in public URLs.
+                    type:
+                    - string
+                    - 'null'
+                    examples:
+                    - 4bD
+                  anonymous_can_upload:
+                    type: boolean
+                    examples:
+                    - false
+                  anonymous_can_download:
+                    type: boolean
+                    examples:
+                    - false
+                  kind:
+                    description: 'Indicates the folder''s access scope, relative to the requesting user. One of:
+
+                      - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+
+                      - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact''s library that the requester has been granted access to.
+
+                      - `account`: a folder shared with the whole account (everyone in the company can see it).
+
+                      '
+                    type: string
+                    enum:
+                    - library
+                    - shared
+                    - account
+                    examples:
+                    - shared
+                  personal_library:
+                    description: 'Whether this folder is someone''s personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+
+                      '
+                    type: boolean
+                    examples:
+                    - false
+                  cursor:
+                    description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                    type:
+                    - string
+                    - 'null'
+                required:
+                - id
+                - name
+                - media_count
+                - created
+                - updated
+                - hashed_id
+                - public
+                - public_id
+                - kind
+                - personal_library
+                - medias
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folders
+      security:
+      - BearerAuth: []
+      operationId: deleteFoldersById
+      x-operation-id-source: derived
     parameters:
     - in: path
       name: id
       required: true
       schema:
         type: string
+    servers:
+    - url: https://api.wistia.com/modern
+  /folders/{id}/copy:
     post:
-      tags:
-      - Folders
-      summary: Copy folder (asynchronous)
-      operationId: copyFolder
+      summary: Copy Folder
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new folder copy, which modifies the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: Copying only adds a new folder; existing folders are not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call creates an additional copy of the folder and its contents.
+      x-speakeasy-group: folders
+      x-speakeasy-name-override: copy
+      description: 'This copies a folder (previously called project) and all its media and subfolders asynchronously in a background job.
+
+
+        This method does not copy the folder’s sharing information (i.e. users that could see the old folder will not automatically be able to see the new one).
+
+
+        For the request you can specify the owner of a new folder by passing an optional parameter. The person you specify must be a Manager in the account.
+
+
+        The body of the response will contain an object representing the background job that was created.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: copy-folder
+      x-wistia-mcp-description: 'Copy, duplicate, or clone a folder (previously called a "project") along with all its media and subfolders. Use this when someone wants to copy, duplicate, or clone an existing folder or project and its contents. The copy runs asynchronously in a background job, so the response contains an object representing the queued background job. Sharing information is NOT copied (users who could see the old folder will not automatically see the new one). You may pass an optional parameter to set the owner of the new folder, but the person specified must be a Manager in the account. Use create-folder to make an empty folder, update-folder to rename, get-folders to list folders, or create-folder-sharing to grant access to the copy.
+
+        '
+      parameters:
+      - name: id
+        in: path
+        description: Folder Hashed ID
+        required: true
+        schema:
+          description: Hashed ID of the folder (e.g., "4d23503f70")
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              properties:
+                adminEmail:
+                  description: The email address of the account Manager that will be the owner of the new folder. Defaults to the Account Owner if invalid or omitted.
+                  type: string
+                  examples:
+                  - admin@example.com
       responses:
         '202':
-          description: Accepted
+          description: Folder queued to be copied
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  description: 'A background job keeps track of the progress of an asynchronous task, e.g
+
+                    bulk archiving media, translating media, etc.
+
+                    '
+                  properties:
+                    id:
+                      description: The ID of the background job that's been queued for the request.
+                      type: integer
+                    hashed_id:
+                      description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                      type: string
+                    status:
+                      description: The status of the background job that's been queued for the request.
+                      type: string
+                      enum:
+                      - queued
+                      - started
+                      - finished
+                      - failed
+                  required:
+                  - id
+                  - hashed_id
+                  - status
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Folders
+      security:
+      - BearerAuth: []
+      operationId: postFoldersByIdCopy
+      x-operation-id-source: derived
+    parameters:
+    - in: path
+      name: id
+      required: true
+      schema:
+        type: string
+    servers:
+    - url: https://api.wistia.com/modern
 components:
   securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
     bearerAuth:
       type: http
       scheme: bearer
@@ -94,3 +1411,53 @@ components:
       type: http
       scheme: basic
       description: HTTP Basic authentication using the API token as the password
+x-refined-from:
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

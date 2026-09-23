@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Wistia Webinar Registrations API
-  version: '1.0'
-  description: 'Operations tagged Webinar Registrations across 2 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml. Each path carries the servers of the definition it was published in.'
+  title: Data Webinar Registrations API
+  description: Wistia Data API
+  version: edge-version
 servers:
 - url: https://api.wistia.com/modern
 tags:
@@ -11,159 +11,6 @@ tags:
   x-displayName: Webinar Registrations
 paths:
   /webinars/{webinarId}/registrations:
-    post:
-      summary: Create Webinar Registration
-      description: 'Register a person for a webinar by providing their email, first name, and last name.
-
-
-        This endpoint generates a unique visitor key and returns a personalized webinar URL for the registrant.
-
-
-        ## Requires api token with one of the following permissions
-
-        ```
-
-        Read, update & delete anything
-
-        ```
-
-        '
-      parameters:
-      - name: webinarId
-        in: path
-        description: Hashed ID of the webinar
-        required: true
-        schema:
-          description: Hashed ID of the webinar (e.g., "abc123xyz")
-          type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              unevaluatedProperties: false
-              type: object
-              required:
-              - email
-              - first_name
-              - last_name
-              properties:
-                email:
-                  type: string
-                  format: email
-                  description: Email address of the registrant
-                  example: john.doe@example.com
-                first_name:
-                  type: string
-                  description: First name of the registrant
-                  example: John
-                last_name:
-                  type: string
-                  description: Last name of the registrant
-                  example: Doe
-      responses:
-        '201':
-          description: Registration created successfully
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                required:
-                - visitor_key
-                - personalized_event_url
-                properties:
-                  visitor_key:
-                    type: string
-                    description: Unique visitor key generated for the registrant
-                    example: iv_1234567890
-                  personalized_event_url:
-                    type: string
-                    format: uri
-                    description: Personalized URL for the registrant to access the webinar
-                    example: https://wistia.com/webinars/registration?vk=iv_1234567890&uid=john.doe@example.com
-        '401':
-          description: Unauthorized, invalid or missing token
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  code:
-                    description: A machine-readable identifier for the specific authorization failure.
-                    type: string
-                    enum:
-                    - unauthorized_credentials
-                    - account_inactive
-                    - unauthorized_scope
-                    - unauthorized_params
-                  error:
-                    type: string
-                    examples:
-                    - Invalid credentials.
-        '403':
-          description: Forbidden, token is valid but account does not have access to feature
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Webinars are not available on your current plan
-        '404':
-          description: Resource not found
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Folder with ID 'fakeid' not found.
-        '422':
-          description: Unprocessable entity, the request parameters were invalid.
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  errors:
-                    unevaluatedProperties: false
-                    description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
-                    type: object
-                    additionalProperties:
-                      type: array
-                      items:
-                        type: string
-                    example:
-                      email:
-                      - is invalid
-                      - can't be blank
-                      first_name:
-                      - can't be blank
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                unevaluatedProperties: false
-                type: object
-                properties:
-                  error:
-                    type: string
-                    examples:
-                    - Internal server error
-      tags:
-      - Webinar Registrations
-      security:
-      - BearerAuth: []
     get:
       summary: List Webinar Registrations
       x-wistia-mcp-annotations:
@@ -195,9 +42,7 @@ paths:
 
         Read all data
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: list-webinar-registrations
       x-wistia-mcp-description: 'List, get, show, or find the registrations (registrants/attendees) for a webinar —
 
@@ -614,13 +459,235 @@ paths:
       - Webinar Registrations
       security:
       - BearerAuth: []
-    servers:
-    - url: https://api.wistia.com/modern
+      operationId: getWebinarsByWebinarIdRegistrations
+      x-operation-id-source: derived
+    post:
+      summary: Create Webinar Registration
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool registers a new attendee for a webinar, which adds data to the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: Only a new registration is created; existing data is not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      x-speakeasy-group: webinarRegistrations
+      x-speakeasy-name-override: create
+      description: 'Register a person for a webinar by providing their email, first name, and last name.
+
+
+        This endpoint generates a unique visitor key and returns a personalized webinar URL for the registrant.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        Read, update & delete anything
+
+        ```'
+      x-wistia-mcp-tool-name: create-webinar-registration
+      x-wistia-mcp-description: 'Register, sign up, or enroll a person (a registrant/attendee) for a webinar — a
+
+        live or scheduled online video event — by providing their email, first name, and
+
+        last name. Use this when someone wants to add an attendee to or register someone for
+
+        a webinar or live event. Generates a unique visitor key and returns a personalized
+
+        webinar URL for the registrant. Use get-webinars to find the webinar, or
+
+        list-webinar-registrations to see existing registrants.
+
+        '
+      parameters:
+      - name: webinarId
+        in: path
+        description: Hashed ID of the webinar
+        required: true
+        schema:
+          description: Hashed ID of the webinar (e.g., "abc123xyz")
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              unevaluatedProperties: false
+              type: object
+              required:
+              - email
+              - first_name
+              - last_name
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email address of the registrant
+                  example: john.doe@example.com
+                first_name:
+                  type: string
+                  description: First name of the registrant
+                  example: John
+                last_name:
+                  type: string
+                  description: Last name of the registrant
+                  example: Doe
+      responses:
+        '201':
+          description: Registration created successfully
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                required:
+                - visitor_key
+                - personalized_event_url
+                properties:
+                  visitor_key:
+                    type: string
+                    description: Unique visitor key generated for the registrant
+                    example: iv_1234567890
+                  personalized_event_url:
+                    type: string
+                    format: uri
+                    description: Personalized URL for the registrant to access the webinar
+                    example: https://wistia.com/webinars/registration?vk=iv_1234567890&uid=john.doe@example.com
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Folder with ID 'fakeid' not found.
+        '422':
+          description: Unprocessable entity, the request parameters were invalid.
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  errors:
+                    unevaluatedProperties: false
+                    description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                    example:
+                      email:
+                      - is invalid
+                      - can't be blank
+                      first_name:
+                      - can't be blank
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Webinar Registrations
+      security:
+      - BearerAuth: []
+      operationId: postWebinarsByWebinarIdRegistrations
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
-x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
-- wistia-data-api-modern-edge-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

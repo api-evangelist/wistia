@@ -23,9 +23,7 @@ paths:
         destructive_hint_justification: This tool is read-only and does not make any changes.
         idempotent_hint: true
         idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
-      description: 'Lists all extended audio descriptions belonging to the account. Supports pagination and sorting.
-
-        '
+      description: Lists all extended audio descriptions belonging to the account. Supports pagination and sorting.
       x-wistia-mcp-tool-name: get-media-extended-audio-descriptions
       x-wistia-mcp-description: 'List, get, or find all extended audio descriptions (EADs) in the account —
 
@@ -287,6 +285,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: getMediaExtendedAudioDescriptions
+      x-operation-id-source: derived
   /media_extended_audio_descriptions/{id}:
     get:
       x-speakeasy-group: mediaExtendedAudioDescriptions
@@ -300,9 +300,7 @@ paths:
         destructive_hint_justification: This tool is read-only and does not make any changes.
         idempotent_hint: true
         idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
-      description: 'Retrieves a single extended audio description by its hashed id, including download links.
-
-        '
+      description: Retrieves a single extended audio description by its hashed id, including download links.
       x-wistia-mcp-tool-name: show-media-extended-audio-description
       x-wistia-mcp-description: 'Show, get, or retrieve a single extended audio description (EAD) by its
 
@@ -496,6 +494,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: getMediaExtendedAudioDescriptionsById
+      x-operation-id-source: derived
     delete:
       x-speakeasy-group: mediaExtendedAudioDescriptions
       summary: Delete Media Extended Audio Description
@@ -508,9 +508,7 @@ paths:
         destructive_hint_justification: This tool permanently deletes the media extended audio description and cannot be undone.
         idempotent_hint: true
         idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
-      description: 'Deletes an extended audio description by its hashed id.
-
-        '
+      description: Deletes an extended audio description by its hashed id.
       x-wistia-mcp-tool-name: delete-media-extended-audio-description
       x-wistia-mcp-description: 'Delete (remove) an extended audio description (EAD) by its hashed id — the
 
@@ -680,6 +678,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: deleteMediaExtendedAudioDescriptionsById
+      x-operation-id-source: derived
   /media_extended_audio_descriptions/order:
     post:
       x-speakeasy-group: mediaExtendedAudioDescriptions
@@ -696,9 +696,7 @@ paths:
       x-wistia-is-purchase: true
       description: 'Orders an extended audio description for a media. The request will charge the credit card on the account when the order is ready.
 
-        Only accounts on paid plans with the `order_audio_descriptions` feature can use this endpoint.
-
-        '
+        Only accounts on paid plans with the `order_audio_descriptions` feature can use this endpoint.'
       x-wistia-mcp-tool-name: order-media-extended-audio-description
       x-wistia-mcp-description: 'Order, purchase, or buy an extended audio description (EAD) for a media — an
 
@@ -935,6 +933,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: postMediaExtendedAudioDescriptionsOrder
+      x-operation-id-source: derived
   /media_extended_audio_descriptions/order_status/{id}:
     get:
       x-speakeasy-group: mediaExtendedAudioDescriptions
@@ -950,9 +950,7 @@ paths:
         idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
       description: 'Returns the current status of an extended audio description order. Use the order id returned
 
-        from the order endpoint to poll for status updates.
-
-        '
+        from the order endpoint to poll for status updates.'
       x-wistia-mcp-tool-name: show-media-extended-audio-description-order-status
       x-wistia-mcp-description: 'Show, get, or check the current status of an extended audio description
 
@@ -1122,6 +1120,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: getMediaExtendedAudioDescriptionsOrderStatusById
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

@@ -42,8 +42,6 @@ paths:
         Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
@@ -52,11 +50,7 @@ paths:
 
         Read all data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Definitions
       parameters:
@@ -242,6 +236,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: getCustomMetadataFieldDefinitions
+      x-operation-id-source: derived
     post:
       x-readme-hidden: true
       x-wistia-mcp-account-gate: can_use_custom_metadata?
@@ -275,19 +271,13 @@ paths:
         Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Definitions
       requestBody:
@@ -600,6 +590,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: postCustomMetadataFieldDefinitions
+      x-operation-id-source: derived
   /custom_metadata_field_definitions/{key}:
     get:
       x-readme-hidden: true
@@ -628,8 +620,6 @@ paths:
         Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
@@ -638,11 +628,7 @@ paths:
 
         Read all data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Definitions
       parameters:
@@ -814,6 +800,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: getCustomMetadataFieldDefinitionsByKey
+      x-operation-id-source: derived
     put:
       x-readme-hidden: true
       x-wistia-mcp-account-gate: can_use_custom_metadata?
@@ -843,19 +831,13 @@ paths:
         Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Definitions
       parameters:
@@ -1140,6 +1122,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: putCustomMetadataFieldDefinitionsByKey
+      x-operation-id-source: derived
     delete:
       x-readme-hidden: true
       x-wistia-mcp-account-gate: can_use_custom_metadata?
@@ -1169,19 +1153,13 @@ paths:
         Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Definitions
       parameters:
@@ -1244,6 +1222,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: deleteCustomMetadataFieldDefinitionsByKey
+      x-operation-id-source: derived
   /custom_metadata_field_definitions/{key}/restore:
     post:
       x-readme-hidden: true
@@ -1272,19 +1252,13 @@ paths:
         Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Definitions
       parameters:
@@ -1468,6 +1442,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: postCustomMetadataFieldDefinitionsByKeyRestore
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

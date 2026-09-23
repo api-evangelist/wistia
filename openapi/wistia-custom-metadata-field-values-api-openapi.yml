@@ -40,8 +40,6 @@ paths:
         Only values for active field definitions are returned. Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
@@ -52,11 +50,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Values
       parameters:
@@ -194,6 +188,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: getMediasByMediaHashedIdCustomMetadataFieldValues
+      x-operation-id-source: derived
   /medias/{mediaHashedId}/custom_metadata_field_values/{key}:
     put:
       x-readme-hidden: true
@@ -246,7 +242,7 @@ paths:
 
         - `multi_select` — an array of the chosen options'' keys (strings); unknown option keys or a non-array value return a 422
 
-        - `contact_ref` — a contact reference object `{"type": "contact" | "contact_group", "id": "<hashed_id>"}`; unknown ids, ids from another account, and group references on fields that do not allow groups return a 422
+        - `contact_ref` — a contact reference object `{"type": "contact" | "contact_group", "id": ""}`; unknown ids, ids from another account, and group references on fields that do not allow groups return a 422
 
         - `contact_multi_ref` — an array of contact reference objects; the same 422 rules apply per reference, and a non-array value returns a 422
 
@@ -257,8 +253,6 @@ paths:
         Only values for active field definitions can be written. Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
@@ -267,11 +261,7 @@ paths:
 
         Upload, read & update all media
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Values
       parameters:
@@ -510,6 +500,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: putMediasByMediaHashedIdCustomMetadataFieldValuesByKey
+      x-operation-id-source: derived
     delete:
       x-readme-hidden: true
       x-wistia-mcp-account-gate: can_use_custom_metadata?
@@ -539,8 +531,6 @@ paths:
         Only values for active field definitions can be cleared. Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
@@ -549,11 +539,7 @@ paths:
 
         Upload, read & update all media
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Values
       parameters:
@@ -622,6 +608,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: deleteMediasByMediaHashedIdCustomMetadataFieldValuesByKey
+      x-operation-id-source: derived
     get:
       x-readme-hidden: true
       x-wistia-mcp-account-gate: can_use_custom_metadata?
@@ -649,8 +637,6 @@ paths:
         Only values for active field definitions are returned. Requires the custom metadata feature to be available on your account.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
@@ -661,11 +647,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       tags:
       - Custom Metadata Field Values
       parameters:
@@ -809,6 +791,8 @@ paths:
                     - Internal server error
       security:
       - BearerAuth: []
+      operationId: getMediasByMediaHashedIdCustomMetadataFieldValuesByKey
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

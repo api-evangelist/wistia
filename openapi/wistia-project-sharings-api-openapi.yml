@@ -25,9 +25,7 @@ paths:
 
         Read all data
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: projectId
         in: path
@@ -65,6 +63,8 @@ paths:
       - Project Sharings
       security:
       - BearerAuth: []
+      operationId: getProjectsByProjectIdSharings
+      x-operation-id-source: derived
     post:
       summary: Project Sharing Create
       description: 'Create a new sharing object for a project by specifying the email of the person to share with and other optional parameters.
@@ -76,9 +76,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: projectId
         in: path
@@ -124,6 +122,8 @@ paths:
       - Project Sharings
       security:
       - BearerAuth: []
+      operationId: postProjectsByProjectIdSharings
+      x-operation-id-source: derived
   /projects/{projectId}/sharings/{sharingId}:
     get:
       summary: Project Sharing Show
@@ -138,9 +138,7 @@ paths:
 
         Read all data
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: projectId
         in: path
@@ -172,6 +170,8 @@ paths:
       - Project Sharings
       security:
       - BearerAuth: []
+      operationId: getProjectsByProjectIdSharingsBySharingId
+      x-operation-id-source: derived
     put:
       summary: Project Sharing Update
       description: 'Update a sharing on a project.
@@ -183,9 +183,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: projectId
         in: path
@@ -222,6 +220,8 @@ paths:
       - Project Sharings
       security:
       - BearerAuth: []
+      operationId: putProjectsByProjectIdSharingsBySharingId
+      x-operation-id-source: derived
     delete:
       summary: Project Sharing Delete
       description: 'Delete a sharing on a project.
@@ -233,9 +233,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: projectId
         in: path
@@ -267,37 +265,10 @@ paths:
       - Project Sharings
       security:
       - BearerAuth: []
+      operationId: deleteProjectsByProjectIdSharingsBySharingId
+      x-operation-id-source: derived
 components:
   schemas:
-    CreateProjectSharingResponse:
-      type: object
-      description: The response includes a link for the user to access the project.
-      properties:
-        project:
-          type: string
-          format: uri
-          examples:
-          - http://myaccount.wistia.com/folders/13
-        sharing:
-          $ref: '#/components/schemas/ProjectSharingSchema'
-    UpdateSharingRequest:
-      type: object
-      properties:
-        sharing:
-          type: object
-          properties:
-            canShare:
-              description: Allow the user or group to share the project with others.
-              type: boolean
-            canDownload:
-              description: Allow the user or group to download media from the project.
-              type: boolean
-            canUpload:
-              description: Allow the user or group to upload media to the project.
-              type: boolean
-            isAdmin:
-              description: Give this user admin rights to the project.
-              type: boolean
     CreateProjectSharing:
       type: object
       properties:
@@ -363,6 +334,17 @@ components:
           - with
       required:
       - sharing
+    CreateProjectSharingResponse:
+      type: object
+      description: The response includes a link for the user to access the project.
+      properties:
+        project:
+          type: string
+          format: uri
+          examples:
+          - http://myaccount.wistia.com/folders/13
+        sharing:
+          $ref: '#/components/schemas/ProjectSharingSchema'
     ProjectSharingSchema:
       type: object
       properties:
@@ -433,29 +415,25 @@ components:
       - canUpload
       - share
       - project
+    UpdateSharingRequest:
+      type: object
+      properties:
+        sharing:
+          type: object
+          properties:
+            canShare:
+              description: Allow the user or group to share the project with others.
+              type: boolean
+            canDownload:
+              description: Allow the user or group to download media from the project.
+              type: boolean
+            canUpload:
+              description: Allow the user or group to upload media to the project.
+              type: boolean
+            isAdmin:
+              description: Give this user admin rights to the project.
+              type: boolean
   responses:
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
     '500':
       description: Internal server error
       content:
@@ -467,6 +445,28 @@ components:
                 type: string
                 examples:
                 - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
   securitySchemes:
     BearerAuth:
       type: http

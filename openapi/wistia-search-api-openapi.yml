@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Search API
   version: '1.0'
-  description: 'Operations tagged Search across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Search across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -17,10 +17,23 @@ paths:
   /search:
     get:
       summary: Search
-      description: 'Searches across folders, medias, channels, and channel episodes.
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads data from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: search
+      x-speakeasy-name-override: search
+      description: 'Searches across folders, subfolders, medias, channels, channel episodes, and webinars.
 
+        Also searches through video transcripts, so media results may include transcript matches with
 
-        <!--- HIDE-MCP -->
+        timestamps when the query matches spoken content.
+
 
         ## Requires api token with one of the following permissions
 
@@ -28,9 +41,15 @@ paths:
 
         Read all data
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: search
+      x-wistia-mcp-description: 'Search, find, look up, or query content across the account''s folders, medias, channels, and
 
-        <!--- /HIDE-MCP -->
+        channel episodes by keyword. Also searches video transcripts, so media results may include
+
+        transcript matches with timestamps when the query matches spoken content. Use this when someone
+
+        wants to locate content by name or text across their Wistia library.
 
         '
       parameters:
@@ -41,6 +60,47 @@ paths:
         schema:
           type: string
         example: screencast
+      - name: tags[]
+        in: query
+        description: Filter results by one or more tag names. When multiple tags are provided, results matching any of the specified tags are returned (OR logic).
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      - name: resource_type[]
+        in: query
+        description: Filter results by one or more resource types.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - media
+            - folder
+            - subfolder
+            - channel
+            - channel_episode
+            - webinar
+        explode: true
+        style: form
+      - name: created_after
+        in: query
+        description: Filter results created on or after this datetime. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: created_before
+        in: query
+        description: Filter results created on or before this datetime. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').
+        required: false
+        schema:
+          type: string
+          format: date-time
       responses:
         '200':
           description: Search results
@@ -54,161 +114,6 @@ paths:
                     unevaluatedProperties: false
                     type: object
                     properties:
-                      webinars:
-                        type: array
-                        items:
-                          unevaluatedProperties: false
-                          type: object
-                          description: 'A webinar is an event which allows you to stream a video
-
-                            to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
-
-                            for more info.
-
-                            '
-                          properties:
-                            id:
-                              description: The hashed ID of the webinar
-                              type: string
-                              examples:
-                              - abc123def456
-                            title:
-                              description: The title of the webinar
-                              type: string
-                              examples:
-                              - 'Wellness Session: Coping with Outie Memories'
-                            description:
-                              description: The description of the webinar
-                              type:
-                              - string
-                              - 'null'
-                              examples:
-                              - A comprehensive session on managing work-life balance
-                            scheduled_for:
-                              description: The scheduled start time in W3C format with timezone
-                              type:
-                              - string
-                              - 'null'
-                              format: date-time
-                              examples:
-                              - '2024-03-20T15:30:00-05:00'
-                            event_duration:
-                              description: Duration of the webinar in minutes
-                              type:
-                              - integer
-                              - 'null'
-                              examples:
-                              - 60
-                            lifecycle_status:
-                              description: Current lifecycle status of the event
-                              type: string
-                              examples:
-                              - scheduled
-                            registration_status:
-                              description: Registration status of the event
-                              type: string
-                              examples:
-                              - published
-                            created_at:
-                              description: When the event was created (UTC)
-                              type: string
-                              format: date-time
-                              examples:
-                              - '2024-03-15T10:30:00Z'
-                            updated_at:
-                              description: When the event was last updated (UTC)
-                              type: string
-                              format: date-time
-                              examples:
-                              - '2024-03-15T10:30:00Z'
-                            audience_link:
-                              description: Link for the audience to join the event
-                              type: string
-                              examples:
-                              - https://lumon-industries.wistia.com/live/events/abc123def456
-                            host_link:
-                              description: Link for the host to manage the event
-                              type: string
-                              examples:
-                              - https://lumon-industries.wistia.com/live/events/abc123def456/onair
-                            panelist_link:
-                              description: Link for panelists to join the event
-                              type: string
-                              examples:
-                              - https://lumon-industries.wistia.com/live/events/abc123def456/onair/a1b2c3d4-e5f6-7890-abcd-ef1234567890
-                            cursor:
-                              description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
-                              type:
-                              - string
-                              - 'null'
-                          required:
-                          - id
-                          - title
-                          - lifecycle_status
-                          - registration_status
-                          - created_at
-                          - updated_at
-                          - audience_link
-                          - host_link
-                          - panelist_link
-                      subfolders:
-                        type: array
-                        items:
-                          type: object
-                          description: A subfolder within a folder that contains media.
-                          properties:
-                            hashed_id:
-                              description: A unique alphanumeric identifier for this subfolder.
-                              type: string
-                              examples:
-                              - abc123def4
-                            name:
-                              description: The display name of the subfolder.
-                              type:
-                              - string
-                              - 'null'
-                              examples:
-                              - Marketing Videos
-                            description:
-                              description: A description for the subfolder.
-                              type:
-                              - string
-                              - 'null'
-                              examples:
-                              - Collection of all marketing and promotional videos
-                            position:
-                              description: The position of this subfolder within its folder, used for ordering.
-                              type:
-                              - integer
-                              - 'null'
-                              examples:
-                              - 1
-                            created:
-                              description: The date when the subfolder was created.
-                              type:
-                              - string
-                              - 'null'
-                              format: date-time
-                              examples:
-                              - '2024-01-15T10:30:00+00:00'
-                            updated:
-                              description: The date when the subfolder was last modified.
-                              type:
-                              - string
-                              - 'null'
-                              format: date-time
-                              examples:
-                              - '2024-01-20T14:45:00+00:00'
-                            cursor:
-                              description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
-                              type:
-                              - string
-                              - 'null'
-                          required:
-                          - hashed_id
-                          - position
-                          - created
-                          - updated
                       folders:
                         type: array
                         items:
@@ -222,30 +127,6 @@ paths:
 
                             '
                           properties:
-                            personal_library:
-                              description: 'Whether this folder is someone''s personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
-
-                                '
-                              type: boolean
-                              examples:
-                              - false
-                            kind:
-                              description: 'Indicates the folder''s access scope, relative to the requesting user. One of:
-
-                                - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
-
-                                - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact''s library that the requester has been granted access to.
-
-                                - `account`: a folder shared with the whole account (everyone in the company can see it).
-
-                                '
-                              type: string
-                              enum:
-                              - library
-                              - shared
-                              - account
-                              examples:
-                              - shared
                             id:
                               description: A unique numeric identifier for the folder within the system.
                               type: integer
@@ -270,90 +151,12 @@ paths:
                               - 2
                             medias:
                               description: A link to where you can fetch the medias for this folder.
+                              unevaluatedProperties: false
                               type: object
                               properties:
-                                protected:
-                                  description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
-                                  type:
-                                  - boolean
-                                  - 'null'
-                                id:
-                                  description: A unique numeric identifier for the media within the system.
-                                  type: integer
-                                name:
-                                  description: The display name of the media.
+                                url:
+                                  description: A URL for fetching all child records of the parent record.
                                   type: string
-                                type:
-                                  description: A string representing what type of media this is.
-                                  type: string
-                                  enum:
-                                  - Video
-                                  - Audio
-                                  - Image
-                                  - PdfDocument
-                                  - MicrosoftOfficeDocument
-                                  - Swf
-                                  - UnknownType
-                                archived:
-                                  description: Whether or not the media is archived, either true or false.
-                                  type: boolean
-                                created:
-                                  description: The date when the media was originally uploaded.
-                                  type: string
-                                  format: date-time
-                                updated:
-                                  description: The date when the media was last changed.
-                                  type: string
-                                  format: date-time
-                                duration:
-                                  unevaluatedProperties: false
-                                  description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-                                  oneOf:
-                                  - type: number
-                                  - type: 'null'
-                                embedCode:
-                                  description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-
-                                    '
-                                  type: string
-                                  deprecated: true
-                                hashed_id:
-                                  description: A unique alphanumeric identifier for this media.
-                                  type: string
-                                description:
-                                  description: A description for the media which usually appears near the top of the sidebar on the media's page.
-                                  type: string
-                                progress:
-                                  description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-                                  type: number
-                                  maximum: 1
-                                  minimum: 0
-                                status:
-                                  description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-
-                                    '
-                                  type: string
-                                  enum:
-                                  - queued
-                                  - processing
-                                  - ready
-                                  - failed
-                                section:
-                                  unevaluatedProperties: false
-                                  description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-                                  oneOf:
-                                  - type: string
-                                  - type: 'null'
-                                thumbnail:
-                                  unevaluatedProperties: false
-                                  type: object
-                                  properties:
-                                    url:
-                                      type: string
-                                    width:
-                                      type: integer
-                                    height:
-                                      type: integer
                             created:
                               description: The date that the folder was originally created.
                               type: string
@@ -391,6 +194,30 @@ paths:
                               type: boolean
                               examples:
                               - false
+                            kind:
+                              description: 'Indicates the folder''s access scope, relative to the requesting user. One of:
+
+                                - `library`: a library the requester owns. Libraries can still be shared with specific contacts or contact groups; the only restriction is that they cannot be shared with the whole account.
+
+                                - `shared`: a folder the requester has access to via a Contact or ContactGroup sharing — this includes both shared folders and another contact''s library that the requester has been granted access to.
+
+                                - `account`: a folder shared with the whole account (everyone in the company can see it).
+
+                                '
+                              type: string
+                              enum:
+                              - library
+                              - shared
+                              - account
+                              examples:
+                              - shared
+                            personal_library:
+                              description: 'Whether this folder is someone''s personal library ("My Library"). Unlike `kind`, this is a property of the folder itself and does not depend on who is requesting — it is `true` for a personal library even when that library has been shared with you (where `kind` would read `shared`). Use this, not `kind`, to tell whether a folder is a personal library.
+
+                                '
+                              type: boolean
+                              examples:
+                              - false
                             cursor:
                               description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
                               type:
@@ -405,7 +232,69 @@ paths:
                           - hashed_id
                           - public
                           - public_id
+                          - kind
+                          - personal_library
                           - medias
+                      subfolders:
+                        type: array
+                        items:
+                          unevaluatedProperties: false
+                          allOf:
+                          - type: object
+                            description: A subfolder within a folder that contains media.
+                            properties:
+                              hashed_id:
+                                description: A unique alphanumeric identifier for this subfolder.
+                                type: string
+                                examples:
+                                - abc123def4
+                              name:
+                                description: The display name of the subfolder.
+                                type:
+                                - string
+                                - 'null'
+                                examples:
+                                - Marketing Videos
+                              description:
+                                description: A description for the subfolder.
+                                type:
+                                - string
+                                - 'null'
+                                examples:
+                                - Collection of all marketing and promotional videos
+                              position:
+                                description: The position of this subfolder within its folder, used for ordering.
+                                type:
+                                - integer
+                                - 'null'
+                                examples:
+                                - 1
+                              created:
+                                description: The date when the subfolder was created.
+                                type:
+                                - string
+                                - 'null'
+                                format: date-time
+                                examples:
+                                - '2024-01-15T10:30:00+00:00'
+                              updated:
+                                description: The date when the subfolder was last modified.
+                                type:
+                                - string
+                                - 'null'
+                                format: date-time
+                                examples:
+                                - '2024-01-20T14:45:00+00:00'
+                              cursor:
+                                description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                                type:
+                                - string
+                                - 'null'
+                            required:
+                            - hashed_id
+                            - position
+                            - created
+                            - updated
                       medias:
                         type: array
                         items:
@@ -421,11 +310,6 @@ paths:
 
                               '
                             properties:
-                              protected:
-                                description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
-                                type:
-                                - boolean
-                                - 'null'
                               id:
                                 description: A unique numeric identifier for the media within the system.
                                 type: integer
@@ -503,6 +387,11 @@ paths:
                                     type: integer
                                   height:
                                     type: integer
+                              protected:
+                                description: Whether the media is protected (e.g. requires a password or other authentication to view). Null if the media is not protected.
+                                type:
+                                - boolean
+                                - 'null'
                           - type: object
                             properties:
                               folder_hashed_id:
@@ -516,8 +405,8 @@ paths:
                                 description: Array of transcript matches with timestamps
                                 type: array
                                 items:
-                                  unevaluatedProperties: false
                                   type: object
+                                  unevaluatedProperties: false
                                   properties:
                                     text:
                                       type: string
@@ -551,24 +440,6 @@ paths:
                           unevaluatedProperties: false
                           type: object
                           properties:
-                            custom_url:
-                              description: The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
-                              type:
-                              - string
-                              - 'null'
-                            podcast_enabled:
-                              description: Whether podcasting is enabled for the channel.
-                              type:
-                              - boolean
-                              - 'null'
-                            auto_publish_enabled:
-                              description: Whether episodes are automatically published when added to the channel.
-                              type:
-                              - boolean
-                              - 'null'
-                            live_stream_event_count:
-                              description: The number of live stream events in the channel.
-                              type: integer
                             id:
                               description: A unique numeric identifier for the channel within the system.
                               type: integer
@@ -592,6 +463,24 @@ paths:
                               description: The date when the channel was last updated.
                               type: string
                               format: date-time
+                            live_stream_event_count:
+                              description: The number of live stream events in the channel.
+                              type: integer
+                            auto_publish_enabled:
+                              description: Whether episodes are automatically published when added to the channel.
+                              type:
+                              - boolean
+                              - 'null'
+                            podcast_enabled:
+                              description: Whether podcasting is enabled for the channel.
+                              type:
+                              - boolean
+                              - 'null'
+                            custom_url:
+                              description: The custom URL used when embedding the channel on your own site. Null if no custom URL is set.
+                              type:
+                              - string
+                              - 'null'
                           required:
                           - id
                           - hashed_id
@@ -606,11 +495,6 @@ paths:
                           unevaluatedProperties: false
                           type: object
                           properties:
-                            live_stream_event_hashed_id:
-                              description: The hashed ID of the live stream event associated with this channel episode, if any.
-                              type:
-                              - string
-                              - 'null'
                             id:
                               description: A unique numeric identifier for the channel episode within the system.
                               type: integer
@@ -635,6 +519,11 @@ paths:
                               - 'null'
                             media_hashed_id:
                               description: The hashed ID of the media associated with this channel episode.
+                              type:
+                              - string
+                              - 'null'
+                            live_stream_event_hashed_id:
+                              description: The hashed ID of the live stream event associated with this channel episode, if any.
                               type:
                               - string
                               - 'null'
@@ -665,15 +554,161 @@ paths:
                           - published
                           - created
                           - updated
+                      webinars:
+                        type: array
+                        items:
+                          unevaluatedProperties: false
+                          type: object
+                          description: 'A webinar is an event which allows you to stream a video
+
+                            to multiple participants. See our [Webinars Guide](https://support.wistia.com/en/articles/8288501-getting-started-with-webinars)
+
+                            for more info.
+
+                            '
+                          properties:
+                            id:
+                              description: The hashed ID of the webinar
+                              type: string
+                              examples:
+                              - abc123def456
+                            title:
+                              description: The title of the webinar
+                              type: string
+                              examples:
+                              - 'Wellness Session: Coping with Outie Memories'
+                            description:
+                              description: The description of the webinar
+                              type:
+                              - string
+                              - 'null'
+                              examples:
+                              - A comprehensive session on managing work-life balance
+                            scheduled_for:
+                              description: The scheduled start time in W3C format with timezone
+                              type:
+                              - string
+                              - 'null'
+                              format: date-time
+                              examples:
+                              - '2024-03-20T15:30:00-05:00'
+                            event_duration:
+                              description: Duration of the webinar in minutes
+                              type:
+                              - integer
+                              - 'null'
+                              examples:
+                              - 60
+                            time_zone:
+                              description: The IANA time zone identifier the webinar is scheduled in
+                              type: string
+                              examples:
+                              - America/New_York
+                            lifecycle_status:
+                              description: The current lifecycle status of the webinar. This is a read-only, system-managed field that Wistia updates as the event moves through its lifecycle; it cannot be set or changed via the API.
+                              type: string
+                              readOnly: true
+                              enum:
+                              - pending
+                              - ready
+                              - starting
+                              - started
+                              - ended
+                              - vod_ready
+                              - failed
+                              examples:
+                              - ready
+                            registration_status:
+                              description: Registration status of the event
+                              type: string
+                              examples:
+                              - published
+                            created_at:
+                              description: When the event was created (UTC)
+                              type: string
+                              format: date-time
+                              examples:
+                              - '2024-03-15T10:30:00Z'
+                            updated_at:
+                              description: When the event was last updated (UTC)
+                              type: string
+                              format: date-time
+                              examples:
+                              - '2024-03-15T10:30:00Z'
+                            audience_link:
+                              description: Link for the audience to join the event
+                              type: string
+                              examples:
+                              - https://lumon-industries.wistia.com/live/events/abc123def456
+                            host_link:
+                              description: Link for the host to manage the event
+                              type: string
+                              examples:
+                              - https://lumon-industries.wistia.com/live/events/abc123def456/onair
+                            panelist_link:
+                              description: Link for panelists to join the event
+                              type: string
+                              examples:
+                              - https://lumon-industries.wistia.com/live/events/abc123def456/onair/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                            thumbnail_url:
+                              description: URL of the webinar's custom thumbnail image, or null if no custom thumbnail has been set
+                              type:
+                              - string
+                              - 'null'
+                              examples:
+                              - https://embed-ssl.wistia.com/deliveries/abc123def456.jpg
+                            folder:
+                              description: The folder (project) this webinar belongs to
+                              unevaluatedProperties: false
+                              oneOf:
+                              - unevaluatedProperties: false
+                                type: object
+                                properties:
+                                  id:
+                                    description: A unique alphanumeric identifier for the record.
+                                    type: string
+                                  index_url:
+                                    description: 'A URL for fetching all the records of the given record type. You can pass hashed_ids as a param with multiple values
+
+                                      to do a batch fetch for this records type.
+
+                                      '
+                                    type: string
+                                  url:
+                                    description: A URL that can be used to fetch this record.
+                                    type: string
+                                required:
+                                - id
+                                - index_url
+                                - url
+                              - type: 'null'
+                            cursor:
+                              description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor[before]` or `cursor[after]` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if records were fetched with `cursor[enabled]`, or `cursor[before]` or `cursor[after]`.
+                              type:
+                              - string
+                              - 'null'
+                          required:
+                          - id
+                          - title
+                          - time_zone
+                          - lifecycle_status
+                          - registration_status
+                          - created_at
+                          - updated_at
+                          - audience_link
+                          - host_link
+                          - panelist_link
                     required:
                     - folders
+                    - subfolders
                     - medias
                     - channels
                     - channel_episodes
+                    - webinars
                 required:
                 - data
         '400':
-          description: Bad request - missing query parameter
+          description: Bad request
           content:
             application/json:
               schema:
@@ -681,9 +716,15 @@ paths:
                 type: object
                 properties:
                   error:
+                    description: Error message detailing the reason for the bad request.
                     type: string
                     examples:
-                    - the "q" parameter should specify the search query, e.g. "q=screencast"
+                    - Bad request
+                  errors:
+                    description: Array of error messages detailing the reasons for the bad request.
+                    type: array
+                    items:
+                      type: string
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -720,10 +761,21 @@ paths:
       - Search
       security:
       - BearerAuth: []
+      operationId: getSearch
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
 components:
   schemas:
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
     SearchChannel:
       type: object
       properties:
@@ -758,6 +810,125 @@ components:
       - mediaCount
       - created
       - updated
+    SearchChannelEpisode:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the channel episode within the system.
+          type: integer
+        hashedId:
+          description: A unique alphanumeric identifier for this channel episode.
+          type: string
+        title:
+          description: The title of the channel episode.
+          type:
+          - string
+          - 'null'
+        description:
+          description: The episode notes for the channel episode.
+          type: string
+        summary:
+          description: The description of the channel episode.
+          type: string
+        channelHashedId:
+          description: The hashed ID of the channel this episode belongs to.
+          type: string
+        mediaHashedId:
+          description: The hashed ID of the media associated with this channel episode.
+          type: string
+        published:
+          description: Whether the channel episode is published.
+          type: boolean
+        created:
+          description: The date when the channel episode was originally created.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the channel episode was last updated.
+          type: string
+          format: date-time
+        publish_at:
+          description: The scheduled publish date (only present if scheduled).
+          type:
+          - string
+          - 'null'
+          format: date-time
+      required:
+      - id
+      - hashedId
+      - description
+      - summary
+      - channelHashedId
+      - mediaHashedId
+      - published
+      - created
+      - updated
+    MediaProperties:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the media within the system.
+          type: integer
+        name:
+          description: The display name of the media.
+          type: string
+        type:
+          description: A string representing what type of media this is.
+          type: string
+          enum:
+          - Video
+          - Audio
+          - Image
+          - PdfDocument
+          - MicrosoftOfficeDocument
+          - Swf
+          - UnknownType
+        archived:
+          description: Whether or not the media is archived, either true or false.
+          type: boolean
+        created:
+          description: The date when the media was originally uploaded.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the media was last changed.
+          type: string
+          format: date-time
+        duration:
+          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+          type: number
+        embedCode:
+          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+            '
+          type: string
+          deprecated: true
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        description:
+          description: A description for the media which usually appears near the top of the sidebar on the media's page.
+          type: string
+        progress:
+          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+          type: number
+          maximum: 1
+          minimum: 0
+        status:
+          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+            '
+          type: string
+          enum:
+          - queued
+          - processing
+          - ready
+          - failed
+        section:
+          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+          type: string
+        thumbnail:
+          $ref: '#/components/schemas/Thumbnail'
     Project:
       type: object
       properties:
@@ -829,134 +1000,6 @@ components:
       - hashedId
       - public
       - publicId
-    MediaProperties:
-      type: object
-      properties:
-        id:
-          description: A unique numeric identifier for the media within the system.
-          type: integer
-        name:
-          description: The display name of the media.
-          type: string
-        type:
-          description: A string representing what type of media this is.
-          type: string
-          enum:
-          - Video
-          - Audio
-          - Image
-          - PdfDocument
-          - MicrosoftOfficeDocument
-          - Swf
-          - UnknownType
-        archived:
-          description: Whether or not the media is archived, either true or false.
-          type: boolean
-        created:
-          description: The date when the media was originally uploaded.
-          type: string
-          format: date-time
-        updated:
-          description: The date when the media was last changed.
-          type: string
-          format: date-time
-        duration:
-          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-          type: number
-        embedCode:
-          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-
-            '
-          type: string
-          deprecated: true
-        hashed_id:
-          description: A unique alphanumeric identifier for this media.
-          type: string
-        description:
-          description: A description for the media which usually appears near the top of the sidebar on the media's page.
-          type: string
-        progress:
-          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-          type: number
-          maximum: 1
-          minimum: 0
-        status:
-          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-
-            '
-          type: string
-          enum:
-          - queued
-          - processing
-          - ready
-          - failed
-        section:
-          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-          type: string
-        thumbnail:
-          $ref: '#/components/schemas/Thumbnail'
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
-    SearchChannelEpisode:
-      type: object
-      properties:
-        id:
-          description: A unique numeric identifier for the channel episode within the system.
-          type: integer
-        hashedId:
-          description: A unique alphanumeric identifier for this channel episode.
-          type: string
-        title:
-          description: The title of the channel episode.
-          type:
-          - string
-          - 'null'
-        description:
-          description: The episode notes for the channel episode.
-          type: string
-        summary:
-          description: The description of the channel episode.
-          type: string
-        channelHashedId:
-          description: The hashed ID of the channel this episode belongs to.
-          type: string
-        mediaHashedId:
-          description: The hashed ID of the media associated with this channel episode.
-          type: string
-        published:
-          description: Whether the channel episode is published.
-          type: boolean
-        created:
-          description: The date when the channel episode was originally created.
-          type: string
-          format: date-time
-        updated:
-          description: The date when the channel episode was last updated.
-          type: string
-          format: date-time
-        publish_at:
-          description: The scheduled publish date (only present if scheduled).
-          type:
-          - string
-          - 'null'
-          format: date-time
-      required:
-      - id
-      - hashedId
-      - description
-      - summary
-      - channelHashedId
-      - mediaHashedId
-      - published
-      - created
-      - updated
     SearchMedia:
       allOf:
       - $ref: '#/components/schemas/MediaProperties'
@@ -970,17 +1013,6 @@ components:
         required:
         - projectHashedId
   responses:
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
     '500':
       description: Internal server error
       content:
@@ -992,11 +1024,68 @@ components:
                 type: string
                 examples:
                 - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

@@ -34,19 +34,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: start_date
         in: query
@@ -192,6 +186,8 @@ paths:
       - Analytics:Account
       security:
       - BearerAuth: []
+      operationId: getAnalyticsAccount
+      x-operation-id-source: derived
   /analytics/account/timeseries:
     get:
       summary: Show Account Analytics Timeseries
@@ -216,19 +212,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: start_date
         in: query
@@ -392,6 +382,8 @@ paths:
       - Analytics:Account
       security:
       - BearerAuth: []
+      operationId: getAnalyticsAccountTimeseries
+      x-operation-id-source: derived
   /analytics/account/top_content:
     get:
       summary: Show Account Top Content
@@ -423,19 +415,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: start_date
         in: query
@@ -799,6 +785,8 @@ paths:
       - Analytics:Account
       security:
       - BearerAuth: []
+      operationId: getAnalyticsAccountTopContent
+      x-operation-id-source: derived
   /analytics/account/embed_locations:
     get:
       summary: Show Account Embed Locations
@@ -821,19 +809,13 @@ paths:
         The date range between `start_date` and `end_date` must not exceed 2 years.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read detailed stats
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: start_date
         in: query
@@ -1014,6 +996,8 @@ paths:
       - Analytics:Account
       security:
       - BearerAuth: []
+      operationId: getAnalyticsAccountEmbedLocations
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

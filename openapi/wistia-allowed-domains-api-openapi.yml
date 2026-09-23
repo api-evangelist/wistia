@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Allowed Domains API
   version: '1.0'
-  description: 'Operations tagged Allowed Domains across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Allowed Domains across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -13,11 +13,12 @@ tags:
 paths:
   /allowed_domains:
     get:
+      x-wistia-mcp-ignore: true
       summary: List Allowed Domains
+      x-speakeasy-group: allowedDomains
+      x-speakeasy-name-override: list
       description: 'Lists allowed domains belonging to the account.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -25,11 +26,7 @@ paths:
 
         Read all data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: page
         in: query
@@ -49,7 +46,7 @@ paths:
           type: integer
       - name: cursor
         in: query
-        description: 'If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 
           first set of records are fetched up to the `per_page`. Cursor
 
@@ -64,7 +61,7 @@ paths:
 
           NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
 
-          last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 
           cursor value to a `sort_by` name.
 
@@ -85,7 +82,7 @@ paths:
               - 0
               - 1
             before:
-              description: 'If `cursor[before]` is set than cursor pagination is enabled and all records
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
 
                 before the cursor up to the `per_page` are returned. This feature is useful for
 
@@ -96,7 +93,7 @@ paths:
                 '
               type: string
             after:
-              description: 'If `cursor[after]` is set than cursor pagination is enabled and all records
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
 
                 after the cursor up to the `per_page` are returned.
 
@@ -116,6 +113,7 @@ paths:
           enum:
           - id
           - domain
+          - created
           default: id
       - name: sort_direction
         in: query
@@ -220,12 +218,15 @@ paths:
       - Allowed Domains
       security:
       - BearerAuth: []
+      operationId: getAllowedDomains
+      x-operation-id-source: derived
     post:
+      x-wistia-mcp-ignore: true
       summary: Create Allowed Domain
+      x-speakeasy-group: allowedDomains
+      x-speakeasy-name-override: create
       description: 'Creates an allowed domain for the account.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -233,11 +234,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       requestBody:
         required: true
         content:
@@ -322,6 +319,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '500':
           description: Internal server error
           content:
@@ -338,15 +347,18 @@ paths:
       - Allowed Domains
       security:
       - BearerAuth: []
+      operationId: postAllowedDomains
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /allowed_domains/{domain}:
     get:
+      x-wistia-mcp-ignore: true
       summary: Show Allowed Domain
+      x-speakeasy-group: allowedDomains
+      x-speakeasy-name-override: get
       description: 'Returns the details of an allowed domain.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -354,11 +366,7 @@ paths:
 
         Read all data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: domain
         in: path
@@ -453,12 +461,15 @@ paths:
       - Allowed Domains
       security:
       - BearerAuth: []
+      operationId: getAllowedDomainsByDomain
+      x-operation-id-source: derived
     delete:
+      x-wistia-mcp-ignore: true
       summary: Delete Allowed Domain
+      x-speakeasy-group: allowedDomains
+      x-speakeasy-name-override: delete
       description: 'Deletes an allowed domain from the account.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -466,11 +477,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: domain
         in: path
@@ -537,6 +544,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Domain not found
           content:
@@ -565,8 +584,50 @@ paths:
       - Allowed Domains
       security:
       - BearerAuth: []
+      operationId: deleteAllowedDomainsByDomain
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
+  /allowed-domains:
+    get:
+      tags:
+      - Allowed Domains
+      summary: List allowed domains
+      operationId: listAllowedDomains
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - Allowed Domains
+      summary: Create allowed domain
+      operationId: createAllowedDomain
+      responses:
+        '201':
+          description: Created
+  /allowed-domains/{domain}:
+    parameters:
+    - in: path
+      name: domain
+      required: true
+      schema:
+        type: string
+    get:
+      tags:
+      - Allowed Domains
+      summary: Show specific allowed domain
+      operationId: getAllowedDomain
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+      - Allowed Domains
+      summary: Delete allowed domain
+      operationId: deleteAllowedDomain
+      responses:
+        '204':
+          description: No Content
 components:
   schemas:
     AllowedDomain:
@@ -587,17 +648,6 @@ components:
       - domain
       - created_at
   responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
     '401':
       description: Unauthorized, invalid or missing token
       content:
@@ -609,11 +659,76 @@ components:
                 type: string
                 examples:
                 - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API access token sent as a Bearer token in the Authorization header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP Basic authentication using the API token as the password
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

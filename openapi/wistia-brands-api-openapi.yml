@@ -39,9 +39,7 @@ paths:
 
         Read all data
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: get-brands
       x-wistia-mcp-description: 'List the brands in the account — the saved sets of branding options (colors,
 
@@ -372,6 +370,8 @@ paths:
       - Brands
       security:
       - BearerAuth: []
+      operationId: getBrands
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

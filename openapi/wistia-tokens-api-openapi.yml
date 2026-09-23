@@ -1,13 +1,11 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Wistia Data Account Tokens API
+  title: Wistia Data Tokens API
   description: 'REST API providing programmatic access to medias, projects, channels, webinars,
 
     captions, customizations, tags, folders, accounts, and allowed domains in a
 
-    Wistia account. Returns JSON over HTTPS.
-
-    '
+    Wistia account. Returns JSON over HTTPS.'
   version: '1.0'
   contact:
     name: Wistia

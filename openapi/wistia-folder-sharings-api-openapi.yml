@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Wistia Folder Sharings API
-  version: '1.0'
-  description: 'Operations tagged Folder Sharings across 2 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml. Each path carries the servers of the definition it was published in.'
+  title: Data Folder Sharings API
+  description: Wistia Data API
+  version: edge-version
 servers:
 - url: https://api.wistia.com/modern
 tags:
@@ -13,10 +13,19 @@ paths:
   /folders/{folderId}/sharings:
     get:
       summary: List Folder Sharings
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads folder sharings from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: list
       description: 'Lists the sharings of contacts and contact groups on a folder.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -24,9 +33,9 @@ paths:
 
         Read all data
 
-        ```
-
-        <!--- /HIDE-MCP -->
+        ```'
+      x-wistia-mcp-tool-name: get-folder-sharings
+      x-wistia-mcp-description: 'List, get, show, or browse the folder sharings — the contacts and contact groups who have been granted access to a folder (previously called a "project"). Use this when someone wants to see who a folder is shared with, list access permissions, or find sharings on a folder, with optional hashed-id filtering, sorting, and pagination. Use create-folder-sharing to grant access, update-folder-sharing to change a sharing, or delete-folder-sharing to revoke access.
 
         '
       parameters:
@@ -55,7 +64,7 @@ paths:
           type: integer
       - name: cursor
         in: query
-        description: 'If `cursor[enabled]` is set to 1 than cursor pagination is enabled and the
+        description: 'If `cursor[enabled]` is set to 1 then cursor pagination is enabled and the
 
           first set of records are fetched up to the `per_page`. Cursor
 
@@ -70,7 +79,7 @@ paths:
 
           NOTE: a cursor value is only valid if the `sort_by` value hasn''t changed from the
 
-          last fetch. For example, you cannot fetch using `sort_by` id and than pass that
+          last fetch. For example, you cannot fetch using `sort_by` id and then pass that
 
           cursor value to a `sort_by` name.
 
@@ -91,7 +100,7 @@ paths:
               - 0
               - 1
             before:
-              description: 'If `cursor[before]` is set than cursor pagination is enabled and all records
+              description: 'If `cursor[before]` is set then cursor pagination is enabled and all records
 
                 before the cursor up to the `per_page` are returned. This feature is useful for
 
@@ -102,7 +111,7 @@ paths:
                 '
               type: string
             after:
-              description: 'If `cursor[after]` is set than cursor pagination is enabled and all records
+              description: 'If `cursor[after]` is set then cursor pagination is enabled and all records
 
                 after the cursor up to the `per_page` are returned.
 
@@ -120,6 +129,8 @@ paths:
         schema:
           type: string
           enum:
+          - created
+          - updated
           - id
           default: id
       - name: sort_direction
@@ -284,12 +295,23 @@ paths:
       - Folder Sharings
       security:
       - BearerAuth: []
+      operationId: getFoldersByFolderIdSharings
+      x-operation-id-source: derived
     post:
       summary: Create Folder Sharing
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new folder sharing in the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool only adds a new resource; existing data is not modified.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: create
       description: 'Creates a new sharing object for a folder by specifying the email of the person to share with and other optional parameters.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -297,9 +319,9 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
+        ```'
+      x-wistia-mcp-tool-name: create-folder-sharing
+      x-wistia-mcp-description: 'Create a folder sharing — grant a contact or contact group access/view permission to a folder (previously called a "project"). Use this when someone wants to share a folder, give access, or add a person or group to a folder by specifying the email of the person to share with plus other optional parameters. Use get-folder-sharings to list who a folder is shared with, update-folder-sharing to change a sharing''s permission, or delete-folder-sharing to revoke access.
 
         '
       parameters:
@@ -327,57 +349,25 @@ paths:
                       type: string
                       format: email
                     requirePassword:
-                      unevaluatedProperties: false
-                      x-wistia-mcp-type: boolean
-                      oneOf:
-                      - type: string
-                        description: Default is "1". Set to "0" to allow access without a password.
-                        enum:
-                        - '0'
-                        - '1'
-                      - type: boolean
-                        description: A flag indicating whether or not a password is required.
-                        examples:
-                        - false
+                      description: A flag indicating whether or not a password is required. Defaults to true.
+                      type: boolean
+                      examples:
+                      - false
                     canShare:
-                      unevaluatedProperties: false
-                      x-wistia-mcp-type: boolean
-                      oneOf:
-                      - type: string
-                        description: Default is "0". Set to "1" to allow the user to share the folder with others.
-                        enum:
-                        - '0'
-                        - '1'
-                      - type: boolean
-                        description: Whether the user is allowed to share the folder with others.
-                        examples:
-                        - false
+                      description: Whether the user is allowed to share the folder with others. Defaults to false.
+                      type: boolean
+                      examples:
+                      - false
                     canDownload:
-                      unevaluatedProperties: false
-                      x-wistia-mcp-type: boolean
-                      oneOf:
-                      - type: string
-                        description: Default is "0". Set to "1" to allow the user to download files from the folder.
-                        enum:
-                        - '0'
-                        - '1'
-                      - type: boolean
-                        description: Whether the user is allowed to download files from the folder.
-                        examples:
-                        - false
+                      description: Whether the user is allowed to download files from the folder. Defaults to false.
+                      type: boolean
+                      examples:
+                      - false
                     canUpload:
-                      unevaluatedProperties: false
-                      x-wistia-mcp-type: boolean
-                      oneOf:
-                      - type: string
-                        description: Default is "0". Set to "1" to allow the user to upload files to the folder.
-                        enum:
-                        - '0'
-                        - '1'
-                      - type: boolean
-                        description: Whether the user is allowed to upload files to the folder.
-                        examples:
-                        - false
+                      description: Whether the user is allowed to upload files to the folder. Defaults to false.
+                      type: boolean
+                      examples:
+                      - false
                     sendEmailNotification:
                       description: Deprecated! Email notifications are always sent now.
                       type: string
@@ -406,11 +396,6 @@ paths:
                 properties:
                   project:
                     description: The URL of the folder that was shared.
-                    type: string
-                    format: uri
-                    examples:
-                    - http://myaccount.wistia.com/folders/13
-                  folder:
                     type: string
                     format: uri
                     examples:
@@ -527,6 +512,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '500':
           description: Internal server error
           content:
@@ -543,15 +540,16 @@ paths:
       - Folder Sharings
       security:
       - BearerAuth: []
-    servers:
-    - url: https://api.wistia.com/modern
+      operationId: postFoldersByFolderIdSharings
+      x-operation-id-source: derived
   /folders/{folderId}/sharings/{sharingId}:
     get:
+      x-wistia-mcp-ignore: true
       summary: Show Folder Sharing
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: get
       description: 'Retrieves the details of a specific sharing object for a given folder.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -559,11 +557,7 @@ paths:
 
         Read all data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       parameters:
       - name: folderId
         in: path
@@ -712,12 +706,23 @@ paths:
       - Folder Sharings
       security:
       - BearerAuth: []
+      operationId: getFoldersByFolderIdSharingsBySharingId
+      x-operation-id-source: derived
     put:
       summary: Update Folder Sharing
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool modifies an existing folder sharing in the account.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: Updating replaces existing values and the previous data cannot be recovered.
+        idempotent_hint: true
+        idempotent_hint_justification: Re-sending the same update with identical attributes leaves the resource in the same state, so repeating the request has no additional effect.
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: update
       description: 'Updates a sharing on a folder.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -725,9 +730,9 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
+        ```'
+      x-wistia-mcp-tool-name: update-folder-sharing
+      x-wistia-mcp-description: 'Update, edit, or change a folder sharing — modify a contact''s or contact group''s access/permission on a folder (previously called a "project"). Use this when someone wants to change, edit, or update an existing folder sharing or access permission. Use create-folder-sharing to grant new access, get-folder-sharings to list current sharings, or delete-folder-sharing to revoke access.
 
         '
       parameters:
@@ -901,12 +906,23 @@ paths:
       - Folder Sharings
       security:
       - BearerAuth: []
+      operationId: putFoldersByFolderIdSharingsBySharingId
+      x-operation-id-source: derived
     delete:
       summary: Delete Folder Sharing
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool deletes a folder sharing from the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool permanently deletes the folder sharing and cannot be undone.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-speakeasy-group: folderSharings
+      x-speakeasy-name-override: delete
       description: 'Deletes a sharing on a folder.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -914,9 +930,9 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
+        ```'
+      x-wistia-mcp-tool-name: delete-folder-sharing
+      x-wistia-mcp-description: 'Delete a folder sharing — remove or revoke a contact''s or contact group''s access to a folder (previously called a "project"). Use this when someone wants to unshare a folder, revoke access, or remove a person or group''s permission on a folder. Use get-folder-sharings to list current sharings, create-folder-sharing to grant access, or update-folder-sharing to change a sharing instead of removing it.
 
         '
       parameters:
@@ -1067,13 +1083,57 @@ paths:
       - Folder Sharings
       security:
       - BearerAuth: []
-    servers:
-    - url: https://api.wistia.com/modern
+      operationId: deleteFoldersByFolderIdSharingsBySharingId
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
-x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
-- wistia-data-api-modern-edge-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

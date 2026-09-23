@@ -25,9 +25,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: page
         in: query
@@ -105,6 +103,8 @@ paths:
       - Live Stream Events
       security:
       - BearerAuth: []
+      operationId: getLiveStreamEvents
+      x-operation-id-source: derived
     post:
       summary: Live Stream Event Create
       description: 'Create a new live stream event. The event will be created synchronously and return the event details with audience and host links.
@@ -126,9 +126,7 @@ paths:
 
         ## Feature Access
 
-        This endpoint requires the live streaming feature to be enabled on your account plan.
-
-        '
+        This endpoint requires the live streaming feature to be enabled on your account plan.'
       requestBody:
         required: true
         content:
@@ -194,6 +192,8 @@ paths:
       - Live Stream Events
       security:
       - BearerAuth: []
+      operationId: postLiveStreamEvents
+      x-operation-id-source: derived
   /live_stream_events/{id}:
     get:
       summary: Live Stream Event Show
@@ -210,9 +210,7 @@ paths:
 
         Read all folder and media data
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: id
         in: path
@@ -248,6 +246,8 @@ paths:
       - Live Stream Events
       security:
       - BearerAuth: []
+      operationId: getLiveStreamEventsById
+      x-operation-id-source: derived
     put:
       summary: Live Stream Event Update
       description: 'Update an existing live stream event.
@@ -259,9 +259,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: id
         in: path
@@ -317,6 +315,8 @@ paths:
       - Live Stream Events
       security:
       - BearerAuth: []
+      operationId: putLiveStreamEventsById
+      x-operation-id-source: derived
     delete:
       summary: Live Stream Event Delete
       description: 'Delete an existing live stream event.
@@ -328,9 +328,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       parameters:
       - name: id
         in: path
@@ -366,59 +364,10 @@ paths:
       - Live Stream Events
       security:
       - BearerAuth: []
+      operationId: deleteLiveStreamEventsById
+      x-operation-id-source: derived
 components:
-  responses:
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
   schemas:
-    UpdateLiveStreamEvent:
-      type: object
-      properties:
-        live_stream_event:
-          type: object
-          properties:
-            title:
-              description: The title of the live stream event
-              type: string
-              examples:
-              - Updated Event Title
-            description:
-              description: The description of the live stream event
-              type: string
-              examples:
-              - Updated event description
-            scheduled_for:
-              description: The scheduled start time in W3C format with timezone
-              type: string
-              format: date-time
-              examples:
-              - '2024-03-20T15:30:00-05:00'
-            event_duration:
-              description: Duration of the event in minutes (minimum 15)
-              type: integer
-              examples:
-              - 90
-              minimum: 15
     CreateLiveStreamEvent:
       type: object
       properties:
@@ -530,6 +479,57 @@ components:
       - audience_link
       - host_link
       - panelist_link
+    UpdateLiveStreamEvent:
+      type: object
+      properties:
+        live_stream_event:
+          type: object
+          properties:
+            title:
+              description: The title of the live stream event
+              type: string
+              examples:
+              - Updated Event Title
+            description:
+              description: The description of the live stream event
+              type: string
+              examples:
+              - Updated event description
+            scheduled_for:
+              description: The scheduled start time in W3C format with timezone
+              type: string
+              format: date-time
+              examples:
+              - '2024-03-20T15:30:00-05:00'
+            event_duration:
+              description: Duration of the event in minutes (minimum 15)
+              type: integer
+              examples:
+              - 90
+              minimum: 15
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http

@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Background Job Status API
   version: '1.0'
-  description: 'Operations tagged Background Job Status across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Background Job Status across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -14,10 +14,21 @@ paths:
   /background_job_status/{backgroundJobStatusId}:
     get:
       summary: Show Background Job Status
+      x-wistia-mcp-ignore: true
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads background job status from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: backgroundJobStatus
+      x-speakeasy-name-override: get
+      x-cli-topic-override: jobs
       description: 'Retrieves the status of a background job.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -25,18 +36,24 @@ paths:
 
         Read all data
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: show-background-job-status
+      x-wistia-mcp-description: 'Poll, check, or get the status and progress of an asynchronous background job by its
 
-        <!--- /HIDE-MCP -->
+        job id, to see whether it is still running, succeeded, or failed. Use this when someone
+
+        wants to track an async operation: poll a job started by tools like import-media-from-url,
+
+        bulk-copy-media, archive-media, or remix operations until it completes.
 
         '
       parameters:
       - name: backgroundJobStatusId
         in: path
-        description: The numeric ID of the background job
+        description: The hashed ID or numeric ID of the background job
         required: true
         schema:
-          type: integer
+          type: string
       responses:
         '200':
           description: OK
@@ -48,27 +65,127 @@ paths:
                 properties:
                   background_job_status:
                     unevaluatedProperties: false
-                    type: object
-                    description: 'A background job keeps track of the progress of an asynchronous task, e.g
+                    allOf:
+                    - type: object
+                      description: 'A background job keeps track of the progress of an asynchronous task, e.g
 
-                      bulk archiving media, translating media, etc.
+                        bulk archiving media, translating media, etc.
 
-                      '
-                    properties:
-                      id:
-                        description: The ID of the background job that's been queued for the request.
-                        type: integer
-                      status:
-                        description: The status of the background job that's been queued for the request.
-                        type: string
-                        enum:
-                        - queued
-                        - started
-                        - finished
-                        - failed
-                    required:
-                    - id
-                    - status
+                        '
+                      properties:
+                        id:
+                          description: The ID of the background job that's been queued for the request.
+                          type: integer
+                        hashed_id:
+                          description: The unguessable hashed ID of the background job. Prefer this over the numeric ID when polling for status.
+                          type: string
+                        status:
+                          description: The status of the background job that's been queued for the request.
+                          type: string
+                          enum:
+                          - queued
+                          - started
+                          - finished
+                          - failed
+                      required:
+                      - id
+                      - hashed_id
+                      - status
+                    - type: object
+                      properties:
+                        object:
+                          unevaluatedProperties: false
+                          description: 'The wrapped resource, present only when the job type carries typed
+
+                            poll content. Use `type` to discriminate which shape this is.
+
+                            '
+                          oneOf:
+                          - type: object
+                            description: 'Wire view of a bulk operation as it appears inside a background job status
+
+                              poll response. Discriminated by `type`.
+
+                              '
+                            unevaluatedProperties: false
+                            properties:
+                              type:
+                                type: string
+                                description: Discriminator identifying the wrapped resource type.
+                                enum:
+                                - bulk_operation
+                              summary:
+                                type: object
+                                description: 'Aggregate counts for the bulk operation. While the operation is
+
+                                  running, `succeeded` and `failed` reflect progress so far.
+
+                                  '
+                                unevaluatedProperties: false
+                                properties:
+                                  total:
+                                    type: integer
+                                    description: The total number of actions in the operation.
+                                  succeeded:
+                                    type: integer
+                                    description: The number of actions that have completed successfully.
+                                  failed:
+                                    type: integer
+                                    description: The number of actions that have failed.
+                                required:
+                                - total
+                                - succeeded
+                                - failed
+                              results:
+                                type: array
+                                description: 'Per-action results, in submission order. Empty until actions begin
+
+                                  completing.
+
+                                  '
+                                items:
+                                  type: object
+                                  unevaluatedProperties: false
+                                  properties:
+                                    position:
+                                      type: integer
+                                      description: The zero-based index of the action within the submitted batch.
+                                    operation:
+                                      type: string
+                                      description: The operation that was performed.
+                                      enum:
+                                      - create
+                                      - update
+                                      - delete
+                                      - move
+                                    resource_type:
+                                      type: string
+                                      description: The type of resource the action operated on.
+                                    id:
+                                      type: string
+                                      description: 'The hashed ID of the affected record. For successful creates this
+
+                                        is the newly created record''s ID. Absent when a create fails
+
+                                        before a record exists.
+
+                                        '
+                                    status:
+                                      type: string
+                                      description: The outcome of the action.
+                                      enum:
+                                      - succeeded
+                                      - failed
+                                    error:
+                                      type: string
+                                      description: The failure reason. Only present for failed actions.
+                                  required:
+                                  - position
+                                  - status
+                            required:
+                            - type
+                            - summary
+                            - results
                 required:
                 - background_job_status
         '401':
@@ -109,34 +226,11 @@ paths:
       - Background Job Status
       security:
       - BearerAuth: []
+      operationId: getBackgroundJobStatusByBackgroundJobStatusId
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
 components:
-  responses:
-    404-2:
-      description: Resource not found
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
   schemas:
     BackgroundJobStatus:
       type: object
@@ -156,11 +250,82 @@ components:
       required:
       - id
       - status
+  responses:
+    404-2:
+      description: Resource not found
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

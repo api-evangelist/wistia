@@ -2,7 +2,7 @@ openapi: 3.2.0
 info:
   title: Wistia Localizations API
   version: '1.0'
-  description: 'Operations tagged Localizations across 3 of this provider''s published API definitions: wistia-data-api-2026-01-openapi.yml, wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
+  description: 'Operations tagged Localizations across 2 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
@@ -14,10 +14,19 @@ paths:
   /medias/{mediaHashedId}/localizations:
     get:
       summary: List Localizations
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads localizations from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: localizations
+      x-speakeasy-name-override: list
       description: 'Lists all the localizations for a media.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -25,9 +34,17 @@ paths:
 
         Read all data
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: gets-localizations
+      x-wistia-mcp-description: 'List, get, or find all localizations (translated, language-specific / dubbed
 
-        <!--- /HIDE-MCP -->
+        versions) for a media, optionally including each one''s transcript. Use this
+
+        when someone wants to see which translated or localized language variants a
+
+        video has. Use show-localization for details on one, create-localization to
+
+        add one, or delete-localization to remove one.
 
         '
       parameters:
@@ -52,123 +69,125 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  description: 'A localization is a translation of a media into another language.
+                  unevaluatedProperties: false
+                  allOf:
+                  - type: object
+                    description: 'A localization is a translation of a media into another language.
 
-                    '
-                  properties:
-                    hashed_id:
-                      description: A unique alphanumeric identifier for this localization.
-                      type: string
-                    language_code:
-                      description: A 3-character language code as specified by IETF.
-                      type: string
-                    iso639_2_language_code:
-                      description: A 2-character language code as specified by ISO-639–2.
-                      type: string
-                    language_name:
-                      description: The name of the language in English.
-                      type: string
-                    native_language_name:
-                      description: The name of the language in the language of the localization.
-                      type: string
-                    created_at:
-                      description: The date when the localization was created.
-                      type: string
-                      format: date-time
-                    updated_at:
-                      description: The date when the localization was last updated.
-                      type: string
-                      format: date-time
-                    ordered_at:
-                      description: The date when the localization was ordered.
-                      type:
-                      - string
-                      - 'null'
-                      format: date-time
-                    enabled_at:
-                      description: The date when the localization was enabled.
-                      type:
-                      - string
-                      - 'null'
-                      format: date-time
-                    enabled:
-                      description: Whether or not the localization is enabled.
-                      type: boolean
-                    source_media:
-                      unevaluatedProperties: false
-                      type: object
-                      description: The media that the localization is associated with.
-                      properties:
-                        hashed_id:
-                          description: A unique alphanumeric identifier for this media.
-                          type: string
-                        name:
-                          description: The name of the media.
-                          type: string
-                        duration:
-                          description: The duration of the media in seconds.
-                          type: number
-                        created_at:
-                          description: The date when the media was created.
-                          type: string
-                          format: date-time
-                        updated_at:
-                          description: The date when the media was last updated.
-                          type: string
-                          format: date-time
-                      required:
-                      - hashed_id
-                      - name
-                      - duration
-                      - created_at
-                      - updated_at
-                    transcript:
-                      unevaluatedProperties: false
-                      type:
-                      - object
-                      - 'null'
-                      description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
-                      properties:
-                        hashed_id:
-                          description: A unique alphanumeric identifier for this transcript.
-                          type: string
-                        language_name:
-                          description: The name of the language in English.
-                          type: string
-                        native_language_name:
-                          description: The name of the language in the language of the localization.
-                          type: string
-                        text:
-                          description: The text of the transcript.
-                          type: string
-                        created_at:
-                          description: The date when the transcript was created.
-                          type: string
-                          format: date-time
-                        updated_at:
-                          description: The date when the transcript was last updated.
-                          type: string
-                          format: date-time
-                      required:
-                      - hashed_id
-                      - language_name
-                      - native_language_name
-                      - text
-                      - created_at
-                      - updated_at
-                  required:
-                  - hashed_id
-                  - language_code
-                  - iso639_2_language_code
-                  - language_name
-                  - native_language_name
-                  - created_at
-                  - updated_at
-                  - ordered_at
-                  - enabled_at
-                  - enabled
-                  - source_media
+                      '
+                    properties:
+                      hashed_id:
+                        description: A unique alphanumeric identifier for this localization.
+                        type: string
+                      language_code:
+                        description: A 3-character language code as specified by IETF.
+                        type: string
+                      iso639_2_language_code:
+                        description: A 2-character language code as specified by ISO-639–2.
+                        type: string
+                      language_name:
+                        description: The name of the language in English.
+                        type: string
+                      native_language_name:
+                        description: The name of the language in the language of the localization.
+                        type: string
+                      created_at:
+                        description: The date when the localization was created.
+                        type: string
+                        format: date-time
+                      updated_at:
+                        description: The date when the localization was last updated.
+                        type: string
+                        format: date-time
+                      ordered_at:
+                        description: The date when the localization was ordered.
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      enabled_at:
+                        description: The date when the localization was enabled.
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      enabled:
+                        description: Whether or not the localization is enabled.
+                        type: boolean
+                      source_media:
+                        unevaluatedProperties: false
+                        type: object
+                        description: The media that the localization is associated with.
+                        properties:
+                          hashed_id:
+                            description: A unique alphanumeric identifier for this media.
+                            type: string
+                          name:
+                            description: The name of the media.
+                            type: string
+                          duration:
+                            description: The duration of the media in seconds.
+                            type: number
+                          created_at:
+                            description: The date when the media was created.
+                            type: string
+                            format: date-time
+                          updated_at:
+                            description: The date when the media was last updated.
+                            type: string
+                            format: date-time
+                        required:
+                        - hashed_id
+                        - name
+                        - duration
+                        - created_at
+                        - updated_at
+                      transcript:
+                        unevaluatedProperties: false
+                        type:
+                        - object
+                        - 'null'
+                        description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
+                        properties:
+                          hashed_id:
+                            description: A unique alphanumeric identifier for this transcript.
+                            type: string
+                          language_name:
+                            description: The name of the language in English.
+                            type: string
+                          native_language_name:
+                            description: The name of the language in the language of the localization.
+                            type: string
+                          text:
+                            description: The text of the transcript.
+                            type: string
+                          created_at:
+                            description: The date when the transcript was created.
+                            type: string
+                            format: date-time
+                          updated_at:
+                            description: The date when the transcript was last updated.
+                            type: string
+                            format: date-time
+                        required:
+                        - hashed_id
+                        - language_name
+                        - native_language_name
+                        - text
+                        - created_at
+                        - updated_at
+                    required:
+                    - hashed_id
+                    - language_code
+                    - iso639_2_language_code
+                    - language_name
+                    - native_language_name
+                    - created_at
+                    - updated_at
+                    - ordered_at
+                    - enabled_at
+                    - enabled
+                    - source_media
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -217,19 +236,27 @@ paths:
       - Localizations
       security:
       - BearerAuth: []
+      operationId: getMediasByMediaHashedIdLocalizations
+      x-operation-id-source: derived
     post:
       summary: Create Localization
-      x-wistia-is-purchase: true
       x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool creates a new localization for a media, which modifies the account.
         open_world_hint: true
+        open_world_hint_justification: This tool calls an external dubbing service to produce the localized media.
         destructive_hint: true
+        destructive_hint_justification: Creating a localization orders a dubbed video from a third-party service and incurs a charge. The charge cannot be undone.
+        idempotent_hint: false
+        idempotent_hint_justification: Each call attempts to create an additional resource, so repeating the request may create duplicates.
+      x-wistia-is-purchase: true
+      x-speakeasy-group: localizations
+      x-speakeasy-name-override: create
       description: 'Creates a new localization.
 
 
         Creating a localization incurs a charge on your account.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -237,9 +264,21 @@ paths:
 
         Read, update & delete anything
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: create-localization
+      x-wistia-mcp-description: 'Create, add, or order a localization: a translated, language-specific
 
-        <!--- /HIDE-MCP -->
+        (dubbed) version of a media in a chosen output language. This incurs a
+
+        charge on the account (it orders a dubbed video from a third-party service)
+
+        and is processed asynchronously. Use this when someone wants to translate or
+
+        produce a different-language variant of a video. Use gets-localizations to
+
+        list a media''s localizations, show-localization for one, or delete-localization
+
+        to remove one. For subtitle tracks instead, see create-captions.
 
         '
       parameters:
@@ -418,6 +457,10 @@ paths:
                       format: date-time
                   required:
                   - auto_enable_dubbing
+                  - expected_billed_minutes
+                  - expected_billed_price_per_minute
+                  - expected_billed_price
+                  - billed_at
         '400':
           description: Bad request
           content:
@@ -456,6 +499,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Resource not found
           content:
@@ -495,15 +550,26 @@ paths:
       - Localizations
       security:
       - BearerAuth: []
+      operationId: postMediasByMediaHashedIdLocalizations
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
   /medias/{mediaHashedId}/localizations/{localizationHashedId}:
     get:
       summary: Show Localization
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads localization from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: localizations
+      x-speakeasy-name-override: get
       description: 'Obtain detailed information about a localization.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -511,9 +577,17 @@ paths:
 
         Read all data
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: show-localization
+      x-wistia-mcp-description: 'Show, get, or fetch detailed information about a single localization (a
 
-        <!--- /HIDE-MCP -->
+        translated, language-specific / dubbed version of a media) by its hashed ID,
+
+        optionally including its transcript. Use this when someone wants details on
+
+        one localized or translated variant of a video. Use gets-localizations to
+
+        list all of a media''s localizations, or create-localization to add one.
 
         '
       parameters:
@@ -542,123 +616,125 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                description: 'A localization is a translation of a media into another language.
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  description: 'A localization is a translation of a media into another language.
 
-                  '
-                properties:
-                  hashed_id:
-                    description: A unique alphanumeric identifier for this localization.
-                    type: string
-                  language_code:
-                    description: A 3-character language code as specified by IETF.
-                    type: string
-                  iso639_2_language_code:
-                    description: A 2-character language code as specified by ISO-639–2.
-                    type: string
-                  language_name:
-                    description: The name of the language in English.
-                    type: string
-                  native_language_name:
-                    description: The name of the language in the language of the localization.
-                    type: string
-                  created_at:
-                    description: The date when the localization was created.
-                    type: string
-                    format: date-time
-                  updated_at:
-                    description: The date when the localization was last updated.
-                    type: string
-                    format: date-time
-                  ordered_at:
-                    description: The date when the localization was ordered.
-                    type:
-                    - string
-                    - 'null'
-                    format: date-time
-                  enabled_at:
-                    description: The date when the localization was enabled.
-                    type:
-                    - string
-                    - 'null'
-                    format: date-time
-                  enabled:
-                    description: Whether or not the localization is enabled.
-                    type: boolean
-                  source_media:
-                    unevaluatedProperties: false
-                    type: object
-                    description: The media that the localization is associated with.
-                    properties:
-                      hashed_id:
-                        description: A unique alphanumeric identifier for this media.
-                        type: string
-                      name:
-                        description: The name of the media.
-                        type: string
-                      duration:
-                        description: The duration of the media in seconds.
-                        type: number
-                      created_at:
-                        description: The date when the media was created.
-                        type: string
-                        format: date-time
-                      updated_at:
-                        description: The date when the media was last updated.
-                        type: string
-                        format: date-time
-                    required:
-                    - hashed_id
-                    - name
-                    - duration
-                    - created_at
-                    - updated_at
-                  transcript:
-                    unevaluatedProperties: false
-                    type:
-                    - object
-                    - 'null'
-                    description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
-                    properties:
-                      hashed_id:
-                        description: A unique alphanumeric identifier for this transcript.
-                        type: string
-                      language_name:
-                        description: The name of the language in English.
-                        type: string
-                      native_language_name:
-                        description: The name of the language in the language of the localization.
-                        type: string
-                      text:
-                        description: The text of the transcript.
-                        type: string
-                      created_at:
-                        description: The date when the transcript was created.
-                        type: string
-                        format: date-time
-                      updated_at:
-                        description: The date when the transcript was last updated.
-                        type: string
-                        format: date-time
-                    required:
-                    - hashed_id
-                    - language_name
-                    - native_language_name
-                    - text
-                    - created_at
-                    - updated_at
-                required:
-                - hashed_id
-                - language_code
-                - iso639_2_language_code
-                - language_name
-                - native_language_name
-                - created_at
-                - updated_at
-                - ordered_at
-                - enabled_at
-                - enabled
-                - source_media
+                    '
+                  properties:
+                    hashed_id:
+                      description: A unique alphanumeric identifier for this localization.
+                      type: string
+                    language_code:
+                      description: A 3-character language code as specified by IETF.
+                      type: string
+                    iso639_2_language_code:
+                      description: A 2-character language code as specified by ISO-639–2.
+                      type: string
+                    language_name:
+                      description: The name of the language in English.
+                      type: string
+                    native_language_name:
+                      description: The name of the language in the language of the localization.
+                      type: string
+                    created_at:
+                      description: The date when the localization was created.
+                      type: string
+                      format: date-time
+                    updated_at:
+                      description: The date when the localization was last updated.
+                      type: string
+                      format: date-time
+                    ordered_at:
+                      description: The date when the localization was ordered.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                    enabled_at:
+                      description: The date when the localization was enabled.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                    enabled:
+                      description: Whether or not the localization is enabled.
+                      type: boolean
+                    source_media:
+                      unevaluatedProperties: false
+                      type: object
+                      description: The media that the localization is associated with.
+                      properties:
+                        hashed_id:
+                          description: A unique alphanumeric identifier for this media.
+                          type: string
+                        name:
+                          description: The name of the media.
+                          type: string
+                        duration:
+                          description: The duration of the media in seconds.
+                          type: number
+                        created_at:
+                          description: The date when the media was created.
+                          type: string
+                          format: date-time
+                        updated_at:
+                          description: The date when the media was last updated.
+                          type: string
+                          format: date-time
+                      required:
+                      - hashed_id
+                      - name
+                      - duration
+                      - created_at
+                      - updated_at
+                    transcript:
+                      unevaluatedProperties: false
+                      type:
+                      - object
+                      - 'null'
+                      description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
+                      properties:
+                        hashed_id:
+                          description: A unique alphanumeric identifier for this transcript.
+                          type: string
+                        language_name:
+                          description: The name of the language in English.
+                          type: string
+                        native_language_name:
+                          description: The name of the language in the language of the localization.
+                          type: string
+                        text:
+                          description: The text of the transcript.
+                          type: string
+                        created_at:
+                          description: The date when the transcript was created.
+                          type: string
+                          format: date-time
+                        updated_at:
+                          description: The date when the transcript was last updated.
+                          type: string
+                          format: date-time
+                      required:
+                      - hashed_id
+                      - language_name
+                      - native_language_name
+                      - text
+                      - created_at
+                      - updated_at
+                  required:
+                  - hashed_id
+                  - language_code
+                  - iso639_2_language_code
+                  - language_name
+                  - native_language_name
+                  - created_at
+                  - updated_at
+                  - ordered_at
+                  - enabled_at
+                  - enabled
+                  - source_media
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -707,12 +783,23 @@ paths:
       - Localizations
       security:
       - BearerAuth: []
+      operationId: getMediasByMediaHashedIdLocalizationsByLocalizationHashedId
+      x-operation-id-source: derived
     delete:
       summary: Delete Localization
+      x-wistia-mcp-annotations:
+        read_only_hint: false
+        read_only_hint_justification: This tool deletes a localization from the account, which modifies data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only operates on records inside the account and does not reach external services.
+        destructive_hint: true
+        destructive_hint_justification: This tool permanently deletes the localization and cannot be undone.
+        idempotent_hint: true
+        idempotent_hint_justification: Deleting a resource that is already deleted has no additional effect, so the request can be safely repeated.
+      x-speakeasy-group: localizations
+      x-speakeasy-name-override: delete
       description: 'Deletes a localization.
 
-
-        <!--- HIDE-MCP -->
 
         ## Requires api token with one of the following permissions
 
@@ -720,9 +807,15 @@ paths:
 
         Read, update & delete anything
 
-        ```
+        ```'
+      x-wistia-mcp-tool-name: delete-localization
+      x-wistia-mcp-description: 'Delete or remove a localization (a translated, language-specific / dubbed
 
-        <!--- /HIDE-MCP -->
+        version of a media) by its hashed ID. Use this when someone wants to remove
+
+        a localized or translated variant of a video. Use create-localization to
+
+        add one, gets-localizations to list them, or show-localization to view one.
 
         '
       parameters:
@@ -744,123 +837,125 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                description: 'A localization is a translation of a media into another language.
+                unevaluatedProperties: false
+                allOf:
+                - type: object
+                  description: 'A localization is a translation of a media into another language.
 
-                  '
-                properties:
-                  hashed_id:
-                    description: A unique alphanumeric identifier for this localization.
-                    type: string
-                  language_code:
-                    description: A 3-character language code as specified by IETF.
-                    type: string
-                  iso639_2_language_code:
-                    description: A 2-character language code as specified by ISO-639–2.
-                    type: string
-                  language_name:
-                    description: The name of the language in English.
-                    type: string
-                  native_language_name:
-                    description: The name of the language in the language of the localization.
-                    type: string
-                  created_at:
-                    description: The date when the localization was created.
-                    type: string
-                    format: date-time
-                  updated_at:
-                    description: The date when the localization was last updated.
-                    type: string
-                    format: date-time
-                  ordered_at:
-                    description: The date when the localization was ordered.
-                    type:
-                    - string
-                    - 'null'
-                    format: date-time
-                  enabled_at:
-                    description: The date when the localization was enabled.
-                    type:
-                    - string
-                    - 'null'
-                    format: date-time
-                  enabled:
-                    description: Whether or not the localization is enabled.
-                    type: boolean
-                  source_media:
-                    unevaluatedProperties: false
-                    type: object
-                    description: The media that the localization is associated with.
-                    properties:
-                      hashed_id:
-                        description: A unique alphanumeric identifier for this media.
-                        type: string
-                      name:
-                        description: The name of the media.
-                        type: string
-                      duration:
-                        description: The duration of the media in seconds.
-                        type: number
-                      created_at:
-                        description: The date when the media was created.
-                        type: string
-                        format: date-time
-                      updated_at:
-                        description: The date when the media was last updated.
-                        type: string
-                        format: date-time
-                    required:
-                    - hashed_id
-                    - name
-                    - duration
-                    - created_at
-                    - updated_at
-                  transcript:
-                    unevaluatedProperties: false
-                    type:
-                    - object
-                    - 'null'
-                    description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
-                    properties:
-                      hashed_id:
-                        description: A unique alphanumeric identifier for this transcript.
-                        type: string
-                      language_name:
-                        description: The name of the language in English.
-                        type: string
-                      native_language_name:
-                        description: The name of the language in the language of the localization.
-                        type: string
-                      text:
-                        description: The text of the transcript.
-                        type: string
-                      created_at:
-                        description: The date when the transcript was created.
-                        type: string
-                        format: date-time
-                      updated_at:
-                        description: The date when the transcript was last updated.
-                        type: string
-                        format: date-time
-                    required:
-                    - hashed_id
-                    - language_name
-                    - native_language_name
-                    - text
-                    - created_at
-                    - updated_at
-                required:
-                - hashed_id
-                - language_code
-                - iso639_2_language_code
-                - language_name
-                - native_language_name
-                - created_at
-                - updated_at
-                - ordered_at
-                - enabled_at
-                - enabled
-                - source_media
+                    '
+                  properties:
+                    hashed_id:
+                      description: A unique alphanumeric identifier for this localization.
+                      type: string
+                    language_code:
+                      description: A 3-character language code as specified by IETF.
+                      type: string
+                    iso639_2_language_code:
+                      description: A 2-character language code as specified by ISO-639–2.
+                      type: string
+                    language_name:
+                      description: The name of the language in English.
+                      type: string
+                    native_language_name:
+                      description: The name of the language in the language of the localization.
+                      type: string
+                    created_at:
+                      description: The date when the localization was created.
+                      type: string
+                      format: date-time
+                    updated_at:
+                      description: The date when the localization was last updated.
+                      type: string
+                      format: date-time
+                    ordered_at:
+                      description: The date when the localization was ordered.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                    enabled_at:
+                      description: The date when the localization was enabled.
+                      type:
+                      - string
+                      - 'null'
+                      format: date-time
+                    enabled:
+                      description: Whether or not the localization is enabled.
+                      type: boolean
+                    source_media:
+                      unevaluatedProperties: false
+                      type: object
+                      description: The media that the localization is associated with.
+                      properties:
+                        hashed_id:
+                          description: A unique alphanumeric identifier for this media.
+                          type: string
+                        name:
+                          description: The name of the media.
+                          type: string
+                        duration:
+                          description: The duration of the media in seconds.
+                          type: number
+                        created_at:
+                          description: The date when the media was created.
+                          type: string
+                          format: date-time
+                        updated_at:
+                          description: The date when the media was last updated.
+                          type: string
+                          format: date-time
+                      required:
+                      - hashed_id
+                      - name
+                      - duration
+                      - created_at
+                      - updated_at
+                    transcript:
+                      unevaluatedProperties: false
+                      type:
+                      - object
+                      - 'null'
+                      description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
+                      properties:
+                        hashed_id:
+                          description: A unique alphanumeric identifier for this transcript.
+                          type: string
+                        language_name:
+                          description: The name of the language in English.
+                          type: string
+                        native_language_name:
+                          description: The name of the language in the language of the localization.
+                          type: string
+                        text:
+                          description: The text of the transcript.
+                          type: string
+                        created_at:
+                          description: The date when the transcript was created.
+                          type: string
+                          format: date-time
+                        updated_at:
+                          description: The date when the transcript was last updated.
+                          type: string
+                          format: date-time
+                      required:
+                      - hashed_id
+                      - language_name
+                      - native_language_name
+                      - text
+                      - created_at
+                      - updated_at
+                  required:
+                  - hashed_id
+                  - language_code
+                  - iso639_2_language_code
+                  - language_name
+                  - native_language_name
+                  - created_at
+                  - updated_at
+                  - ordered_at
+                  - enabled_at
+                  - enabled
+                  - source_media
         '401':
           description: Unauthorized, invalid or missing token
           content:
@@ -881,6 +976,18 @@ paths:
                     type: string
                     examples:
                     - Invalid credentials.
+        '403':
+          description: Forbidden, token is valid but account does not have access to feature
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Webinars are not available on your current plan
         '404':
           description: Resource not found
           content:
@@ -909,6 +1016,8 @@ paths:
       - Localizations
       security:
       - BearerAuth: []
+      operationId: deleteMediasByMediaHashedIdLocalizationsByLocalizationHashedId
+      x-operation-id-source: derived
     servers:
     - url: https://api.wistia.com/modern
 components:
@@ -946,6 +1055,33 @@ components:
       - text
       - created_at
       - updated_at
+    SourceMedia:
+      type: object
+      description: The media that the localization is associated with.
+      properties:
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        name:
+          description: The name of the media.
+          type: string
+        duration:
+          description: The duration of the media in seconds.
+          type: number
+        created_at:
+          description: The date when the media was created.
+          type: string
+          format: date-time
+        updated_at:
+          description: The date when the media was last updated.
+          type: string
+          format: date-time
+      required:
+      - hashed_id
+      - name
+      - duration
+      - created_at
+      - updated_at
     LocalizationWithPurchaseData:
       allOf:
       - $ref: '#/components/schemas/Localization'
@@ -977,33 +1113,6 @@ components:
             format: date-time
         required:
         - auto_enable_dubbing
-    SourceMedia:
-      type: object
-      description: The media that the localization is associated with.
-      properties:
-        hashed_id:
-          description: A unique alphanumeric identifier for this media.
-          type: string
-        name:
-          description: The name of the media.
-          type: string
-        duration:
-          description: The duration of the media in seconds.
-          type: number
-        created_at:
-          description: The date when the media was created.
-          type: string
-          format: date-time
-        updated_at:
-          description: The date when the media was last updated.
-          type: string
-          format: date-time
-      required:
-      - hashed_id
-      - name
-      - duration
-      - created_at
-      - updated_at
     Localization:
       type: object
       properties:
@@ -1062,28 +1171,6 @@ components:
       - enabled
       - source_media
   responses:
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
     '500':
       description: Internal server error
       content:
@@ -1095,6 +1182,28 @@ components:
                 type: string
                 examples:
                 - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
     '400':
       description: Bad request
       content:
@@ -1112,6 +1221,52 @@ components:
       type: http
       scheme: bearer
 x-refined-from:
-- wistia-data-api-2026-01-openapi.yml
 - wistia-data-api-modern-edge-openapi.yml
 - wistia-data-api-v1-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar

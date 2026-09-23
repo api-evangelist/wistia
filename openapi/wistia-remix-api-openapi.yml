@@ -41,19 +41,13 @@ paths:
         to the source media''s folder.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       x-wistia-mcp-tool-name: create-remix
       x-wistia-mcp-description: 'Start, create, or generate a new AI video remix — an automated edit that
 
@@ -190,6 +184,8 @@ paths:
       - Remix
       security:
       - BearerAuth: []
+      operationId: postRemixes
+      x-operation-id-source: derived
   /remixes/{remixHashedId}:
     get:
       x-readme-hidden: true
@@ -208,19 +204,13 @@ paths:
         "edit_tree_generated", preview URLs are included in the response.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read all folder and media data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       x-wistia-mcp-tool-name: get-remix
       x-wistia-mcp-description: 'Get, show, check, or poll the status of an AI video remix job. Poll this after
 
@@ -342,6 +332,8 @@ paths:
       - Remix
       security:
       - BearerAuth: []
+      operationId: getRemixesByRemixHashedId
+      x-operation-id-source: derived
   /remixes/{remixHashedId}/continue:
     post:
       x-readme-hidden: true
@@ -369,19 +361,13 @@ paths:
         it defaults to the same folder as the previous remix version''s output.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       x-wistia-mcp-tool-name: continue-remix
       x-wistia-mcp-description: 'Continue, refine, or revise an existing AI video remix with new natural-language
 
@@ -515,6 +501,8 @@ paths:
       - Remix
       security:
       - BearerAuth: []
+      operationId: postRemixesByRemixHashedIdContinue
+      x-operation-id-source: derived
   /remixes/{remixHashedId}/export:
     post:
       x-readme-hidden: true
@@ -536,19 +524,13 @@ paths:
         If no folder_id is provided, the remix is exported to the source media''s folder.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read, update & delete anything
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       x-wistia-mcp-tool-name: export-remix
       x-wistia-mcp-description: 'Export, save, or render a finished AI video remix as a new media file in a
 
@@ -679,6 +661,8 @@ paths:
       - Remix
       security:
       - BearerAuth: []
+      operationId: postRemixesByRemixHashedIdExport
+      x-operation-id-source: derived
   /remix_account_status:
     get:
       x-readme-hidden: true
@@ -695,19 +679,13 @@ paths:
       description: 'Check the current account''s remix credit usage and limits.
 
 
-        <!--- HIDE-MCP -->
-
         ## Requires api token with one of the following permissions
 
         ```
 
         Read all folder and media data
 
-        ```
-
-        <!--- /HIDE-MCP -->
-
-        '
+        ```'
       x-wistia-mcp-tool-name: get-remix-account-status
       x-wistia-mcp-description: 'Check remaining AI video remix credits, quota, and balance for the account
 
@@ -777,6 +755,8 @@ paths:
       - Remix
       security:
       - BearerAuth: []
+      operationId: getRemixAccountStatus
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

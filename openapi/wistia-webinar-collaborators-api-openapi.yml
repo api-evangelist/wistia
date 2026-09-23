@@ -36,9 +36,7 @@ paths:
 
         Read all data
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: get-webinar-collaborators
       x-wistia-mcp-description: 'List, get, show, or browse the webinar collaborators — the contacts and contact groups who have been granted producer access to a webinar. Use this when someone wants to see who has access to produce a webinar, list producers, or find who a webinar is shared with, with optional sorting and pagination. Results are limited to collaborators the authenticated user is permitted to see: only account owners, managers, and the webinar''s producers can see the list. Use create-webinar-collaborator to grant access or delete-webinar-collaborator to revoke access.
 
@@ -284,6 +282,8 @@ paths:
       - Webinar Collaborators
       security:
       - BearerAuth: []
+      operationId: getWebinarsByWebinarIdCollaborators
+      x-operation-id-source: derived
     post:
       summary: Create Webinar Collaborator
       x-wistia-mcp-annotations:
@@ -306,9 +306,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: create-webinar-collaborator
       x-wistia-mcp-description: 'Create a webinar collaborator — invite a contact as a producer to a webinar. Use this when someone wants to share producer access to a webinar, give production access, or add a person to a webinar by specifying their email address. Viewers cannot be webinar collaborators. Use get-webinar-collaborators to list who has access to a webinar or delete-webinar-collaborator to revoke access.
 
@@ -469,6 +467,8 @@ paths:
       - Webinar Collaborators
       security:
       - BearerAuth: []
+      operationId: postWebinarsByWebinarIdCollaborators
+      x-operation-id-source: derived
   /webinars/{webinarId}/collaborators/{id}:
     delete:
       summary: Delete Webinar Collaborator
@@ -492,9 +492,7 @@ paths:
 
         Read, update & delete anything
 
-        ```
-
-        '
+        ```'
       x-wistia-mcp-tool-name: delete-webinar-collaborator
       x-wistia-mcp-description: 'Delete a webinar collaborator — revoke a contact''s producer access to a webinar. Use this when someone wants to remove a person''s access to produce a webinar, unshare a webinar, or revoke permissions. Use get-webinar-collaborators to list who has access to a webinar or create-webinar-collaborator to grant access.
 
@@ -630,6 +628,8 @@ paths:
       - Webinar Collaborators
       security:
       - BearerAuth: []
+      operationId: deleteWebinarsByWebinarIdCollaboratorsById
+      x-operation-id-source: derived
 components:
   securitySchemes:
     BearerAuth:

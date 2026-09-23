@@ -1,37 +1,639 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Wistia Data Account API
-  description: 'REST API providing programmatic access to medias, projects, channels, webinars,
-
-    captions, customizations, tags, folders, accounts, and allowed domains in a
-
-    Wistia account. Returns JSON over HTTPS.
-
-    '
+  title: Wistia Account API
   version: '1.0'
-  contact:
-    name: Wistia
-    url: https://docs.wistia.com/reference/getting-started-with-the-data-api
+  description: 'Operations tagged Account across 3 of this provider''s published API definitions: wistia-data-api-modern-edge-openapi.yml, wistia-data-api-v1-openapi.yml, wistia-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
+- url: https://api.wistia.com/modern
 - url: https://api.wistia.com/v1
-  description: Wistia Data API production server
-security:
-- bearerAuth: []
-- basicAuth: []
 tags:
 - name: Account
+  x-displayName: Account
 paths:
   /account:
     get:
-      tags:
-      - Account
-      summary: Retrieve account summary
-      operationId: getAccount
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
+      operationId: getAccountDetails
+      summary: Get Current Account
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads current account from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: account
+      x-speakeasy-name-override: get
+      description: 'Retrieves a summary of the Wistia account including account name, description, URL and counts of records.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        (any scope allowed)
+
+        ```'
+      x-wistia-mcp-tool-name: get-current-account
+      x-wistia-mcp-description: 'Get, show, or retrieve a profile summary of the current Wistia account: account name,
+
+        description, URL, settings, and counts of records. Use this when someone asks about
+
+        their account details, account info, account name, or who they are. For plan, quota,
+
+        and billing limits use get-account-usage; for the API token/credential use get-current-token.
+
+        '
       responses:
         '200':
-          description: OK
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'An account represents a customer at Wistia. Each account can own media, folders
+
+                  channels, etc.
+
+                  '
+                properties:
+                  id:
+                    description: Numeric id of the account
+                    type: integer
+                  name:
+                    description: Account name
+                    type: string
+                  url:
+                    description: Account’s main Wistia URL (e.g. http://brendan.wistia.com)
+                    type: string
+                  media_count:
+                    description: The total number of medias in this account
+                    type: integer
+                  video_limit:
+                    description: The account's video limit
+                    type:
+                    - integer
+                    - 'null'
+                  folder_count:
+                    description: The total number of folders in this account
+                    type: integer
+                  channel_count:
+                    description: The total number of channels in this account
+                    type: integer
+                required:
+                - id
+                - name
+                - url
+                - media_count
+                - video_limit
+                - folder_count
+                - channel_count
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Account
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /account_usage:
+    get:
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
+      operationId: getAccountUsage
+      summary: Get Account Usage
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads account usage from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: account
+      x-speakeasy-name-override: getUsage
+      description: 'Retrieves plan, usage, and limit information for the current account.
+
+
+        The response includes plan tier, upload eligibility, and links to billing pages.
+
+        Usage and limit details (media counts, storage, seats, bandwidth) are only visible
+
+        to account owners and managers — other contacts receive `null` for the `limits` field.
+
+
+        ## Requires api token with one of the following permissions
+
+        ```
+
+        (any scope allowed)
+
+        ```'
+      x-wistia-mcp-tool-name: get-account-usage
+      x-wistia-mcp-description: 'Get, show, or check the current account''s plan, usage, limits, and quota: plan tier,
+
+        billing details, upload eligibility, media counts, storage usage, seat/user usage
+
+        (billable users vs. seat limits), and bandwidth usage (how much of the plan is used).
+
+        Use this when someone asks about their plan, billing, quota, limits, remaining storage,
+
+        seats, users limit, bandwidth, or usage. For general account profile/name use
+
+        get-current-account.
+
+        '
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                description: 'Account usage and plan information, including storage, media, seat, and bandwidth limits.
+
+                  Fields under `limits` are only visible to account owners and managers.
+
+                  '
+                unevaluatedProperties: false
+                properties:
+                  plan:
+                    type: object
+                    description: The account's current plan information
+                    unevaluatedProperties: false
+                    properties:
+                      tier:
+                        description: 'The plan tier identifier. Common values include `free`, `starter`, `plus`,
+
+                          `pro`, `advanced`, `business`, `enterprise`. Legacy plans may use other
+
+                          tier names. Empty string if the account has no plan.
+
+                          '
+                        type: string
+                      name:
+                        description: Human-readable plan name
+                        type: string
+                      is_standard:
+                        description: Whether this is a 2026 storage-based plan (true) or a legacy media-count plan (false)
+                        type: boolean
+                      is_trial:
+                        description: Whether the account is currently on a trial
+                        type: boolean
+                      trial_expires_at:
+                        description: ISO 8601 timestamp when the trial expires, or null if not trialing
+                        type:
+                        - string
+                        - 'null'
+                    required:
+                    - tier
+                    - name
+                    - is_standard
+                    - is_trial
+                    - trial_expires_at
+                  can_upload:
+                    description: Whether the next upload will succeed. False when an inflexible media or storage limit has been reached.
+                    type: boolean
+                  upload_blocked_reason:
+                    description: 'The reason uploads are blocked, or null if uploads are allowed.
+
+                      Known values: `reached_media_limit`, `reached_storage_limit`.
+
+                      '
+                    type:
+                    - string
+                    - 'null'
+                  limits:
+                    description: 'Usage and limit data. Null when the authenticated contact does not have
+
+                      billing visibility (i.e. is not an account owner or manager).
+
+                      '
+                    type:
+                    - object
+                    - 'null'
+                    unevaluatedProperties: false
+                    properties:
+                      primary_resource:
+                        description: The primary resource type for this plan's limits — "storage" for standard plans, "media" for legacy plans
+                        type: string
+                        enum:
+                        - storage
+                        - media
+                      media:
+                        type: object
+                        description: Media count and limits
+                        unevaluatedProperties: false
+                        properties:
+                          count:
+                            description: Current number of media in the account
+                            type: integer
+                          flexible_limit:
+                            description: Soft media limit (overage billed). Null if no soft limit.
+                            type:
+                            - integer
+                            - 'null'
+                          inflexible_limit:
+                            description: Hard media limit (uploads blocked). Null if no hard limit.
+                            type:
+                            - integer
+                            - 'null'
+                        required:
+                        - count
+                        - flexible_limit
+                        - inflexible_limit
+                      storage:
+                        type: object
+                        description: Storage usage and limits in bytes (1 GB = 1,000,000,000 bytes)
+                        unevaluatedProperties: false
+                        properties:
+                          used_bytes:
+                            description: Current storage usage in bytes
+                            type: integer
+                          flexible_limit_bytes:
+                            description: Included storage limit in bytes. Null if unlimited.
+                            type:
+                            - integer
+                            - 'null'
+                          inflexible_limit_bytes:
+                            description: Hard storage cap in bytes. Null if no hard cap.
+                            type:
+                            - integer
+                            - 'null'
+                        required:
+                        - used_bytes
+                        - flexible_limit_bytes
+                        - inflexible_limit_bytes
+                      users:
+                        type: object
+                        description: Seat (user) usage and limits. Viewers are non-billable and excluded from the billable counts.
+                        unevaluatedProperties: false
+                        properties:
+                          billable_count:
+                            description: 'Current number of billable users (seats). For agency accounts this aggregates
+
+                              distinct users across the parent and team accounts — the count billing compares
+
+                              against `flexible_limit`. Excludes viewers.
+
+                              '
+                            type: integer
+                          account_billable_count:
+                            description: 'Billable users in this account only, the count compared against `inflexible_limit`
+
+                              when enforcing the hard seat limit. Matches `billable_count` for non-agency accounts.
+
+                              Excludes viewers.
+
+                              '
+                            type: integer
+                          viewers_count:
+                            description: Current number of viewer contacts, which are non-billable and don't count toward seat limits.
+                            type: integer
+                          flexible_limit:
+                            description: Included seats on flexible plans (additional seats billed as overage). Null if no soft limit.
+                            type:
+                            - integer
+                            - 'null'
+                          inflexible_limit:
+                            description: Hard seat limit (adding users blocked at the limit). Null if no hard limit.
+                            type:
+                            - integer
+                            - 'null'
+                        required:
+                        - billable_count
+                        - account_billable_count
+                        - viewers_count
+                        - flexible_limit
+                        - inflexible_limit
+                      bandwidth:
+                        type: object
+                        description: Bandwidth usage and limits for the current billing period, in bytes (1 GB = 1,000,000,000 bytes)
+                        unevaluatedProperties: false
+                        properties:
+                          used_bytes:
+                            description: Bandwidth used in the current billing period, in bytes
+                            type: integer
+                          limit_bytes:
+                            description: Bandwidth limit for the billing period in bytes. Null if unlimited.
+                            type:
+                            - integer
+                            - 'null'
+                          period:
+                            description: Whether the bandwidth allowance is tracked monthly or annually
+                            type: string
+                            enum:
+                            - monthly
+                            - annual
+                          resets_at:
+                            description: ISO 8601 timestamp when the bandwidth period resets, or null if unknown
+                            type:
+                            - string
+                            - 'null'
+                        required:
+                        - used_bytes
+                        - limit_bytes
+                        - period
+                        - resets_at
+                    required:
+                    - primary_resource
+                    - media
+                    - storage
+                    - users
+                    - bandwidth
+                  links:
+                    type: object
+                    description: URLs for plan, usage, and billing pages
+                    unevaluatedProperties: false
+                    properties:
+                      plans_url:
+                        description: URL to the account's plans page. Always present.
+                        type: string
+                      usage_url:
+                        description: URL to the account's usage page. Null for non-owner/manager contacts.
+                        type:
+                        - string
+                        - 'null'
+                      billing_url:
+                        description: URL to the account's billing page. Null for non-owner/manager contacts.
+                        type:
+                        - string
+                        - 'null'
+                    required:
+                    - plans_url
+                    - usage_url
+                    - billing_url
+                required:
+                - plan
+                - can_upload
+                - upload_blocked_reason
+                - limits
+                - links
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Account
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
+  /token:
+    get:
+      x-wistia-openai-ignore: true
+      x-wistia-anthropic-ignore: true
+      x-wistia-mcp-ignore-agent-chat: true
+      operationId: getTokenDetails
+      summary: Get Current Token
+      x-wistia-mcp-annotations:
+        read_only_hint: true
+        read_only_hint_justification: This tool only reads current token from the account and does not modify any data.
+        open_world_hint: false
+        open_world_hint_justification: This tool only queries records inside the account and does not reach external services.
+        destructive_hint: false
+        destructive_hint_justification: This tool is read-only and does not make any changes.
+        idempotent_hint: true
+        idempotent_hint_justification: Reading data does not change any state, so repeated calls have no additional effect.
+      x-speakeasy-group: account
+      x-speakeasy-name-override: getTokenDetails
+      x-cli-action-override: token
+      description: 'Retrieves a summary of the token used to make the API request. This endpoint can primarily be used to
+
+        debug permission issues with the API.'
+      x-wistia-mcp-tool-name: get-current-token
+      x-wistia-mcp-description: 'Get, show, or look up info about the API token, credential, or API key making the current
+
+        request, including its scope, permissions, and owner. Use this when someone asks who the
+
+        token belongs to, what scope or permissions the auth has, or to debug permission/authorization
+
+        issues. For account profile use get-current-account; for plan and limits use get-account-usage.
+
+        '
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                description: 'The token used to make the API request. This is primarily for debugging
+
+                  purposes. Sensitive data such as the token value is excluded.
+
+                  '
+                properties:
+                  type:
+                    description: The type of token used.
+                    type: string
+                    enum:
+                    - permanent
+                    - expiring
+                    - oauth
+                  application:
+                    unevaluatedProperties: false
+                    description: The application used by the token. Will be null if the token isn't an oauth token.
+                    oneOf:
+                    - type: object
+                      unevaluatedProperties: false
+                      properties:
+                        name:
+                          description: The name of the application.
+                          type: string
+                        scopes:
+                          description: The scopes of the application. These may be different than the token scope.
+                          type: array
+                          items:
+                            type: string
+                      required:
+                      - name
+                      - scopes
+                    - type: 'null'
+                  scopes:
+                    description: The scopes of the token.
+                    type: array
+                    items:
+                      type: string
+                  name:
+                    description: The name of the token. This only applies to permanent tokens.
+                    type:
+                    - string
+                    - 'null'
+                  expires_at:
+                    description: When the token expires. A null token means it never expires.
+                    type:
+                    - string
+                    - 'null'
+                    format: iso8601
+                required:
+                - type
+                - application
+                - scopes
+                - name
+        '401':
+          description: Unauthorized, invalid or missing token
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  code:
+                    description: A machine-readable identifier for the specific authorization failure.
+                    type: string
+                    enum:
+                    - unauthorized_credentials
+                    - account_inactive
+                    - unauthorized_scope
+                    - unauthorized_params
+                  error:
+                    type: string
+                    examples:
+                    - Invalid credentials.
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                unevaluatedProperties: false
+                type: object
+                properties:
+                  error:
+                    type: string
+                    examples:
+                    - Internal server error
+      tags:
+      - Account
+      security:
+      - BearerAuth: []
+    servers:
+    - url: https://api.wistia.com/modern
 components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          description: Numeric id of the account
+          type: integer
+        name:
+          description: Account name
+          type: string
+        url:
+          description: Account’s main Wistia URL (e.g. http://brendan.wistia.com)
+          type: string
+        mediaCount:
+          description: The total number of medias in this account
+          type: integer
+        videoLimit:
+          description: The account's video limit
+          type: integer
+        projectCount:
+          description: The total number of projects in this account
+          type: integer
+        channelCount:
+          description: The total number of channels in this account
+          type: integer
+      required:
+      - id
+      - name
+      - url
+      - mediaCount
+      - videoLimit
+      - projectCount
+      - channelCount
   securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
     bearerAuth:
       type: http
       scheme: bearer
@@ -40,3 +642,54 @@ components:
       type: http
       scheme: basic
       description: HTTP Basic authentication using the API token as the password
+x-refined-from:
+- wistia-data-api-modern-edge-openapi.yml
+- wistia-data-api-v1-openapi.yml
+- wistia-openapi.yml
+x-tagGroups:
+- name: Data API
+  tags:
+  - Media
+  - Customizations
+  - Captions
+  - Localizations
+  - Trims
+  - Extended Audio Descriptions
+  - Brands
+  - Tags
+  - Taggings
+  - Folders
+  - Folder Sharings
+  - Subfolders
+  - Channels
+  - Channel Collaborators
+  - Channel Episodes
+  - Webinars
+  - Webinar Collaborators
+  - Webinar Registrations
+  - Account
+  - Search
+  - Resource URLs
+  - Expiring Access Tokens
+  - Background Job Status
+  - Allowed Domains
+  - Remix
+  - Push Devices
+  - Deleted Media
+  - Review Bundles
+  - Share Links
+  - Bulk Actions
+  - Custom Metadata Field Definitions
+  - Custom Metadata Field Values
+- name: Stats API
+  tags:
+  - Stats:Account
+  - Stats:Events
+  - Stats:Media
+  - Stats:Projects
+  - Stats:Visitors
+- name: Analytics API
+  tags:
+  - Analytics:Account
+  - Analytics:Media
+  - Analytics:Webinar
