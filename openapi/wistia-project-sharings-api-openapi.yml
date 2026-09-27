@@ -268,6 +268,40 @@ paths:
       operationId: deleteProjectsByProjectIdSharingsBySharingId
       x-operation-id-source: derived
 components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   schemas:
     CreateProjectSharing:
       type: object
@@ -334,17 +368,24 @@ components:
           - with
       required:
       - sharing
-    CreateProjectSharingResponse:
+    UpdateSharingRequest:
       type: object
-      description: The response includes a link for the user to access the project.
       properties:
-        project:
-          type: string
-          format: uri
-          examples:
-          - http://myaccount.wistia.com/folders/13
         sharing:
-          $ref: '#/components/schemas/ProjectSharingSchema'
+          type: object
+          properties:
+            canShare:
+              description: Allow the user or group to share the project with others.
+              type: boolean
+            canDownload:
+              description: Allow the user or group to download media from the project.
+              type: boolean
+            canUpload:
+              description: Allow the user or group to upload media to the project.
+              type: boolean
+            isAdmin:
+              description: Give this user admin rights to the project.
+              type: boolean
     ProjectSharingSchema:
       type: object
       properties:
@@ -415,58 +456,17 @@ components:
       - canUpload
       - share
       - project
-    UpdateSharingRequest:
+    CreateProjectSharingResponse:
       type: object
+      description: The response includes a link for the user to access the project.
       properties:
+        project:
+          type: string
+          format: uri
+          examples:
+          - http://myaccount.wistia.com/folders/13
         sharing:
-          type: object
-          properties:
-            canShare:
-              description: Allow the user or group to share the project with others.
-              type: boolean
-            canDownload:
-              description: Allow the user or group to download media from the project.
-              type: boolean
-            canUpload:
-              description: Allow the user or group to upload media to the project.
-              type: boolean
-            isAdmin:
-              description: Give this user admin rights to the project.
-              type: boolean
-  responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
+          $ref: '#/components/schemas/ProjectSharingSchema'
   securitySchemes:
     BearerAuth:
       type: http

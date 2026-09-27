@@ -3217,13 +3217,15 @@ paths:
     - url: https://api.wistia.com/modern
 components:
   schemas:
-    MediaShow:
+    IncludesProject:
+      type: object
+      properties:
+        project:
+          $ref: '#/components/schemas/Project-2'
+    MediaCopy:
       allOf:
       - $ref: '#/components/schemas/MediaProperties'
       - $ref: '#/components/schemas/IncludesProject'
-      - $ref: '#/components/schemas/IncludesAssets'
-      - $ref: '#/components/schemas/IncludesSubfolder'
-      - $ref: '#/components/schemas/IncludesTags'
     IncludesTags:
       type: object
       properties:
@@ -3236,17 +3238,24 @@ components:
               name:
                 description: The display name of the tag.
                 type: string
-    IncludesSubfolder:
+    Project-2:
       type: object
       properties:
-        subfolder:
-          description: The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
-          allOf:
-          - $ref: '#/components/schemas/Subfolder'
-    MediaCopy:
-      allOf:
-      - $ref: '#/components/schemas/MediaProperties'
-      - $ref: '#/components/schemas/IncludesProject'
+        id:
+          description: A unique numeric identifier for the project within the system.
+          type: integer
+          examples:
+          - 22570
+        name:
+          description: The project’s display name.
+          type: string
+          examples:
+          - My Project Title
+        hashedId:
+          description: A private hashed id, uniquely identifying the project within the system.
+          type: string
+          examples:
+          - 4d23503f70
     Asset:
       type: object
       properties:
@@ -3270,38 +3279,61 @@ components:
 
             '
           type: string
+    Subfolder:
+      type: object
+      description: A subfolder within a project that contains media files.
+      properties:
+        hashed_id:
+          description: A unique alphanumeric identifier for this subfolder.
+          type: string
+          examples:
+          - abc123def4
+        name:
+          description: The display name of the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Marketing Videos
+        description:
+          description: A description for the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Collection of all marketing and promotional videos
+        position:
+          description: The position of this subfolder within its project, used for ordering.
+          type:
+          - integer
+          - 'null'
+          examples:
+          - 1
+        created:
+          description: The date when the subfolder was created.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-01-15T10:30:00+00:00'
+        updated:
+          description: The date when the subfolder was last modified.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-01-20T14:45:00+00:00'
+      required:
+      - hashed_id
+      - position
+      - created
+      - updated
     MediaUpdate:
       allOf:
       - $ref: '#/components/schemas/MediaProperties'
       - $ref: '#/components/schemas/IncludesTags'
-    IncludesProject:
-      type: object
-      properties:
-        project:
-          $ref: '#/components/schemas/Project-2'
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
-    MediaIndex:
-      allOf:
-      - $ref: '#/components/schemas/MediaProperties'
-      - $ref: '#/components/schemas/IncludesProject'
-      - $ref: '#/components/schemas/IncludesAssets'
-      - $ref: '#/components/schemas/IncludesSubfolder'
-      - $ref: '#/components/schemas/IncludesTags'
-      - type: object
-        properties:
-          cursor:
-            description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor_before` or `cursor_after` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if medias were fetched with `use_cursor`, or `cursor_before` or `cursor_after`.
-            type:
-            - string
-            - 'null'
     BackgroundJobStatus:
       type: object
       description: Status of the background job.
@@ -3320,6 +3352,51 @@ components:
       required:
       - id
       - status
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    MediaShow:
+      allOf:
+      - $ref: '#/components/schemas/MediaProperties'
+      - $ref: '#/components/schemas/IncludesProject'
+      - $ref: '#/components/schemas/IncludesAssets'
+      - $ref: '#/components/schemas/IncludesSubfolder'
+      - $ref: '#/components/schemas/IncludesTags'
+    IncludesSubfolder:
+      type: object
+      properties:
+        subfolder:
+          description: The subfolder (media group) in which the media appears. Null if the media is not in a subfolder.
+          allOf:
+          - $ref: '#/components/schemas/Subfolder'
+    MediaIndex:
+      allOf:
+      - $ref: '#/components/schemas/MediaProperties'
+      - $ref: '#/components/schemas/IncludesProject'
+      - $ref: '#/components/schemas/IncludesAssets'
+      - $ref: '#/components/schemas/IncludesSubfolder'
+      - $ref: '#/components/schemas/IncludesTags'
+      - type: object
+        properties:
+          cursor:
+            description: A cursor for stable pagination based on current `sort_by` order. You can pass this to `cursor_before` or `cursor_after` as a parameter to fetch the records before or after this record in the same sort order. This is only populated if medias were fetched with `use_cursor`, or `cursor_before` or `cursor_after`.
+            type:
+            - string
+            - 'null'
+    IncludesAssets:
+      type: object
+      properties:
+        assets:
+          description: An array of the assets available for this media.
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
     MediaProperties:
       type: object
       properties:
@@ -3386,83 +3463,6 @@ components:
           type: string
         thumbnail:
           $ref: '#/components/schemas/Thumbnail'
-    Subfolder:
-      type: object
-      description: A subfolder within a project that contains media files.
-      properties:
-        hashed_id:
-          description: A unique alphanumeric identifier for this subfolder.
-          type: string
-          examples:
-          - abc123def4
-        name:
-          description: The display name of the subfolder.
-          type:
-          - string
-          - 'null'
-          examples:
-          - Marketing Videos
-        description:
-          description: A description for the subfolder.
-          type:
-          - string
-          - 'null'
-          examples:
-          - Collection of all marketing and promotional videos
-        position:
-          description: The position of this subfolder within its project, used for ordering.
-          type:
-          - integer
-          - 'null'
-          examples:
-          - 1
-        created:
-          description: The date when the subfolder was created.
-          type:
-          - string
-          - 'null'
-          format: date-time
-          examples:
-          - '2024-01-15T10:30:00+00:00'
-        updated:
-          description: The date when the subfolder was last modified.
-          type:
-          - string
-          - 'null'
-          format: date-time
-          examples:
-          - '2024-01-20T14:45:00+00:00'
-      required:
-      - hashed_id
-      - position
-      - created
-      - updated
-    Project-2:
-      type: object
-      properties:
-        id:
-          description: A unique numeric identifier for the project within the system.
-          type: integer
-          examples:
-          - 22570
-        name:
-          description: The project’s display name.
-          type: string
-          examples:
-          - My Project Title
-        hashedId:
-          description: A private hashed id, uniquely identifying the project within the system.
-          type: string
-          examples:
-          - 4d23503f70
-    IncludesAssets:
-      type: object
-      properties:
-        assets:
-          description: An array of the assets available for this media.
-          type: array
-          items:
-            $ref: '#/components/schemas/Asset'
   responses:
     '500':
       description: Internal server error
@@ -3475,17 +3475,6 @@ components:
                 type: string
                 examples:
                 - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
     '404':
       description: Resource not found
       content:
@@ -3497,6 +3486,17 @@ components:
                 type: string
                 examples:
                 - Project with ID 'fakeid' not found.
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
     '400':
       description: Bad request
       content:

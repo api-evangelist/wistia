@@ -629,24 +629,6 @@ paths:
         '204':
           description: No Content
 components:
-  schemas:
-    AllowedDomain:
-      type: object
-      properties:
-        domain:
-          description: The allowed domain name.
-          type: string
-          examples:
-          - example.com
-        created_at:
-          description: The date that the allowed domain was originally created.
-          type: string
-          format: date-time
-          examples:
-          - '2010-08-13T18:47:39+00:00'
-      required:
-      - domain
-      - created_at
   responses:
     '401':
       description: Unauthorized, invalid or missing token
@@ -670,6 +652,24 @@ components:
                 type: string
                 examples:
                 - Internal server error
+  schemas:
+    AllowedDomain:
+      type: object
+      properties:
+        domain:
+          description: The allowed domain name.
+          type: string
+          examples:
+          - example.com
+        created_at:
+          description: The date that the allowed domain was originally created.
+          type: string
+          format: date-time
+          examples:
+          - '2010-08-13T18:47:39+00:00'
+      required:
+      - domain
+      - created_at
   securitySchemes:
     BearerAuth:
       type: http

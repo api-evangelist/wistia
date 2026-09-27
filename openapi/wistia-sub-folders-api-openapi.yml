@@ -1678,15 +1678,6 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/MediaProperties'
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
     Subfolder:
       type: object
       description: A subfolder within a project that contains media files.
@@ -1738,6 +1729,15 @@ components:
       - position
       - created
       - updated
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
     MediaProperties:
       type: object
       properties:

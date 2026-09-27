@@ -1654,6 +1654,29 @@ paths:
     - url: https://api.wistia.com/v1
       description: Wistia Data API production server
 components:
+  responses:
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
   schemas:
     Caption:
       type: object
@@ -1681,29 +1704,6 @@ components:
       - language
       - is_draft
       - id
-  responses:
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
   securitySchemes:
     BearerAuth:
       type: http

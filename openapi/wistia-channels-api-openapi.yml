@@ -4032,17 +4032,6 @@ paths:
       description: Wistia Data API production server
 components:
   responses:
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
     '401':
       description: Unauthorized, invalid or missing token
       content:
@@ -4065,6 +4054,17 @@ components:
                 type: string
                 examples:
                 - Internal server error
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
   schemas:
     Channel:
       type: object

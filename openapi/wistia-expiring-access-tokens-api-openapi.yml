@@ -161,43 +161,6 @@ paths:
     servers:
     - url: https://api.wistia.com/modern
 components:
-  schemas:
-    ExpiringAccessTokenResponse:
-      type: object
-      properties:
-        token:
-          description: A token which can be used to authorize requests to Wistia. Currently only for doing transcript embeds.
-          type: string
-      required:
-      - token
-    ExpiringAccessTokenInput:
-      type: object
-      properties:
-        expires_at:
-          description: an ISO8601 string of when the token will expire, defaults to two days from creation
-          type: string
-          format: iso8601
-        authorizations:
-          description: a list of authorizations the token will have
-          type: array
-          items:
-            type: object
-            properties:
-              type:
-                description: The type of object the permission is being performed on, only media is currently supported
-                type: string
-              id:
-                description: The hashed if of the object the permissions are being performed on.
-                type: string
-              permissions:
-                description: The types of permissions, currently only supports edit-transcripts
-                type: array
-                items:
-                  type: string
-            required:
-            - type
-            - id
-            - permissions
   responses:
     '500':
       description: Internal server error
@@ -240,6 +203,43 @@ components:
                 type: string
                 examples:
                 - Invalid credentials.
+  schemas:
+    ExpiringAccessTokenInput:
+      type: object
+      properties:
+        expires_at:
+          description: an ISO8601 string of when the token will expire, defaults to two days from creation
+          type: string
+          format: iso8601
+        authorizations:
+          description: a list of authorizations the token will have
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                description: The type of object the permission is being performed on, only media is currently supported
+                type: string
+              id:
+                description: The hashed if of the object the permissions are being performed on.
+                type: string
+              permissions:
+                description: The types of permissions, currently only supports edit-transcripts
+                type: array
+                items:
+                  type: string
+            required:
+            - type
+            - id
+            - permissions
+    ExpiringAccessTokenResponse:
+      type: object
+      properties:
+        token:
+          description: A token which can be used to authorize requests to Wistia. Currently only for doing transcript embeds.
+          type: string
+      required:
+      - token
   securitySchemes:
     BearerAuth:
       type: http

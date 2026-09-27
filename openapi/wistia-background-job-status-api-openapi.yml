@@ -251,8 +251,6 @@ components:
       - id
       - status
   responses:
-    404-2:
-      description: Resource not found
     '401':
       description: Unauthorized, invalid or missing token
       content:
@@ -275,6 +273,8 @@ components:
                 type: string
                 examples:
                 - Internal server error
+    404-2:
+      description: Resource not found
   securitySchemes:
     BearerAuth:
       type: http

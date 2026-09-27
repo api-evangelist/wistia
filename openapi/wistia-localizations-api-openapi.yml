@@ -1021,6 +1021,52 @@ paths:
     servers:
     - url: https://api.wistia.com/modern
 components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                description: Error message detailing the reason for the bad request.
+                type: string
+                examples:
+                - Bad request
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   schemas:
     LocalizationTranscript:
       type:
@@ -1055,64 +1101,6 @@ components:
       - text
       - created_at
       - updated_at
-    SourceMedia:
-      type: object
-      description: The media that the localization is associated with.
-      properties:
-        hashed_id:
-          description: A unique alphanumeric identifier for this media.
-          type: string
-        name:
-          description: The name of the media.
-          type: string
-        duration:
-          description: The duration of the media in seconds.
-          type: number
-        created_at:
-          description: The date when the media was created.
-          type: string
-          format: date-time
-        updated_at:
-          description: The date when the media was last updated.
-          type: string
-          format: date-time
-      required:
-      - hashed_id
-      - name
-      - duration
-      - created_at
-      - updated_at
-    LocalizationWithPurchaseData:
-      allOf:
-      - $ref: '#/components/schemas/Localization'
-      - type: object
-        properties:
-          auto_enable_dubbing:
-            description: Whether or not the dubbing will be automatically enabled when completed.
-            type: boolean
-          expected_billed_minutes:
-            description: The expected number of minutes that will be billed for the dubbing.
-            type:
-            - number
-            - 'null'
-          expected_billed_price_per_minute:
-            description: The expected price per minute that will be billed for the dubbing.
-            type:
-            - number
-            - 'null'
-          expected_billed_price:
-            description: The expected total price that will be billed for the dubbing.
-            type:
-            - number
-            - 'null'
-          billed_at:
-            description: The date when the dubbing was billed.
-            type:
-            - string
-            - 'null'
-            format: date-time
-        required:
-        - auto_enable_dubbing
     Localization:
       type: object
       properties:
@@ -1170,52 +1158,64 @@ components:
       - enabled_at
       - enabled
       - source_media
-  responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
-    '400':
-      description: Bad request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                description: Error message detailing the reason for the bad request.
-                type: string
-                examples:
-                - Bad request
+    LocalizationWithPurchaseData:
+      allOf:
+      - $ref: '#/components/schemas/Localization'
+      - type: object
+        properties:
+          auto_enable_dubbing:
+            description: Whether or not the dubbing will be automatically enabled when completed.
+            type: boolean
+          expected_billed_minutes:
+            description: The expected number of minutes that will be billed for the dubbing.
+            type:
+            - number
+            - 'null'
+          expected_billed_price_per_minute:
+            description: The expected price per minute that will be billed for the dubbing.
+            type:
+            - number
+            - 'null'
+          expected_billed_price:
+            description: The expected total price that will be billed for the dubbing.
+            type:
+            - number
+            - 'null'
+          billed_at:
+            description: The date when the dubbing was billed.
+            type:
+            - string
+            - 'null'
+            format: date-time
+        required:
+        - auto_enable_dubbing
+    SourceMedia:
+      type: object
+      description: The media that the localization is associated with.
+      properties:
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        name:
+          description: The name of the media.
+          type: string
+        duration:
+          description: The duration of the media in seconds.
+          type: number
+        created_at:
+          description: The date when the media was created.
+          type: string
+          format: date-time
+        updated_at:
+          description: The date when the media was last updated.
+          type: string
+          format: date-time
+      required:
+      - hashed_id
+      - name
+      - duration
+      - created_at
+      - updated_at
   securitySchemes:
     BearerAuth:
       type: http

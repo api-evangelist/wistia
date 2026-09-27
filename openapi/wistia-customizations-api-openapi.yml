@@ -5565,201 +5565,41 @@ paths:
     - url: https://api.wistia.com/v1
       description: Wistia Data API production server
 components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   schemas:
-    VideoCustomizationResponse:
-      type: object
-      properties:
-        playerColor:
-          description: The color of the video player.
-          type: string
-        stillUrl:
-          type: string
-        autoPlay:
-          description: Whether the video should auto play or not.
-          type: string
-        bpbTime:
-          type: string
-        controlsVisibleOnLoad:
-          type: string
-        endVideoBehavior:
-          description: Behavior of the video at the end.
-          type: string
-        fullscreenButton:
-          type: string
-        branding:
-          type: string
-        playbar:
-          type: string
-        playButton:
-          description: Indicates if the play button is visible.
-          type: string
-        settingsControl:
-          type: string
-        showCustomerLogo:
-          type: string
-        qualityControl:
-          type: string
-        playbackRateControl:
-          type: string
-        smallPlayButton:
-          type: string
-        spherical:
-          type: string
-        volumeControl:
-          type: string
-        copyLinkAndThumbnailEnabled:
-          type: string
-        doNotTrack:
-          type: string
-        email:
-          type: string
-        fitStrategy:
-          type: string
-        fullscreenOnRotateToLandscape:
-          type: string
-        muted:
-          type: string
-        playlistLinks:
-          type: string
-        playlistLoop:
-          type: string
-        playsinline:
-          type: string
-        playPauseNotifier:
-          type: string
-        playSuspendedOffScreen:
-          type: string
-        preload:
-          type: string
-        qualityMax:
-          type: string
-        qualityMin:
-          type: string
-        resumable:
-          type: string
-        seo:
-          type: string
-        silentAutoPlay:
-          type: string
-        time:
-          type: string
-        thumbnailAltText:
-          type: string
-        videoFoam:
-          type: string
-        volume:
-          type: string
-        wmode:
-          type: string
-        keyMoments:
-          description: String representation of whether the key moments feature is enabled.
-          type: string
-        plugin:
-          type: object
-          properties:
-            passwordProtectedVideo:
-              type: object
-              properties:
-                'on':
-                  type: string
-                src:
-                  type: string
-                challenge:
-                  type: string
-                async:
-                  type: string
-            videoThumbnail:
-              type: object
-              properties:
-                clickToPlayButton:
-                  type: string
-            socialbar-v1:
-              type: object
-              properties:
-                buttons:
-                  type: string
-                showTweetCount:
-                  type: string
-                tweetText:
-                  type: string
-                height:
-                  type: string
-            chapters:
-              type: object
-              properties:
-                visibleOnLoad:
-                  type: string
-                chapterList:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      title:
-                        type: string
-                      time:
-                        type: string
-                      deleted:
-                        type: string
-                'on':
-                  type: string
-            postRoll-v1:
-              description: Adds a Call To Action to your Video (response format)
-              type: object
-              properties:
-                rewatch:
-                  description: String representation of whether the video can be rewatched.
-                  type: string
-                text:
-                  description: The URL of the text to be displayed.
-                  type: string
-                link:
-                  description: The URL of the link to be displayed.
-                  type: string
-                time:
-                  description: The time when the post-roll should be displayed as a string.
-                  type: string
-                autoSize:
-                  description: String representation of whether the post-roll will automatically adjust its size.
-                  type: string
-                style:
-                  type: object
-                  properties:
-                    backgroundColor:
-                      description: The background color of the post-roll.
-                      type: string
-                ctaType:
-                  description: The type of call-to-action to be displayed.
-                  type: string
-                'on':
-                  description: String representation of whether the post-roll is enabled.
-                  type: string
-                conversionOpportunityKey:
-                  description: The key used for tracking conversion opportunities.
-                  type: string
-            captions-v1:
-              description: Captions plugin configuration (response format)
-              type: object
-              properties:
-                'on':
-                  description: String representation of whether the captions plugin is enabled ("true" or "false").
-                  type: string
-                onByDefault:
-                  description: String representation of whether captions are turned on by default ("true" or "false").
-                  type: string
-        private:
-          type: object
-          properties:
-            password_protect_on:
-              type: string
-            show_comments:
-              type: string
-        encrypted:
-          type: object
-          properties:
-            password_protect_password:
-              type: string
     VideoCustomization:
       type: object
       properties:
@@ -5981,40 +5821,200 @@ components:
         wmode:
           description: If set to transparent, the background behind the player will be transparent instead of black.
           type: string
-  responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
+    VideoCustomizationResponse:
+      type: object
+      properties:
+        playerColor:
+          description: The color of the video player.
+          type: string
+        stillUrl:
+          type: string
+        autoPlay:
+          description: Whether the video should auto play or not.
+          type: string
+        bpbTime:
+          type: string
+        controlsVisibleOnLoad:
+          type: string
+        endVideoBehavior:
+          description: Behavior of the video at the end.
+          type: string
+        fullscreenButton:
+          type: string
+        branding:
+          type: string
+        playbar:
+          type: string
+        playButton:
+          description: Indicates if the play button is visible.
+          type: string
+        settingsControl:
+          type: string
+        showCustomerLogo:
+          type: string
+        qualityControl:
+          type: string
+        playbackRateControl:
+          type: string
+        smallPlayButton:
+          type: string
+        spherical:
+          type: string
+        volumeControl:
+          type: string
+        copyLinkAndThumbnailEnabled:
+          type: string
+        doNotTrack:
+          type: string
+        email:
+          type: string
+        fitStrategy:
+          type: string
+        fullscreenOnRotateToLandscape:
+          type: string
+        muted:
+          type: string
+        playlistLinks:
+          type: string
+        playlistLoop:
+          type: string
+        playsinline:
+          type: string
+        playPauseNotifier:
+          type: string
+        playSuspendedOffScreen:
+          type: string
+        preload:
+          type: string
+        qualityMax:
+          type: string
+        qualityMin:
+          type: string
+        resumable:
+          type: string
+        seo:
+          type: string
+        silentAutoPlay:
+          type: string
+        time:
+          type: string
+        thumbnailAltText:
+          type: string
+        videoFoam:
+          type: string
+        volume:
+          type: string
+        wmode:
+          type: string
+        keyMoments:
+          description: String representation of whether the key moments feature is enabled.
+          type: string
+        plugin:
+          type: object
+          properties:
+            passwordProtectedVideo:
+              type: object
+              properties:
+                'on':
+                  type: string
+                src:
+                  type: string
+                challenge:
+                  type: string
+                async:
+                  type: string
+            videoThumbnail:
+              type: object
+              properties:
+                clickToPlayButton:
+                  type: string
+            socialbar-v1:
+              type: object
+              properties:
+                buttons:
+                  type: string
+                showTweetCount:
+                  type: string
+                tweetText:
+                  type: string
+                height:
+                  type: string
+            chapters:
+              type: object
+              properties:
+                visibleOnLoad:
+                  type: string
+                chapterList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      title:
+                        type: string
+                      time:
+                        type: string
+                      deleted:
+                        type: string
+                'on':
+                  type: string
+            postRoll-v1:
+              description: Adds a Call To Action to your Video (response format)
+              type: object
+              properties:
+                rewatch:
+                  description: String representation of whether the video can be rewatched.
+                  type: string
+                text:
+                  description: The URL of the text to be displayed.
+                  type: string
+                link:
+                  description: The URL of the link to be displayed.
+                  type: string
+                time:
+                  description: The time when the post-roll should be displayed as a string.
+                  type: string
+                autoSize:
+                  description: String representation of whether the post-roll will automatically adjust its size.
+                  type: string
+                style:
+                  type: object
+                  properties:
+                    backgroundColor:
+                      description: The background color of the post-roll.
+                      type: string
+                ctaType:
+                  description: The type of call-to-action to be displayed.
+                  type: string
+                'on':
+                  description: String representation of whether the post-roll is enabled.
+                  type: string
+                conversionOpportunityKey:
+                  description: The key used for tracking conversion opportunities.
+                  type: string
+            captions-v1:
+              description: Captions plugin configuration (response format)
+              type: object
+              properties:
+                'on':
+                  description: String representation of whether the captions plugin is enabled ("true" or "false").
+                  type: string
+                onByDefault:
+                  description: String representation of whether captions are turned on by default ("true" or "false").
+                  type: string
+        private:
+          type: object
+          properties:
+            password_protect_on:
+              type: string
+            show_comments:
+              type: string
+        encrypted:
+          type: object
+          properties:
+            password_protect_password:
+              type: string
   securitySchemes:
     BearerAuth:
       type: http
