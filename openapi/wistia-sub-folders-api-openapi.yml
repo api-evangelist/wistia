@@ -1646,98 +1646,6 @@ paths:
     - url: https://api.wistia.com/v1
 components:
   schemas:
-    SubfolderInput:
-      type: object
-      description: Input data for creating or updating a subfolder.
-      properties:
-        name:
-          description: The display name of the subfolder.
-          type: string
-          examples:
-          - Marketing Videos
-          maxLength: 255
-        description:
-          description: A description for the subfolder.
-          type:
-          - string
-          - 'null'
-          examples:
-          - Collection of all marketing and promotional videos
-          maxLength: 1000
-      required:
-      - name
-    SubfolderWithMedia:
-      type: object
-      description: A subfolder with its contained media files.
-      allOf:
-      - $ref: '#/components/schemas/Subfolder'
-      - type: object
-        properties:
-          medias:
-            description: Array of media files contained in this subfolder.
-            type: array
-            items:
-              $ref: '#/components/schemas/MediaProperties'
-    Subfolder:
-      type: object
-      description: A subfolder within a project that contains media files.
-      properties:
-        hashed_id:
-          description: A unique alphanumeric identifier for this subfolder.
-          type: string
-          examples:
-          - abc123def4
-        name:
-          description: The display name of the subfolder.
-          type:
-          - string
-          - 'null'
-          examples:
-          - Marketing Videos
-        description:
-          description: A description for the subfolder.
-          type:
-          - string
-          - 'null'
-          examples:
-          - Collection of all marketing and promotional videos
-        position:
-          description: The position of this subfolder within its project, used for ordering.
-          type:
-          - integer
-          - 'null'
-          examples:
-          - 1
-        created:
-          description: The date when the subfolder was created.
-          type:
-          - string
-          - 'null'
-          format: date-time
-          examples:
-          - '2024-01-15T10:30:00+00:00'
-        updated:
-          description: The date when the subfolder was last modified.
-          type:
-          - string
-          - 'null'
-          format: date-time
-          examples:
-          - '2024-01-20T14:45:00+00:00'
-      required:
-      - hashed_id
-      - position
-      - created
-      - updated
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
     MediaProperties:
       type: object
       properties:
@@ -1804,6 +1712,98 @@ components:
           type: string
         thumbnail:
           $ref: '#/components/schemas/Thumbnail'
+    Subfolder:
+      type: object
+      description: A subfolder within a project that contains media files.
+      properties:
+        hashed_id:
+          description: A unique alphanumeric identifier for this subfolder.
+          type: string
+          examples:
+          - abc123def4
+        name:
+          description: The display name of the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Marketing Videos
+        description:
+          description: A description for the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Collection of all marketing and promotional videos
+        position:
+          description: The position of this subfolder within its project, used for ordering.
+          type:
+          - integer
+          - 'null'
+          examples:
+          - 1
+        created:
+          description: The date when the subfolder was created.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-01-15T10:30:00+00:00'
+        updated:
+          description: The date when the subfolder was last modified.
+          type:
+          - string
+          - 'null'
+          format: date-time
+          examples:
+          - '2024-01-20T14:45:00+00:00'
+      required:
+      - hashed_id
+      - position
+      - created
+      - updated
+    SubfolderWithMedia:
+      type: object
+      description: A subfolder with its contained media files.
+      allOf:
+      - $ref: '#/components/schemas/Subfolder'
+      - type: object
+        properties:
+          medias:
+            description: Array of media files contained in this subfolder.
+            type: array
+            items:
+              $ref: '#/components/schemas/MediaProperties'
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    SubfolderInput:
+      type: object
+      description: Input data for creating or updating a subfolder.
+      properties:
+        name:
+          description: The display name of the subfolder.
+          type: string
+          examples:
+          - Marketing Videos
+          maxLength: 255
+        description:
+          description: A description for the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Collection of all marketing and promotional videos
+          maxLength: 1000
+      required:
+      - name
   responses:
     '500':
       description: Internal server error

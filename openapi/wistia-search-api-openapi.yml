@@ -766,30 +766,85 @@ paths:
     servers:
     - url: https://api.wistia.com/modern
 components:
-  responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
   schemas:
+    MediaProperties:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the media within the system.
+          type: integer
+        name:
+          description: The display name of the media.
+          type: string
+        type:
+          description: A string representing what type of media this is.
+          type: string
+          enum:
+          - Video
+          - Audio
+          - Image
+          - PdfDocument
+          - MicrosoftOfficeDocument
+          - Swf
+          - UnknownType
+        archived:
+          description: Whether or not the media is archived, either true or false.
+          type: boolean
+        created:
+          description: The date when the media was originally uploaded.
+          type: string
+          format: date-time
+        updated:
+          description: The date when the media was last changed.
+          type: string
+          format: date-time
+        duration:
+          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
+          type: number
+        embedCode:
+          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
+
+            '
+          type: string
+          deprecated: true
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        description:
+          description: A description for the media which usually appears near the top of the sidebar on the media's page.
+          type: string
+        progress:
+          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
+          type: number
+          maximum: 1
+          minimum: 0
+        status:
+          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
+
+            '
+          type: string
+          enum:
+          - queued
+          - processing
+          - ready
+          - failed
+        section:
+          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
+          type: string
+        thumbnail:
+          $ref: '#/components/schemas/Thumbnail'
+    SearchMedia:
+      allOf:
+      - $ref: '#/components/schemas/MediaProperties'
+      - type: object
+        properties:
+          projectHashedId:
+            description: The hashed ID of the project this media belongs to
+            type: string
+            examples:
+            - 4d23503f70
+        required:
+        - projectHashedId
     Project:
       type: object
       properties:
@@ -861,6 +916,15 @@ components:
       - hashedId
       - public
       - publicId
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
     SearchChannelEpisode:
       type: object
       properties:
@@ -914,15 +978,6 @@ components:
       - published
       - created
       - updated
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
     SearchChannel:
       type: object
       properties:
@@ -957,84 +1012,29 @@ components:
       - mediaCount
       - created
       - updated
-    SearchMedia:
-      allOf:
-      - $ref: '#/components/schemas/MediaProperties'
-      - type: object
-        properties:
-          projectHashedId:
-            description: The hashed ID of the project this media belongs to
-            type: string
-            examples:
-            - 4d23503f70
-        required:
-        - projectHashedId
-    MediaProperties:
-      type: object
-      properties:
-        id:
-          description: A unique numeric identifier for the media within the system.
-          type: integer
-        name:
-          description: The display name of the media.
-          type: string
-        type:
-          description: A string representing what type of media this is.
-          type: string
-          enum:
-          - Video
-          - Audio
-          - Image
-          - PdfDocument
-          - MicrosoftOfficeDocument
-          - Swf
-          - UnknownType
-        archived:
-          description: Whether or not the media is archived, either true or false.
-          type: boolean
-        created:
-          description: The date when the media was originally uploaded.
-          type: string
-          format: date-time
-        updated:
-          description: The date when the media was last changed.
-          type: string
-          format: date-time
-        duration:
-          description: Specifies the length (in seconds) for audio and video files. Specifies number of pages in the document. Omitted for other types of media.
-          type: number
-        embedCode:
-          description: 'DEPRECATED: If you want to programmatically embed videos, follow the construct an embed code guide.
-
-            '
-          type: string
-          deprecated: true
-        hashed_id:
-          description: A unique alphanumeric identifier for this media.
-          type: string
-        description:
-          description: A description for the media which usually appears near the top of the sidebar on the media's page.
-          type: string
-        progress:
-          description: A floating point value between 0 and 1 that indicates the progress of the processing for this file.
-          type: number
-          maximum: 1
-          minimum: 0
-        status:
-          description: 'Post upload processing status. - `queued`: the file is waiting in the queue to be processed. - `processing`: the file is actively being processed. - `ready`: the file has been fully processed and is ready for embedding and viewing. - `failed`: the file was unable to be processed (usually a format or size error).
-
-            '
-          type: string
-          enum:
-          - queued
-          - processing
-          - ready
-          - failed
-        section:
-          description: The title of the section in which the media appears. This attribute is omitted if the media is not in a section (default).
-          type: string
-        thumbnail:
-          $ref: '#/components/schemas/Thumbnail'
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http

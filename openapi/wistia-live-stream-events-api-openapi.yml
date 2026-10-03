@@ -367,29 +367,6 @@ paths:
       operationId: deleteLiveStreamEventsById
       x-operation-id-source: derived
 components:
-  responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
   schemas:
     UpdateLiveStreamEvent:
       type: object
@@ -419,35 +396,6 @@ components:
               examples:
               - 90
               minimum: 15
-    CreateLiveStreamEvent:
-      type: object
-      properties:
-        title:
-          description: The title of the live stream event
-          type: string
-          examples:
-          - 'Wellness Session: Coping with Outie Memories'
-        description:
-          description: The description of the live stream event
-          type: string
-          examples:
-          - A comprehensive session on managing work-life balance
-        scheduled_for:
-          description: The scheduled start time in W3C format with timezone
-          type: string
-          format: date-time
-          examples:
-          - '2024-03-20T15:30:00-05:00'
-        event_duration:
-          description: Duration of the event in minutes (minimum 15)
-          type: integer
-          examples:
-          - 60
-          minimum: 15
-      required:
-      - title
-      - scheduled_for
-      - event_duration
     LiveStreamEvent:
       type: object
       properties:
@@ -530,6 +478,58 @@ components:
       - audience_link
       - host_link
       - panelist_link
+    CreateLiveStreamEvent:
+      type: object
+      properties:
+        title:
+          description: The title of the live stream event
+          type: string
+          examples:
+          - 'Wellness Session: Coping with Outie Memories'
+        description:
+          description: The description of the live stream event
+          type: string
+          examples:
+          - A comprehensive session on managing work-life balance
+        scheduled_for:
+          description: The scheduled start time in W3C format with timezone
+          type: string
+          format: date-time
+          examples:
+          - '2024-03-20T15:30:00-05:00'
+        event_duration:
+          description: Duration of the event in minutes (minimum 15)
+          type: integer
+          examples:
+          - 60
+          minimum: 15
+      required:
+      - title
+      - scheduled_for
+      - event_duration
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http

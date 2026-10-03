@@ -1021,86 +1021,7 @@ paths:
     servers:
     - url: https://api.wistia.com/modern
 components:
-  responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
-    '400':
-      description: Bad request
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                description: Error message detailing the reason for the bad request.
-                type: string
-                examples:
-                - Bad request
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
   schemas:
-    LocalizationTranscript:
-      type:
-      - object
-      - 'null'
-      description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
-      properties:
-        hashed_id:
-          description: A unique alphanumeric identifier for this transcript.
-          type: string
-        language_name:
-          description: The name of the language in English.
-          type: string
-        native_language_name:
-          description: The name of the language in the language of the localization.
-          type: string
-        text:
-          description: The text of the transcript.
-          type: string
-        created_at:
-          description: The date when the transcript was created.
-          type: string
-          format: date-time
-        updated_at:
-          description: The date when the transcript was last updated.
-          type: string
-          format: date-time
-      required:
-      - hashed_id
-      - language_name
-      - native_language_name
-      - text
-      - created_at
-      - updated_at
     Localization:
       type: object
       properties:
@@ -1158,6 +1079,39 @@ components:
       - enabled_at
       - enabled
       - source_media
+    LocalizationTranscript:
+      type:
+      - object
+      - 'null'
+      description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
+      properties:
+        hashed_id:
+          description: A unique alphanumeric identifier for this transcript.
+          type: string
+        language_name:
+          description: The name of the language in English.
+          type: string
+        native_language_name:
+          description: The name of the language in the language of the localization.
+          type: string
+        text:
+          description: The text of the transcript.
+          type: string
+        created_at:
+          description: The date when the transcript was created.
+          type: string
+          format: date-time
+        updated_at:
+          description: The date when the transcript was last updated.
+          type: string
+          format: date-time
+      required:
+      - hashed_id
+      - language_name
+      - native_language_name
+      - text
+      - created_at
+      - updated_at
     LocalizationWithPurchaseData:
       allOf:
       - $ref: '#/components/schemas/Localization'
@@ -1216,6 +1170,52 @@ components:
       - duration
       - created_at
       - updated_at
+  responses:
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                description: Error message detailing the reason for the bad request.
+                type: string
+                examples:
+                - Bad request
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http
