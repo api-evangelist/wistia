@@ -64,6 +64,28 @@ paths:
       x-operation-id-source: derived
 components:
   responses:
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
     '422':
       description: Unprocessable entity, the request parameters were invalid.
       content:
@@ -83,17 +105,6 @@ components:
                   - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
                   media:
                   - must be part of a project
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
     '403':
       description: Forbidden, token is valid but account does not have access to feature
       content:
@@ -105,17 +116,6 @@ components:
                 type: string
                 examples:
                 - Live streaming is not available on your current plan
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
     '401':
       description: Unauthorized, invalid or missing token
       content:
@@ -128,6 +128,21 @@ components:
                 examples:
                 - Invalid credentials.
   schemas:
+    RegistrationResponse:
+      type: object
+      required:
+      - visitor_key
+      - personalized_event_url
+      properties:
+        visitor_key:
+          type: string
+          description: Unique visitor key generated for the registrant
+          example: iv_1234567890
+        personalized_event_url:
+          type: string
+          format: uri
+          description: Personalized URL for the registrant to access the live event
+          example: https://wistia.com/webinars/registration?vk=iv_1234567890&uid=john.doe@example.com
     CreateRegistration:
       type: object
       required:
@@ -148,21 +163,6 @@ components:
           type: string
           description: Last name of the registrant
           example: Doe
-    RegistrationResponse:
-      type: object
-      required:
-      - visitor_key
-      - personalized_event_url
-      properties:
-        visitor_key:
-          type: string
-          description: Unique visitor key generated for the registrant
-          example: iv_1234567890
-        personalized_event_url:
-          type: string
-          format: uri
-          description: Personalized URL for the registrant to access the live event
-          example: https://wistia.com/webinars/registration?vk=iv_1234567890&uid=john.doe@example.com
   securitySchemes:
     BearerAuth:
       type: http

@@ -325,17 +325,6 @@ components:
                 type: string
                 examples:
                 - Project with ID 'fakeid' not found.
-    '403':
-      description: Forbidden, token is valid but account does not have access to feature
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Live streaming is not available on your current plan
     '500':
       description: Internal server error
       content:
@@ -347,6 +336,17 @@ components:
                 type: string
                 examples:
                 - Internal server error
+    '403':
+      description: Forbidden, token is valid but account does not have access to feature
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Live streaming is not available on your current plan
     '401':
       description: Unauthorized, invalid or missing token
       content:
@@ -359,6 +359,116 @@ components:
                 examples:
                 - Invalid credentials.
   schemas:
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    UpdateProject:
+      type: object
+      properties:
+        name:
+          description: The project’s new name.
+          type: string
+          examples:
+          - My New Project Name
+        description:
+          description: The project’s new description.
+          type: string
+          examples:
+          - My New Project Description
+        anonymousCanUpload:
+          description: Whether anonymous users can upload media to the project.
+          type: boolean
+        anonymousCanDownload:
+          description: Whether anonymous users can download media from the project.
+          type: boolean
+        public:
+          oneOf:
+          - type: string
+            description: A flag indicating whether or not the project is enabled for public access. Set to “1” to enable and “0” to disable.
+            enum:
+            - '0'
+            - '1'
+          - type: boolean
+            description: A flag indicating whether or not the project is enabled for public access. Set to `true` to enable and `false` to disable.
+            examples:
+            - false
+    Project:
+      type: object
+      properties:
+        id:
+          description: A unique numeric identifier for the project within the system.
+          type: integer
+          examples:
+          - 22570
+        name:
+          description: The project’s display name.
+          type: string
+          examples:
+          - My Project Title
+        description:
+          description: The project’s description.
+          type:
+          - string
+          - 'null'
+          examples:
+          - About My Project
+        mediaCount:
+          description: The number of different medias that have been uploaded to the project.
+          type: integer
+          examples:
+          - 2
+        created:
+          description: The date that the project was originally created.
+          type: string
+          format: date-time
+          examples:
+          - '2010-08-13T18:47:39+00:00'
+        updated:
+          description: The date that the project was last updated.
+          type: string
+          format: date-time
+          examples:
+          - '2010-08-19T21:47:00+00:00'
+        hashedId:
+          description: A private hashed id, uniquely identifying the project within the system.
+          type: string
+          examples:
+          - 4d23503f70
+        public:
+          description: A boolean indicating whether the project is available for public (anonymous) viewing.
+          type: boolean
+          examples:
+          - false
+        publicId:
+          description: If the project is public, this field contains a string representing the ID used for referencing the project in public URLs.
+          type:
+          - string
+          - 'null'
+          examples:
+          - 4bD
+        anonymousCanUpload:
+          type: boolean
+          examples:
+          - false
+        anonymousCanDownload:
+          type: boolean
+          examples:
+          - false
+      required:
+      - id
+      - name
+      - mediaCount
+      - created
+      - updated
+      - hashedId
+      - public
+      - publicId
     MediaProperties:
       type: object
       properties:
@@ -436,116 +546,6 @@ components:
               $ref: '#/components/schemas/MediaProperties'
         required:
         - medias
-    Project:
-      type: object
-      properties:
-        id:
-          description: A unique numeric identifier for the project within the system.
-          type: integer
-          examples:
-          - 22570
-        name:
-          description: The project’s display name.
-          type: string
-          examples:
-          - My Project Title
-        description:
-          description: The project’s description.
-          type:
-          - string
-          - 'null'
-          examples:
-          - About My Project
-        mediaCount:
-          description: The number of different medias that have been uploaded to the project.
-          type: integer
-          examples:
-          - 2
-        created:
-          description: The date that the project was originally created.
-          type: string
-          format: date-time
-          examples:
-          - '2010-08-13T18:47:39+00:00'
-        updated:
-          description: The date that the project was last updated.
-          type: string
-          format: date-time
-          examples:
-          - '2010-08-19T21:47:00+00:00'
-        hashedId:
-          description: A private hashed id, uniquely identifying the project within the system.
-          type: string
-          examples:
-          - 4d23503f70
-        public:
-          description: A boolean indicating whether the project is available for public (anonymous) viewing.
-          type: boolean
-          examples:
-          - false
-        publicId:
-          description: If the project is public, this field contains a string representing the ID used for referencing the project in public URLs.
-          type:
-          - string
-          - 'null'
-          examples:
-          - 4bD
-        anonymousCanUpload:
-          type: boolean
-          examples:
-          - false
-        anonymousCanDownload:
-          type: boolean
-          examples:
-          - false
-      required:
-      - id
-      - name
-      - mediaCount
-      - created
-      - updated
-      - hashedId
-      - public
-      - publicId
-    UpdateProject:
-      type: object
-      properties:
-        name:
-          description: The project’s new name.
-          type: string
-          examples:
-          - My New Project Name
-        description:
-          description: The project’s new description.
-          type: string
-          examples:
-          - My New Project Description
-        anonymousCanUpload:
-          description: Whether anonymous users can upload media to the project.
-          type: boolean
-        anonymousCanDownload:
-          description: Whether anonymous users can download media from the project.
-          type: boolean
-        public:
-          oneOf:
-          - type: string
-            description: A flag indicating whether or not the project is enabled for public access. Set to “1” to enable and “0” to disable.
-            enum:
-            - '0'
-            - '1'
-          - type: boolean
-            description: A flag indicating whether or not the project is enabled for public access. Set to `true` to enable and `false` to disable.
-            examples:
-            - false
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
     CreateProject:
       type: object
       properties:

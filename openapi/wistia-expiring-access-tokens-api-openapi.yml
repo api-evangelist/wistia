@@ -161,6 +161,48 @@ paths:
     servers:
     - url: https://api.wistia.com/modern
 components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '422':
+      description: Unprocessable entity, the request parameters were invalid.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+                example:
+                  trims:
+                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
+                  media:
+                  - must be part of a project
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   schemas:
     ExpiringAccessTokenResponse:
       type: object
@@ -198,48 +240,6 @@ components:
             - type
             - id
             - permissions
-  responses:
-    '422':
-      description: Unprocessable entity, the request parameters were invalid.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              errors:
-                description: Object containing validation errors grouped by field name. Each field contains an array of error messages.
-                type: object
-                additionalProperties:
-                  type: array
-                  items:
-                    type: string
-                example:
-                  trims:
-                  - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
-                  media:
-                  - must be part of a project
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http

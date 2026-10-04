@@ -194,25 +194,6 @@ paths:
     servers:
     - url: https://api.wistia.com/modern
 components:
-  schemas:
-    BackgroundJobStatus:
-      type: object
-      description: Status of the background job.
-      properties:
-        id:
-          description: The ID of the background job that's been queued for the request.
-          type: integer
-        status:
-          description: The status of the background job that's been queued for the request.
-          type: string
-          enum:
-          - queued
-          - started
-          - finished
-          - failed
-      required:
-      - id
-      - status
   responses:
     '422':
       description: Unprocessable entity, the request parameters were invalid.
@@ -233,17 +214,6 @@ components:
                   - didn't match hh:mm:ss.xxx-hh:mm:ss.xxx
                   media:
                   - must be part of a project
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
     '500':
       description: Internal server error
       content:
@@ -255,6 +225,36 @@ components:
                 type: string
                 examples:
                 - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
+  schemas:
+    BackgroundJobStatus:
+      type: object
+      description: Status of the background job.
+      properties:
+        id:
+          description: The ID of the background job that's been queued for the request.
+          type: integer
+        status:
+          description: The status of the background job that's been queued for the request.
+          type: string
+          enum:
+          - queued
+          - started
+          - finished
+          - failed
+      required:
+      - id
+      - status
   securitySchemes:
     BearerAuth:
       type: http

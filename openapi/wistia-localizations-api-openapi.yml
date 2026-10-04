@@ -1022,6 +1022,97 @@ paths:
     - url: https://api.wistia.com/modern
 components:
   schemas:
+    SourceMedia:
+      type: object
+      description: The media that the localization is associated with.
+      properties:
+        hashed_id:
+          description: A unique alphanumeric identifier for this media.
+          type: string
+        name:
+          description: The name of the media.
+          type: string
+        duration:
+          description: The duration of the media in seconds.
+          type: number
+        created_at:
+          description: The date when the media was created.
+          type: string
+          format: date-time
+        updated_at:
+          description: The date when the media was last updated.
+          type: string
+          format: date-time
+      required:
+      - hashed_id
+      - name
+      - duration
+      - created_at
+      - updated_at
+    LocalizationWithPurchaseData:
+      allOf:
+      - $ref: '#/components/schemas/Localization'
+      - type: object
+        properties:
+          auto_enable_dubbing:
+            description: Whether or not the dubbing will be automatically enabled when completed.
+            type: boolean
+          expected_billed_minutes:
+            description: The expected number of minutes that will be billed for the dubbing.
+            type:
+            - number
+            - 'null'
+          expected_billed_price_per_minute:
+            description: The expected price per minute that will be billed for the dubbing.
+            type:
+            - number
+            - 'null'
+          expected_billed_price:
+            description: The expected total price that will be billed for the dubbing.
+            type:
+            - number
+            - 'null'
+          billed_at:
+            description: The date when the dubbing was billed.
+            type:
+            - string
+            - 'null'
+            format: date-time
+        required:
+        - auto_enable_dubbing
+    LocalizationTranscript:
+      type:
+      - object
+      - 'null'
+      description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
+      properties:
+        hashed_id:
+          description: A unique alphanumeric identifier for this transcript.
+          type: string
+        language_name:
+          description: The name of the language in English.
+          type: string
+        native_language_name:
+          description: The name of the language in the language of the localization.
+          type: string
+        text:
+          description: The text of the transcript.
+          type: string
+        created_at:
+          description: The date when the transcript was created.
+          type: string
+          format: date-time
+        updated_at:
+          description: The date when the transcript was last updated.
+          type: string
+          format: date-time
+      required:
+      - hashed_id
+      - language_name
+      - native_language_name
+      - text
+      - created_at
+      - updated_at
     Localization:
       type: object
       properties:
@@ -1079,97 +1170,6 @@ components:
       - enabled_at
       - enabled
       - source_media
-    LocalizationTranscript:
-      type:
-      - object
-      - 'null'
-      description: The transcript for the localization. Selectively serialized in some endpoints. See properties for endpoint.
-      properties:
-        hashed_id:
-          description: A unique alphanumeric identifier for this transcript.
-          type: string
-        language_name:
-          description: The name of the language in English.
-          type: string
-        native_language_name:
-          description: The name of the language in the language of the localization.
-          type: string
-        text:
-          description: The text of the transcript.
-          type: string
-        created_at:
-          description: The date when the transcript was created.
-          type: string
-          format: date-time
-        updated_at:
-          description: The date when the transcript was last updated.
-          type: string
-          format: date-time
-      required:
-      - hashed_id
-      - language_name
-      - native_language_name
-      - text
-      - created_at
-      - updated_at
-    LocalizationWithPurchaseData:
-      allOf:
-      - $ref: '#/components/schemas/Localization'
-      - type: object
-        properties:
-          auto_enable_dubbing:
-            description: Whether or not the dubbing will be automatically enabled when completed.
-            type: boolean
-          expected_billed_minutes:
-            description: The expected number of minutes that will be billed for the dubbing.
-            type:
-            - number
-            - 'null'
-          expected_billed_price_per_minute:
-            description: The expected price per minute that will be billed for the dubbing.
-            type:
-            - number
-            - 'null'
-          expected_billed_price:
-            description: The expected total price that will be billed for the dubbing.
-            type:
-            - number
-            - 'null'
-          billed_at:
-            description: The date when the dubbing was billed.
-            type:
-            - string
-            - 'null'
-            format: date-time
-        required:
-        - auto_enable_dubbing
-    SourceMedia:
-      type: object
-      description: The media that the localization is associated with.
-      properties:
-        hashed_id:
-          description: A unique alphanumeric identifier for this media.
-          type: string
-        name:
-          description: The name of the media.
-          type: string
-        duration:
-          description: The duration of the media in seconds.
-          type: number
-        created_at:
-          description: The date when the media was created.
-          type: string
-          format: date-time
-        updated_at:
-          description: The date when the media was last updated.
-          type: string
-          format: date-time
-      required:
-      - hashed_id
-      - name
-      - duration
-      - created_at
-      - updated_at
   responses:
     '404':
       description: Resource not found

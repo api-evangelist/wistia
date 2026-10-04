@@ -2021,77 +2021,57 @@ paths:
     servers:
     - url: https://api.wistia.com/modern
 components:
-  parameters:
-    published:
-      name: published
-      in: query
-      description: Filter by published status.
-      required: false
-      schema:
-        type: boolean
-    sort_by:
-      name: sort_by
-      in: query
-      description: Ordering. Default is ID ASC.
-      required: false
-      schema:
-        type: string
-        enum:
-        - position
-        - title
-        - created
-        - updated
-        - id
-    per_page:
-      name: per_page
-      in: query
-      description: Number of channels per page
-      required: false
-      schema:
-        type: integer
-    hashed_id:
-      name: hashed_id[]
-      in: query
-      description: Filter by hashed id
-      required: false
-      schema:
-        type: array
-        items:
-          type: string
-    page:
-      name: page
-      in: query
-      description: Page number to retrieve
-      required: false
-      schema:
-        type: integer
-    media_id:
-      name: media_id[]
-      in: query
-      description: Filter by media id
-      required: false
-      schema:
-        type: array
-        items:
-          type: string
-    sort_direction:
-      name: sort_direction
-      in: query
-      description: Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
-      required: false
-      schema:
-        type: integer
-        enum:
-        - 0
-        - 1
-    title:
-      name: title
-      in: query
-      description: Filter by channel episode name/title.
-      required: false
-      schema:
-        type: string
   schemas:
+    CreateChannelEpisode:
+      type: object
+      properties:
+        media_id:
+          description: The alphanumeric hashed ID of the media to be added as a channel episode.
+          type: string
+        title:
+          description: The episode's title.  If not provided, the channel episode uses the title of the media used to create it.
+          type: string
+          examples:
+          - My New Episode
+        description:
+          description: The episode's description or episode notes.
+          type: string
+          examples:
+          - My Episode Description.
+        summary:
+          description: A short summary of the episode that is displayed when space is limited.
+          type: string
+          examples:
+          - A short description.
+        publish_status:
+          description: The status of whether or not the episode has been published to your channel.
+          type: string
+          enum:
+          - draft
+          - published
+          - scheduled
+        publish_at:
+          description: The date and time when the episode should be published in UTC timezone. Required when publish_status is 'scheduled'. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').  Can only be provided when publish_status is 'scheduled.'
+          type: string
+          format: date-time
+          examples:
+          - '2024-12-31T23:59:59Z'
+        episode_type:
+          description: The episode type for your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
+          type: string
+          enum:
+          - full
+          - trailer
+          - bonus
+        episode_number:
+          description: The episode number for this episode in your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
+          type: integer
+        explicit_content:
+          description: Whether this episode contains explicit content.  This parameter only takes effect if podcasting is enabled for the channel.
+          type: boolean
+        hide_from_feed:
+          description: Whether or not to hide this episode from your podcast feed.  Set to true to hide the episode, false to show the episode.  This parameter only takes effect if podcasting is enabled for the channel.
+          type: boolean
     ChannelEpisode:
       type: object
       properties:
@@ -2144,56 +2124,76 @@ components:
       - published
       - title
       - updated
-    CreateChannelEpisode:
-      type: object
-      properties:
-        media_id:
-          description: The alphanumeric hashed ID of the media to be added as a channel episode.
+  parameters:
+    sort_by:
+      name: sort_by
+      in: query
+      description: Ordering. Default is ID ASC.
+      required: false
+      schema:
+        type: string
+        enum:
+        - position
+        - title
+        - created
+        - updated
+        - id
+    title:
+      name: title
+      in: query
+      description: Filter by channel episode name/title.
+      required: false
+      schema:
+        type: string
+    hashed_id:
+      name: hashed_id[]
+      in: query
+      description: Filter by hashed id
+      required: false
+      schema:
+        type: array
+        items:
           type: string
-        title:
-          description: The episode's title.  If not provided, the channel episode uses the title of the media used to create it.
+    media_id:
+      name: media_id[]
+      in: query
+      description: Filter by media id
+      required: false
+      schema:
+        type: array
+        items:
           type: string
-          examples:
-          - My New Episode
-        description:
-          description: The episode's description or episode notes.
-          type: string
-          examples:
-          - My Episode Description.
-        summary:
-          description: A short summary of the episode that is displayed when space is limited.
-          type: string
-          examples:
-          - A short description.
-        publish_status:
-          description: The status of whether or not the episode has been published to your channel.
-          type: string
-          enum:
-          - draft
-          - published
-          - scheduled
-        publish_at:
-          description: The date and time when the episode should be published in UTC timezone. Required when publish_status is 'scheduled'. Must be a valid ISO8601 timestamp in UTC (ending with 'Z').  Can only be provided when publish_status is 'scheduled.'
-          type: string
-          format: date-time
-          examples:
-          - '2024-12-31T23:59:59Z'
-        episode_type:
-          description: The episode type for your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
-          type: string
-          enum:
-          - full
-          - trailer
-          - bonus
-        episode_number:
-          description: The episode number for this episode in your podcast.  This parameter only takes effect if podcasting is enabled for the channel.
-          type: integer
-        explicit_content:
-          description: Whether this episode contains explicit content.  This parameter only takes effect if podcasting is enabled for the channel.
-          type: boolean
-        hide_from_feed:
-          description: Whether or not to hide this episode from your podcast feed.  Set to true to hide the episode, false to show the episode.  This parameter only takes effect if podcasting is enabled for the channel.
-          type: boolean
+    published:
+      name: published
+      in: query
+      description: Filter by published status.
+      required: false
+      schema:
+        type: boolean
+    page:
+      name: page
+      in: query
+      description: Page number to retrieve
+      required: false
+      schema:
+        type: integer
+    sort_direction:
+      name: sort_direction
+      in: query
+      description: Ordering Sort Direction (0 = desc, 1 = asc; default is 1)
+      required: false
+      schema:
+        type: integer
+        enum:
+        - 0
+        - 1
+    per_page:
+      name: per_page
+      in: query
+      description: Number of channels per page
+      required: false
+      schema:
+        type: integer
   responses:
     '500':
       description: Internal server error

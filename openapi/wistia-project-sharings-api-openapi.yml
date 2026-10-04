@@ -268,40 +268,6 @@ paths:
       operationId: deleteProjectsByProjectIdSharingsBySharingId
       x-operation-id-source: derived
 components:
-  responses:
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
   schemas:
     CreateProjectSharingResponse:
       type: object
@@ -332,6 +298,71 @@ components:
             isAdmin:
               description: Give this user admin rights to the project.
               type: boolean
+    CreateProjectSharing:
+      type: object
+      properties:
+        sharing:
+          type: object
+          properties:
+            with:
+              description: The email address of the person with whom you want to share the project.
+              type: string
+              format: email
+            requirePassword:
+              oneOf:
+              - type: string
+                description: Default is "1". Set to "0" to allow access without a password.
+                enum:
+                - '0'
+                - '1'
+              - type: boolean
+                description: A flag indicating whether or not a password is required.
+                examples:
+                - false
+            canShare:
+              oneOf:
+              - type: string
+                description: Default is "0". Set to "1" to allow the user to share the project with others.
+                enum:
+                - '0'
+                - '1'
+              - type: boolean
+                description: Whether the user is allowed to share the project with others.
+                examples:
+                - false
+            canDownload:
+              oneOf:
+              - type: string
+                description: Default is "0". Set to "1" to allow the user to download files from the project.
+                enum:
+                - '0'
+                - '1'
+              - type: boolean
+                description: Whether the user is allowed to download files from the project.
+                examples:
+                - false
+            canUpload:
+              oneOf:
+              - type: string
+                description: Default is "0". Set to "1" to allow the user to upload files to the project.
+                enum:
+                - '0'
+                - '1'
+              - type: boolean
+                description: Whether the user is allowed to upload files to the project.
+                examples:
+                - false
+            sendEmailNotification:
+              description: Deprecated! Email notifications are always sent now.
+              type: string
+              enum:
+              - '0'
+              - '1'
+              deprecated: true
+          required:
+          - with
+      required:
+      - sharing
     ProjectSharingSchema:
       type: object
       properties:
@@ -402,71 +433,40 @@ components:
       - canUpload
       - share
       - project
-    CreateProjectSharing:
-      type: object
-      properties:
-        sharing:
-          type: object
-          properties:
-            with:
-              description: The email address of the person with whom you want to share the project.
-              type: string
-              format: email
-            requirePassword:
-              oneOf:
-              - type: string
-                description: Default is "1". Set to "0" to allow access without a password.
-                enum:
-                - '0'
-                - '1'
-              - type: boolean
-                description: A flag indicating whether or not a password is required.
+  responses:
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
                 examples:
-                - false
-            canShare:
-              oneOf:
-              - type: string
-                description: Default is "0". Set to "1" to allow the user to share the project with others.
-                enum:
-                - '0'
-                - '1'
-              - type: boolean
-                description: Whether the user is allowed to share the project with others.
+                - Project with ID 'fakeid' not found.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
                 examples:
-                - false
-            canDownload:
-              oneOf:
-              - type: string
-                description: Default is "0". Set to "1" to allow the user to download files from the project.
-                enum:
-                - '0'
-                - '1'
-              - type: boolean
-                description: Whether the user is allowed to download files from the project.
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
                 examples:
-                - false
-            canUpload:
-              oneOf:
-              - type: string
-                description: Default is "0". Set to "1" to allow the user to upload files to the project.
-                enum:
-                - '0'
-                - '1'
-              - type: boolean
-                description: Whether the user is allowed to upload files to the project.
-                examples:
-                - false
-            sendEmailNotification:
-              description: Deprecated! Email notifications are always sent now.
-              type: string
-              enum:
-              - '0'
-              - '1'
-              deprecated: true
-          required:
-          - with
-      required:
-      - sharing
+                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http

@@ -1645,7 +1645,71 @@ paths:
     servers:
     - url: https://api.wistia.com/v1
 components:
+  responses:
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   schemas:
+    SubfolderInput:
+      type: object
+      description: Input data for creating or updating a subfolder.
+      properties:
+        name:
+          description: The display name of the subfolder.
+          type: string
+          examples:
+          - Marketing Videos
+          maxLength: 255
+        description:
+          description: A description for the subfolder.
+          type:
+          - string
+          - 'null'
+          examples:
+          - Collection of all marketing and promotional videos
+          maxLength: 1000
+      required:
+      - name
+    Thumbnail:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+    SubfolderWithMedia:
+      type: object
+      description: A subfolder with its contained media files.
+      allOf:
+      - $ref: '#/components/schemas/Subfolder'
+      - type: object
+        properties:
+          medias:
+            description: Array of media files contained in this subfolder.
+            type: array
+            items:
+              $ref: '#/components/schemas/MediaProperties'
     MediaProperties:
       type: object
       properties:
@@ -1763,70 +1827,6 @@ components:
       - position
       - created
       - updated
-    SubfolderWithMedia:
-      type: object
-      description: A subfolder with its contained media files.
-      allOf:
-      - $ref: '#/components/schemas/Subfolder'
-      - type: object
-        properties:
-          medias:
-            description: Array of media files contained in this subfolder.
-            type: array
-            items:
-              $ref: '#/components/schemas/MediaProperties'
-    Thumbnail:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
-    SubfolderInput:
-      type: object
-      description: Input data for creating or updating a subfolder.
-      properties:
-        name:
-          description: The display name of the subfolder.
-          type: string
-          examples:
-          - Marketing Videos
-          maxLength: 255
-        description:
-          description: A description for the subfolder.
-          type:
-          - string
-          - 'null'
-          examples:
-          - Collection of all marketing and promotional videos
-          maxLength: 1000
-      required:
-      - name
-  responses:
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http

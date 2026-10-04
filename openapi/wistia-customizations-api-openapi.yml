@@ -5565,6 +5565,40 @@ paths:
     - url: https://api.wistia.com/v1
       description: Wistia Data API production server
 components:
+  responses:
+    '404':
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Project with ID 'fakeid' not found.
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Internal server error
+    '401':
+      description: Unauthorized, invalid or missing token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                examples:
+                - Invalid credentials.
   schemas:
     VideoCustomizationResponse:
       type: object
@@ -5981,40 +6015,6 @@ components:
         wmode:
           description: If set to transparent, the background behind the player will be transparent instead of black.
           type: string
-  responses:
-    '404':
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Project with ID 'fakeid' not found.
-    '500':
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Internal server error
-    '401':
-      description: Unauthorized, invalid or missing token
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                examples:
-                - Invalid credentials.
   securitySchemes:
     BearerAuth:
       type: http
