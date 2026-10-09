@@ -1,4 +1,4 @@
-generated: '2026-09-16'
+generated: '2026-09-24'
 method: generated
 source: openapi/wistia-account-api-openapi.yml, openapi/wistia-allowed-domains-api-openapi.yml,
   openapi/wistia-analytics-account-api-openapi.yml, openapi/wistia-analytics-media-api-openapi.yml,
