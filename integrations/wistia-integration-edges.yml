@@ -4,7 +4,9 @@ checked:
 - https://github.com/PipedreamHQ/pipedream/tree/94800dd6de6640b942c65ea7ee655f71ac56d438/components/
 - https://registry.modelcontextprotocol.io/v0/servers
 - https://zapier.com/api/v4/apps/
+- monday-com/integrations/monday-com-integration-edges.yml
 - okta/integrations/okta-integration-edges.yml
+- zoom/integrations/zoom-integration-edges.yml
 source:
 - okta/integrations/okta-integration-edges.yml
 edges:
@@ -115,3 +117,37 @@ edges:
     builder: Pipedream repo (component)
   detected_by: sweep-workflow-automation.py
   first_seen: '2026-10-15'
+- partner_name: Monday.com (own)
+  partner: monday-com
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://monday.com/marketplace/listing/10000315
+  mirror_of: monday-com/integrations/monday-com-integration-edges.yml
+  apps:
+  - Wistia
+  listing_count: 1
+  detected: '2026-10-18'
+  detected_by: mirror-platform-listings.py
+  category: monday.com app
+- partner_name: Zoom (own)
+  partner: zoom
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://marketplace.zoom.us/apps/GTWte6LFTseOzMjWvN_fVw
+  mirror_of: zoom/integrations/zoom-integration-edges.yml
+  apps:
+  - Wistia
+  listing_count: 1
+  detected: '2026-10-18'
+  detected_by: mirror-platform-listings.py
+  category: Zoom app
