@@ -207,6 +207,31 @@
     detected: '2026-10-22'
   status: not-a-workflow
   arazzo: null
+- slug: wistia-ifttt
+  label: IFTTT
+  partner: ifttt
+  partner_name: IFTTT
+  type: marketplace
+  marketplace: ifttt-services
+  channel: ipaas-listing
+  evidence: https://ifttt.com/wistia
+  source: edge
+  relationship: ipaas-bridge
+  contract_reference:
+    register: IFTTT service directory (ifttt.com/explore/services; ifttt.com/<service>)
+    spec_file: null
+    role: ipaas-connector:ifttt
+    registered_name: Wistia
+    matched_domain: wistia.com
+    matched_by: domain
+    app_slug: wistia
+    ifttt_category: Business tools
+    builder: unknown (the service page does not say who built it)
+    detected_by: sweep-ifttt-services.py
+    detected: '2026-10-23'
+    signal_note: one edge per (provider, platform); triggers, actions and applet counts are context, never read
+  status: not-a-workflow
+  arazzo: null
 - slug: wistia-monday-com-own
   label: Monday.com (own)
   partner: monday-com
@@ -281,6 +306,19 @@
   marketplace: own
   channel: partner-built
   evidence: https://www.intercom.com/app-store/?app_package_code=wistia
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: wistia-marketo-own
+  label: Marketo (own)
+  partner: marketo
+  partner_name: Marketo (own)
+  category: Adobe Exchange Experience Cloud listing (Marketo Engage)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://exchange.adobe.com/apps/ec/600230
   source: edge
   relationship: platform-app
   status: not-a-workflow
