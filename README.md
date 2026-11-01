@@ -1,4 +1,4 @@
-# Wistia (wistia)
+# Wistia
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,107 +64,252 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Wistia is an all-in-one video marketing platform for businesses that combines branded video hosting, webinars, video editing, webcam and screen recording, and deep viewer analytics for B2B marketing teams focused on lead generation, brand control, and content performance. Founded in 2006, Wistia is used by more than 425,000 businesses and integrates with major marketing automation and CRM platforms. Wistia exposes a Data API at https://api.wistia.com/v1 for programmatic access to medias, projects, customizations, accounts, and analytics, with authentication via Bearer Token or HTTP Basic using an API access token.
+Wistia is an all-in-one video marketing platform for businesses that combines branded video hosting, webinars, video editing, webcam and screen recording, and deep viewer analytics for B2B marketing teams focused on lead generation, brand control, and content performance. Founded in 2006, Wistia is used by more than 425,000 businesses and integrates with major marketing automation and CRM platforms. Wistia ships an unusually complete developer surface for its category: a frozen evergreen Data API at https://api.wistia.com/v1 alongside a header-versioned modern API at https://api.wistia.com/modern with dated stable releases (2026-01), OpenAPI 3.1 descriptions made discoverable through an RFC 9727 api-catalog linkset, OAuth 2.0 with RFC 8414/9728 discovery and dynamic client registration, a hosted MCP server at https://api.wistia.com/mcp/api, a Go CLI, a Speakeasy-generated TypeScript SDK, and the Aurora `<wistia-player>` web component.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/apis.yml)
+**Areas:** Video Hosting · Video Marketing · Video Analytics · Lead Generation · Webinars · B2B Marketing · Video Captions · Localization · MCP · Media Management
 
-## Scope
+## Wistia on APIs.io
 
-- **Type:** Index
+Everything profiled for Wistia is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/wistia/](https://apis.io/providers/wistia/)** — or go straight to one of the APIs or properties below.
 
-## Tags
+### APIs (49)
 
-- Video Hosting
-- Video Marketing
-- Video Analytics
-- Lead Generation
-- Webinars
-- B2B Marketing
+- [Wistia MCP Server](https://apis.io/apis/wistia/mcp/) — Wistia's first-party hosted Model Context Protocol server, exposing 125 tools across the media, folders, channels, captions, customizations, tags, webinars,…
+- [Wistia Upload API](https://apis.io/apis/wistia/upload-api/) — Endpoint for uploading video files directly to a Wistia account, typically used in conjunction with the Data API to manage uploaded media. Authentication…
+- [Wistia Webhooks](https://apis.io/apis/wistia/webhooks/) — Real-time webhook deliveries from Wistia for documented media lifecycle events. Deliveries are HTTP POST with a JSON body and are signed via HMAC-SHA256…
+- [Wistia Account API](https://apis.io/apis/wistia/wistia-account-api/) — The Account API from Wistia — 1 operation(s) for account.
+- [Wistia Captions API](https://apis.io/apis/wistia/wistia-captions-api/) — The Captions API from Wistia — 3 operation(s) for captions.
+- [Wistia Channels API](https://apis.io/apis/wistia/wistia-channels-api/) — The Channels API from Wistia — 2 operation(s) for channels.
+- [Wistia Customizations API](https://apis.io/apis/wistia/wistia-customizations-api/) — The Customizations API from Wistia — 1 operation(s) for customizations.
+- [Wistia Folders API](https://apis.io/apis/wistia/wistia-folders-api/) — The Folders API from Wistia — 3 operation(s) for folders.
+- [Wistia Medias API](https://apis.io/apis/wistia/wistia-medias-api/) — The Medias API from Wistia — 8 operation(s) for medias.
+- [Wistia Tags API](https://apis.io/apis/wistia/wistia-tags-api/) — The Tags API from Wistia — 3 operation(s) for tags.
+- [Wistia Tokens API](https://apis.io/apis/wistia/wistia-tokens-api/) — The Tokens API from Wistia — 1 operation(s) for tokens.
+- [Wistia Webinars API](https://apis.io/apis/wistia/wistia-webinars-api/) — The Webinars API from Wistia — 3 operation(s) for webinars.
+- [Wistia Allowed Domains API](https://apis.io/apis/wistia/wistia-allowed-domains-api/) — The Allowed Domains API from Wistia — 2 operation(s) for allowed domains.
+- [Wistia Analytics:Account API](https://apis.io/apis/wistia/wistia-analytics-account-api/) — The Analytics:Account API from Wistia — 4 operation(s) for analytics:account.
+- [Wistia Analytics:Media API](https://apis.io/apis/wistia/wistia-analytics-media-api/) — The Analytics:Media API from Wistia — 7 operation(s) for analytics:media.
+- [Wistia Analytics:Webinar API](https://apis.io/apis/wistia/wistia-analytics-webinar-api/) — The Analytics:Webinar API from Wistia — 5 operation(s) for analytics:webinar.
+- [Wistia Background Job Status API](https://apis.io/apis/wistia/wistia-background-job-status-api/) — The Background Job Status API from Wistia — 1 operation(s) for background job status.
+- [Wistia Brands API](https://apis.io/apis/wistia/wistia-brands-api/) — The Brands API from Wistia — 1 operation(s) for brands.
+- [Wistia Bulk Actions API](https://apis.io/apis/wistia/wistia-bulk-actions-api/) — The Bulk Actions API from Wistia — 1 operation(s) for bulk actions.
+- [Wistia Channel Collaborators API](https://apis.io/apis/wistia/wistia-channel-collaborators-api/) — The Channel Collaborators API from Wistia — 2 operation(s) for channel collaborators.
+- [Wistia Channel Episodes API](https://apis.io/apis/wistia/wistia-channel-episodes-api/) — The Channel Episodes API from Wistia — 6 operation(s) for channel episodes.
+- [Wistia Custom Metadata Field Definitions API](https://apis.io/apis/wistia/wistia-custom-metadata-field-definitions-api/) — The Custom Metadata Field Definitions API from Wistia — 3 operation(s) for custom metadata field definitions.
+- [Wistia Custom Metadata Field Values API](https://apis.io/apis/wistia/wistia-custom-metadata-field-values-api/) — The Custom Metadata Field Values API from Wistia — 2 operation(s) for custom metadata field values.
+- [Wistia Deleted Media API](https://apis.io/apis/wistia/wistia-deleted-media-api/) — The Deleted Media API from Wistia — 2 operation(s) for deleted media.
+- [Wistia Expiring Access Tokens API](https://apis.io/apis/wistia/wistia-expiring-access-tokens-api/) — The Expiring Access Tokens API from Wistia — 1 operation(s) for expiring access tokens.
+- [Wistia Extended Audio Descriptions API](https://apis.io/apis/wistia/wistia-extended-audio-descriptions-api/) — The Extended Audio Descriptions API from Wistia — 4 operation(s) for extended audio descriptions.
+- [Wistia Folder Sharings API](https://apis.io/apis/wistia/wistia-folder-sharings-api/) — The Folder Sharings API from Wistia — 2 operation(s) for folder sharings.
+- [Wistia Live Stream Event Registrations API](https://apis.io/apis/wistia/wistia-live-stream-event-registrations-api/) — The Live Stream Event Registrations API from Wistia — 1 operation(s) for live stream event registrations.
+- [Wistia Live Stream Events API](https://apis.io/apis/wistia/wistia-live-stream-events-api/) — The Live Stream Events API from Wistia — 2 operation(s) for live stream events.
+- [Wistia Localizations API](https://apis.io/apis/wistia/wistia-localizations-api/) — The Localizations API from Wistia — 2 operation(s) for localizations.
+- [Wistia Media API](https://apis.io/apis/wistia/wistia-media-api/) — The Media API from Wistia — 11 operation(s) for media.
+- [Wistia Project Sharings API](https://apis.io/apis/wistia/wistia-project-sharings-api/) — The Project Sharings API from Wistia — 2 operation(s) for project sharings.
+- [Wistia Projects API](https://apis.io/apis/wistia/wistia-projects-api/) — The Projects API from Wistia — 3 operation(s) for projects.
+- [Wistia Push Devices API](https://apis.io/apis/wistia/wistia-push-devices-api/) — The Push Devices API from Wistia — 2 operation(s) for push devices.
+- [Wistia Remix API](https://apis.io/apis/wistia/wistia-remix-api/) — The Remix API from Wistia — 5 operation(s) for remix.
+- [Wistia Resource URLs API](https://apis.io/apis/wistia/wistia-resource-urls-api/) — The Resource URLs API from Wistia — 1 operation(s) for resource urls.
+- [Wistia Review Bundles API](https://apis.io/apis/wistia/wistia-review-bundles-api/) — The Review Bundles API from Wistia — 2 operation(s) for review bundles.
+- [Wistia Search API](https://apis.io/apis/wistia/wistia-search-api/) — The Search API from Wistia — 1 operation(s) for search.
+- [Wistia Share Links API](https://apis.io/apis/wistia/wistia-share-links-api/) — The Share Links API from Wistia — 2 operation(s) for share links.
+- [Wistia Stats:Account API](https://apis.io/apis/wistia/wistia-stats-account-api/) — The Stats:Account API from Wistia — 2 operation(s) for stats:account.
+- [Wistia Stats:Events API](https://apis.io/apis/wistia/wistia-stats-events-api/) — The Stats:Events API from Wistia — 2 operation(s) for stats:events.
+- [Wistia Stats:Media API](https://apis.io/apis/wistia/wistia-stats-media-api/) — The Stats:Media API from Wistia — 3 operation(s) for stats:media.
+- [Wistia Stats:Projects API](https://apis.io/apis/wistia/wistia-stats-projects-api/) — The Stats:Projects API from Wistia — 1 operation(s) for stats:projects.
+- [Wistia Stats:Visitors API](https://apis.io/apis/wistia/wistia-stats-visitors-api/) — The Stats:Visitors API from Wistia — 2 operation(s) for stats:visitors.
+- [Wistia Taggings API](https://apis.io/apis/wistia/wistia-taggings-api/) — The Taggings API from Wistia — 1 operation(s) for taggings.
+- [Wistia Trims API](https://apis.io/apis/wistia/wistia-trims-api/) — The Trims API from Wistia — 1 operation(s) for trims.
+- [Wistia Webinar Collaborators API](https://apis.io/apis/wistia/wistia-webinar-collaborators-api/) — The Webinar Collaborators API from Wistia — 2 operation(s) for webinar collaborators.
+- [Wistia Webinar Registrations API](https://apis.io/apis/wistia/wistia-webinar-registrations-api/) — The Webinar Registrations API from Wistia — 1 operation(s) for webinar registrations.
+- [Wistia Sub Folders API](https://apis.io/apis/wistia/wistia-sub-folders-api/) — The Sub Folders API from Wistia — 5 operation(s) for sub folders.
 
-## Timestamps
+### Published properties
 
-- **Created:** 2026-05-11
-- **Modified:** 2026-05-30
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-## APIs
+#### AsyncAPI (2)
 
-### Wistia Data API
+Event-driven and webhook contracts.
 
-REST API providing programmatic access to medias, projects, accounts, customizations, captions, and statistics in a Wistia account. Data is returned in JSON over HTTPS. Authentication uses Bearer Tokens via the Authorization header or HTTP Basic Auth with the API token as the password. Rate limited to 600 requests per minute per account.
+- [Wistia Webhooks API](https://apis.io/asyncapis/wistia/wistia-asyncapi/)
+- [Wistia Webhooks](https://apis.io/asyncapis/wistia/wistia-webhooks/)
 
-- **Human URL:** [https://docs.wistia.com/reference/getting-started-with-the-data-api](https://docs.wistia.com/reference/getting-started-with-the-data-api)
-- **Base URL:** `https://api.wistia.com/v1`
+#### Event channels (11)
 
-#### Tags
+Individual events and webhooks the provider emits.
 
-- Video
-- Media
-- Analytics
-- Captions
-- Projects
+- [media.created](https://apis.io/channels/wistia/media-created/)
+- [media.deleted](https://apis.io/channels/wistia/media-deleted/)
+- [media.failed](https://apis.io/channels/wistia/media-failed/)
+- [media.localization_created](https://apis.io/channels/wistia/media-localization-created/)
+- [media.localization_failed](https://apis.io/channels/wistia/media-localization-failed/)
+- [media.processing](https://apis.io/channels/wistia/media-processing/)
+- [media.ready](https://apis.io/channels/wistia/media-ready/)
+- [media.transcript_failed](https://apis.io/channels/wistia/media-transcript-failed/)
+- [media.transcript_updated](https://apis.io/channels/wistia/media-transcript-updated/)
+- [media.translation_created](https://apis.io/channels/wistia/media-translation-created/)
+- [media.updated](https://apis.io/channels/wistia/media-updated/)
 
-#### Properties
+#### MCP servers (1)
 
-- [Documentation](https://docs.wistia.com/reference/getting-started-with-the-data-api)
-- [Getting Started](https://docs.wistia.com/docs/making-api-requests)
-- [Authentication](https://docs.wistia.com/docs/authenticating-with-oauth2)
-- [API Reference](https://docs.wistia.com/reference)
-- [Postman Collection](collections/wistia.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/wistia.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Model Context Protocol servers that expose the API to agents.
 
-### Wistia Upload API
+- [Wistia API MCP Server](https://apis.io/servers/wistia/wistia-api-mcp-server/)
 
-Endpoint for uploading video files directly to a Wistia account, typically used in conjunction with the Data API to manage uploaded media. Authentication uses the same API access token.
+#### Agentic access (1)
 
-- **Human URL:** [https://docs.wistia.com/reference/upload](https://docs.wistia.com/reference/upload)
-- **Base URL:** `https://upload.wistia.com`
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags
+- [Wistia Agentic Access](https://apis.io/agentic-access/wistia/wistia-agentic-access/)
 
-- Video Upload
-- Media Ingest
+#### Collections (11)
 
-#### Properties
+Postman and Open Collection request collections.
 
-- [Documentation](https://docs.wistia.com/reference/upload)
-- [Postman Collection](collections/wistia.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/wistia.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Wistia Data API](https://apis.io/collections/wistia/open-wistia/)
+- [Wistia Data Account API](https://apis.io/collections/wistia/open-wistia-account-api/)
+- [Wistia Data Account AllowedDomains API](https://apis.io/collections/wistia/open-wistia-alloweddomains-api/)
+- [Wistia Data Account Captions API](https://apis.io/collections/wistia/open-wistia-captions-api/)
+- [Wistia Data Account Channels API](https://apis.io/collections/wistia/open-wistia-channels-api/)
+- [Wistia Data Account Customizations API](https://apis.io/collections/wistia/open-wistia-customizations-api/)
+- [Wistia Data Account Folders API](https://apis.io/collections/wistia/open-wistia-folders-api/)
+- [Wistia Data Account Medias API](https://apis.io/collections/wistia/open-wistia-medias-api/)
+- [Wistia Data Account Tags API](https://apis.io/collections/wistia/open-wistia-tags-api/)
+- [Wistia Data Account Tokens API](https://apis.io/collections/wistia/open-wistia-tokens-api/)
+- [Wistia Data Account Webinars API](https://apis.io/collections/wistia/open-wistia-webinars-api/)
 
-### Wistia Webhooks
+#### Overlays (47)
 
-Real-time webhook deliveries from Wistia for documented media lifecycle events. Deliveries are HTTP POST with a JSON body and are signed via HMAC-SHA256 using the consumer's configured webhook secret, supplied in the X-Wistia-Signature header. See the linked AsyncAPI 2.6 description for the modeled events and payload shape.
+OpenAPI overlays, including conversational phrasing for each operation.
 
-- **Human URL:** [https://docs.wistia.com/docs/webhooks](https://docs.wistia.com/docs/webhooks)
-- **Base URL:** `https://docs.wistia.com/docs/webhooks`
+- [Wistia Account Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-account-api-phrasing-overlay/)
+- [Wistia Allowed Domains Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-allowed-domains-api-phrasing-overlay/)
+- [Wistia Analytics Account Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-analytics-account-api-phrasing-overlay/)
+- [Wistia Analytics Media Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-analytics-media-api-phrasing-overlay/)
+- [Wistia Analytics Webinar Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-analytics-webinar-api-phrasing-overlay/)
+- [Wistia Background Job Status Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-background-job-status-api-phrasing-overlay/)
+- [Wistia Brands Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-brands-api-phrasing-overlay/)
+- [Wistia Bulk Actions Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-bulk-actions-api-phrasing-overlay/)
+- [Wistia Captions Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-captions-api-phrasing-overlay/)
+- [Wistia Channel Collaborators Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-channel-collaborators-api-phrasing-overlay/)
+- [Wistia Channel Episodes Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-channel-episodes-api-phrasing-overlay/)
+- [Wistia Channels Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-channels-api-phrasing-overlay/)
+- [Wistia Custom Metadata Field Definitions Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-custom-metadata-field-definitions-api-phrasing-overlay/)
+- [Wistia Custom Metadata Field Values Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-custom-metadata-field-values-api-phrasing-overlay/)
+- [Wistia Customizations Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-customizations-api-phrasing-overlay/)
+- [Wistia Data Api 2026 01 Overlay](https://apis.io/overlays/wistia/wistia-data-api-2026-01-overlay/)
+- [Wistia Deleted Media Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-deleted-media-api-phrasing-overlay/)
+- [Wistia Expiring Access Tokens Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-expiring-access-tokens-api-phrasing-overlay/)
+- [Wistia Extended Audio Descriptions Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-extended-audio-descriptions-api-phrasing-overlay/)
+- [Wistia Folder Sharings Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-folder-sharings-api-phrasing-overlay/)
+- [Wistia Folders Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-folders-api-phrasing-overlay/)
+- [Wistia Live Stream Event Registrations Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-live-stream-event-registrations-api-phrasing-overlay/)
+- [Wistia Live Stream Events Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-live-stream-events-api-phrasing-overlay/)
+- [Wistia Localizations Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-localizations-api-phrasing-overlay/)
+- [Wistia Media Api Phrasing Overlay](https://apis.io/overlays/wistia/wistia-media-api-phrasing-overlay/)
+- …and 22 more published on APIs.io
 
-#### Tags
+#### Governance rules (1)
 
-- Webhooks
-- Events
-- Media
-- AsyncAPI
+Spectral rulesets for the provider's contracts.
 
-#### Properties
+- [Wistia — asyncapi rules](https://apis.io/rules/wistia/wistia-asyncapi-spectral-rules/)
 
-- [Documentation](https://docs.wistia.com/docs/webhooks)
-- [AsyncAPI](https://raw.githubusercontent.com/api-evangelist/wistia/refs/heads/main/asyncapi/wistia-asyncapi.yml) — [AsyncAPI Specification](https://www.asyncapi.com/docs/reference/specification/latest)
-- [Postman Collection](collections/wistia.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/wistia.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Security (3)
 
-## Common Properties
+Authentication, trust centre, and vulnerability disclosure.
 
-- [GitHub Organization](https://github.com/wistia)
+- [Wistia Authentication](https://apis.io/security/wistia/wistia-authentication/)
+- [Wistia Domain Security](https://apis.io/security/wistia/wistia-domain-security/)
+- [Wistia Trust Center](https://apis.io/security/wistia/wistia-trust-center/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Wistia Scopes](https://apis.io/scopes/wistia/wistia-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Wistia Plans Pricing](https://apis.io/plans/wistia/wistia-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Wistia Rate Limits](https://apis.io/rate-limits/wistia/wistia-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
 - [Website](https://wistia.com)
 - [Documentation](https://docs.wistia.com)
+- [Getting started](https://docs.wistia.com/docs/making-api-requests)
+- [API reference](https://docs.wistia.com/reference)
 - [Pricing](https://wistia.com/pricing)
-- [Sign Up](https://wistia.com/signup)
 - [Support](https://wistia.com/support)
-- [Developers](https://docs.wistia.com)
 - [Blog](https://wistia.com/learn)
-- [LinkedIn](https://www.linkedin.com/company/wistia)
-- [L L Ms Txt](https://docs.wistia.com/llms.txt)
+- [Compliance](https://security.wistia.com/)
+- [Terms of service](https://wistia.com/terms)
+- [Privacy policy](https://wistia.com/privacy)
+- [GitHub](https://github.com/wistia)
+- [Status](https://status.wistia.com)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 69.9** — exemplar · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 80.0 |
+| Contract quality | 64.0 |
+| Contract governance | 29.5 |
+| Operational transparency | 69.7 |
+| Developer ergonomics | 54.2 |
+| Access clarity | 92.1 |
+
+**Agent readiness 35.7** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | partial |
+| Operation Distinctiveness | — |
+
+**Regulatory alignment 39.2** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/wistia/](https://apis.io/providers/wistia/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Wistia: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/wistia/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
